@@ -26,5 +26,11 @@ setup(
     #long_description=read('README.txt'),
     download_url='git://github.com/quinode/coop_cms.git',
     zip_safe=False,
+    install_requires = [
+        'Django==1.3.1',
+        'django-floppyforms==0.4.7',
+        'django-livesettings==1.4-7',
+        'sorl-thumbnail==11.09',
+    ]
 )
 
