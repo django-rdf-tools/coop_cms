@@ -2,6 +2,10 @@
 ##############
 *.pyc
 *.tmproj
+*.egg-info
+/build
+/dist
+
 
 # OS generated files #
 ######################

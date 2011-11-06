@@ -18,7 +18,12 @@ setup(
     name='django-coop-cms',
     version = VERSION,
     description='Small CMS built around a tree navigation open to any django models',
-    packages=['coop_cms','coop_cms.management','coop_cms.templatetags','coop_cms.migrations'],
+    packages=[  'coop_cms',
+                'coop_cms.management',
+                'coop_cms.management.commands',
+                'coop_cms.templatetags',
+                'coop_cms.migrations'
+                ],
     include_package_data=True,
     author='Luc Jean',
     author_email='ljean@apidev.fr',
@@ -26,11 +31,10 @@ setup(
     #long_description=read('README.txt'),
     #download_url='git://github.com/quinode/coop_cms.git',
     zip_safe=False,
-    install_requires = [
-        'Django==1.3.1',
-        'django-floppyforms==0.4.7',
-        'django-livesettings==1.4-7',
-        'sorl-thumbnail==11.09',
-    ]
+    install_requires = ['Django==1.3.1',
+                        'django-floppyforms==0.4.7',
+                        'django-livesettings==1.4-7',
+                        'sorl-thumbnail==11.09',
+                        ],
 )
 
