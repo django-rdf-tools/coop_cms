@@ -8,7 +8,7 @@ except ImportError:
     ez_setup.use_setuptools()
     from setuptools import setup, find_packages
 
-VERSION = __import__('djaloha').__version__
+VERSION = __import__('coop_cms').__version__
 
 import os
 def read(fname):
