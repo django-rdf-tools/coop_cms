@@ -112,6 +112,9 @@ class NavNode(models.Model):
         if in_navigation != None:
             nodes = nodes.filter(in_navigation=in_navigation)
         return nodes
+    
+    def has_children(self):
+        return self.get_children(True).count()
         
     def get_siblings(self, in_navigation=None):
         nodes = NavNode.objects.filter(parent=self.parent).order_by("ordering")
@@ -137,12 +140,26 @@ class NavNode(models.Model):
     
     def _get_li_content(self, li_template):
         if li_template:
-            t = get_template(li_template) if type(li_template) is unicode else li_template
+            t = li_template if hasattr(li_template, 'render') else get_template(li_template)
             return t.render(Context({'node': self}))
         else:
             return u'<a href="{0}">{1}</a>'.format(self.get_absolute_url(), self.label)
+            
+    def _get_ul_format(self, ul_template):
+        if ul_template:
+            t = ul_template if hasattr(ul_template, 'render') else get_template(ul_template)
+            return t.render(Context({'node': self}))
+        else:
+            return u'<ul>{0}</ul>'
+        
+    def _get_li_args(self, li_args):
+        if li_args:
+            t = li_args if hasattr(li_args, 'render') else get_template(li_args)
+            return t.render(Context({'node': self}))
+        else:
+            return u''
     
-    def as_navigation(self, li_template=None, css_class=""):
+    def as_navigation(self, li_template=None, css_class="", ul_template=None, li_args=None):
         #Display the node and his children as nested ul and li html tags.
         #li_template is a custom template that can be passed
         
@@ -150,8 +167,11 @@ class NavNode(models.Model):
             return ""
         
         children_li = [child.as_navigation(li_template) for child in self.get_children(in_navigation=True)]
-        children_html = u"<ul>{0}</ul>".format(u''.join(children_li)) if children_li else ""
-        
+        ul_format = self._get_ul_format(ul_template)
+        children_html = ul_format.format(u''.join(children_li)) if children_li else ""
+        args = self._get_li_args(li_args)
+        if args:
+            css_class = " "+args
         return u'<li{0}>{1}{2}</li>'.format(css_class, self._get_li_content(li_template), children_html)
         
     def as_breadcrumb(self, li_template=None, css_class=""):
