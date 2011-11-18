@@ -347,7 +347,3 @@ class Document(Media):
             return settings.STATIC_URL+u'img/{0}.png'.format(ext)
         else:
             return settings.STATIC_URL+u'img/default-icon.png'
-
-    
-    
-    
