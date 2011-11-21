@@ -38,9 +38,9 @@ class ArticleAdmin(admin.ModelAdmin):
     list_editable = ['publication']
     readonly_fields = ['slug', 'created', 'modified']
     fieldsets = (
+        (_('Navigation'), {'fields': ('navigation_parent',)}),
         (_('General'), {'fields': ('slug', 'title', 'content')}),
         (_('Publication'), {'fields': ('publication', 'created', 'modified')}),
-        (_('Navigation'), {'fields': ('navigation_parent',)}),
     )
     
 admin.site.register(models.Article, ArticleAdmin)

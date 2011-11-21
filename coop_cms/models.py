@@ -236,7 +236,7 @@ class Article(TimeStampedModel):
         verbose_name_plural = _(u"articles")
     
     def __unicode__(self):
-        return self.slug
+        return self.title
     
     def _get_navigation_parent(self):
         ct = ContentType.objects.get_for_model(Article)

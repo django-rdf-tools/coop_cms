@@ -33,6 +33,8 @@ background: linear-gradient(#FFFFFF, #ABABAB);
 	padding: 7px;
 	right: 10px;
 	text-align: center;
+	z-index: 10000;
+
 }
 
 #admin-bar a {
@@ -54,3 +56,23 @@ background: linear-gradient(#FFFFFF, #ABABAB);
 #admin-bar a:hover {
 	color: #9c131b;
 }
+
+span.unicon{
+	font-size: 1.8em;
+	display: inline-block;
+	margin-top: -0.2em;
+	height: 1em;
+	margin-right: 0.2em;
+	position: relative;
+	top: 0.1em;
+}
+
+#pageslide-slide-wrap{
+	background-color: #797979;
+}
+
+#ppanel h3{
+	text-align: center;
+	color: #fffeff;
+}
+
