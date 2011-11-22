@@ -45,7 +45,7 @@ $(function(){
 <input type="submit" style="visibility: hidden">
 </form>
 </div>
-<form style="height: 0" id="article_publication_form" method="POST" action="{{ article.get_publish_url }}"">{% csrf_token %}
+<form style="height: 0" id="article_publication_form" method="POST" action="{{ article.get_publish_url }}">{% csrf_token %}
     <input type="hidden" name="status" value="{{ARTICLE_PUBLISHED}}">
     <input type="submit" style="visibility: hidden">
 </form>
