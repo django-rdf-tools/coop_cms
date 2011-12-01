@@ -1,0 +1,7 @@
+{% load i18n %}
+{% load article_tags %}
+<br/>
+<h2>Dernières actualités</h2>
+<ul class="articles">
+    {% last_articles 5 "coop_cms/article_list_item.html" %}
+</ul>
