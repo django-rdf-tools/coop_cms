@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coop_cms\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-01 09:24+0100\n"
-"PO-Revision-Date: 2011-12-01 09:34+0100\n"
+"POT-Creation-Date: 2011-12-01 15:56+0100\n"
+"PO-Revision-Date: 2011-12-01 15:47+0100\n"
 "Last-Translator: Dominique Guardiola <dguardiola@quinode.fr>\n"
 "Language-Team: Apidev, Quinode <contact@quinode.fr>\n"
 "Language: \n"
@@ -19,19 +19,18 @@ msgstr ""
 "X-Poedit-Language: French\n"
 "X-Poedit-Country: FRANCE\n"
 
-#: admin.py:41
-#: config.py:17
+#: admin.py:41 config.py:17
 #, fuzzy
 msgid "Navigation"
 msgstr "Arborescence"
 
 #: admin.py:42
 msgid "General"
-msgstr ""
+msgstr "Général"
 
 #: admin.py:43
 msgid "Publication"
-msgstr ""
+msgstr "Publication"
 
 #: config.py:23
 msgid "Selection des applications"
@@ -42,8 +41,12 @@ msgid "Selectionnez des applications contenant des objets navigables"
 msgstr ""
 
 #: forms.py:22
-msgid "Invalid rule for this content type: The object class doesn't have a get_label method"
-msgstr "Règle invalide pour ce content type: La classe de l'objet n'a pas de méthode get_label"
+msgid ""
+"Invalid rule for this content type: The object class doesn't have a "
+"get_label method"
+msgstr ""
+"Règle invalide pour ce content type: La classe de l'objet n'a pas de méthode "
+"get_label"
 
 #: forms.py:43
 msgid "Title can not be empty"
@@ -68,6 +71,15 @@ msgstr "Utiliser le champ search"
 #: models.py:62
 msgid "Use get_label"
 msgstr "Utiliser la méthode get_label"
+
+#: models.py:65
+msgid "django model"
+msgstr "modèle django"
+
+#: models.py:66
+#, fuzzy
+msgid "search field"
+msgstr "Utiliser le champ search"
 
 #: models.py:67
 msgid "How to generate the label"
@@ -121,13 +133,11 @@ msgstr "Un noeud ne peut pas être son propre parent"
 msgid "A node can not be child of its own child"
 msgstr "Un noeud ne peut pas être son propre enfant"
 
-#: models.py:207
-#: templates/admin/coop_cms/navtree/change_list.html:307
+#: models.py:207 templates/admin/coop_cms/navtree/change_list.html:307
 msgid "Navigation tree"
 msgstr "Arborescence"
 
-#: models.py:224
-#: templates/coop_cms/article.html:3
+#: models.py:224 templates/coop_cms/article.html:3
 #: templates/coop_cms/article_form.html:3
 msgid "Draft"
 msgstr "Brouillon"
@@ -165,8 +175,12 @@ msgid "articles"
 msgstr "articles"
 
 #: models.py:267
-msgid "set the parent in navigation. WARNING: delete other nodes pointing to this object"
-msgstr "définit le noeud parant. Attention : efface les noeuds pointant vers cet objet"
+msgid ""
+"set the parent in navigation. WARNING: delete other nodes pointing to this "
+"object"
+msgstr ""
+"définit le noeud parant. Attention : efface les noeuds pointant vers cet "
+"objet"
 
 #: models.py:304
 msgid "link"
@@ -180,8 +194,7 @@ msgstr "liens"
 msgid "name"
 msgstr "nom"
 
-#: models.py:335
-#: models.py:341
+#: models.py:335 models.py:341
 msgid "file"
 msgstr "fichier"
 
@@ -225,8 +238,7 @@ msgstr "'{0}' ajouté à l'arborescence."
 msgid "The node is now in navigation."
 msgstr "le noeud est à présent visible dans l'arborescence."
 
-#: views.py:297
-#: templates/coop_cms/navtree_content/default.html:5
+#: views.py:297 templates/coop_cms/navtree_content/default.html:5
 msgid "Remove from navigation"
 msgstr "Supprimer de l'arborescence"
 
@@ -234,8 +246,7 @@ msgstr "Supprimer de l'arborescence"
 msgid "The node has been removed of the navigation."
 msgstr "Le noeud a été supprimé de l'arborescence"
 
-#: views.py:301
-#: templates/coop_cms/navtree_content/default.html:7
+#: views.py:301 templates/coop_cms/navtree_content/default.html:7
 msgid "Add to navigation"
 msgstr "Rendre le noeud visible dans l'arborescence"
 
@@ -247,8 +258,7 @@ msgstr "Message {0} inconnu"
 msgid "You are not allowed to add a node"
 msgstr "Vous n'êtes pas autorisé à ajouter un noeud"
 
-#: views.py:335
-#: views.py:337
+#: views.py:335 views.py:337
 msgid "An error occured"
 msgstr "Une erreur est survenue"
 
@@ -311,6 +321,19 @@ msgstr "Médiathèque"
 msgid "Edition"
 msgstr "Edition"
 
+#: templates/coop_cms/article_list.html:4
+msgid "Last articles"
+msgstr "Derniers articles"
+
+#: templates/coop_cms/article_list_item.html:8
+#, python-format
+msgid ""
+"%(when)s\n"
+"            "
+msgstr ""
+"%(when)s\n"
+"            "
+
 #: templates/coop_cms/media_library.html:15
 msgid "Images"
 msgstr "Images"
@@ -342,4 +365,3 @@ msgstr "navigation_children requiert un objet en argument"
 #: templatetags/coop_navigation.py:131
 msgid "navigation_siblings requires object as argument"
 msgstr "navigation_siblings requiert un objet en argument"
-

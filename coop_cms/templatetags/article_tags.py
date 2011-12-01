@@ -34,7 +34,6 @@ class ArticleListNode(template.Node):
         return article_list
 
     def render(self, context):
-        print self.number
         #nb = resolve(self.number, context)
         tmpl = resolve(self.templ, context)
         t = template.loader.get_template(tmpl)
