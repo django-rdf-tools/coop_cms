@@ -62,8 +62,8 @@ class NavType(models.Model):
         (LABEL_USE_GET_LABEL, _(u'Use get_label')),
     )
     
-    content_type = models.ForeignKey(ContentType, unique=True)
-    search_field = models.CharField(max_length=200, blank=True, default="")
+    content_type = models.ForeignKey(ContentType, unique=True, verbose_name=_(u'django model'))
+    search_field = models.CharField(max_length=200, blank=True, default="", verbose_name=_(u'search field'))
     label_rule = models.IntegerField(verbose_name=_(u'How to generate the label'),
         choices=LABEL_RULE_CHOICES, default=LABEL_USE_UNICODE)
     
