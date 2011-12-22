@@ -8,6 +8,7 @@ from django.template import Template, Context
 from coop_cms.models import Link, NavNode, NavType, Article
 import json
 from django.core.exceptions import ValidationError
+from coop_cms.settings import get_article_class
 
 class NavigationTest(TestCase):
 
@@ -552,71 +553,71 @@ class NavigationTest(TestCase):
 class NavigationParentTest(TestCase):
     
     def setUp(self):
-        ct = ContentType.objects.get_for_model(Article)
+        ct = ContentType.objects.get_for_model(get_article_class())
         NavType.objects.create(content_type=ct, search_field='title', label_rule=NavType.LABEL_USE_SEARCH_FIELD)
     
     def test_set_himself_as_parent_raise_error(self):
-        art = Article.objects.create(title='toto', content='oups')
+        art = get_article_class().objects.create(title='toto', content='oups')
         node = NavNode.objects.create(label=art.title, content_object=art, ordering=1, parent=None)
         self.assertRaises(ValidationError, art._set_navigation_parent, node.id)
         
     def test_set_child_as_parent_raise_error(self):
-        art1 = Article.objects.create(title='toto', content='oups')
+        art1 = get_article_class().objects.create(title='toto', content='oups')
         node1 = NavNode.objects.create(label=art1.title, content_object=art1, ordering=1, parent=None)
         
-        art2 = Article.objects.create(title='titi', content='oups')
+        art2 = get_article_class().objects.create(title='titi', content='oups')
         node2 = NavNode.objects.create(label=art2.title, content_object=art2, ordering=1, parent=node1)
         
         self.assertRaises(ValidationError, art1._set_navigation_parent, node2.id)
     
     def test_add_to_navigation_as_root(self):
-        art1 = Article.objects.create(title='toto', content='oups')
+        art1 = get_article_class().objects.create(title='toto', content='oups')
         art1.navigation_parent = 0
-        ct = ContentType.objects.get_for_model(Article)
+        ct = ContentType.objects.get_for_model(get_article_class())
         node = NavNode.objects.get(content_type=ct, object_id=art1.id)
         
     def test_add_to_navigation_as_child(self):
-        art1 = Article.objects.create(title='toto', content='oups')
+        art1 = get_article_class().objects.create(title='toto', content='oups')
         node1 = NavNode.objects.create(label=art1.title, content_object=art1, ordering=1, parent=None)
-        art2 = Article.objects.create(title='titi', content='oups')
+        art2 = get_article_class().objects.create(title='titi', content='oups')
         art2.navigation_parent = node1.id
-        ct = ContentType.objects.get_for_model(Article)
+        ct = ContentType.objects.get_for_model(get_article_class())
         node = NavNode.objects.get(content_type=ct, object_id=art2.id)
         self.assertEqual(node.parent.id, node1.id)
         
     def test_move_in_navigation_to_root(self):
-        art1 = Article.objects.create(title='toto', content='oups')
+        art1 = get_article_class().objects.create(title='toto', content='oups')
         node1 = NavNode.objects.create(label=art1.title, content_object=art1, ordering=1, parent=None)
-        art2 = Article.objects.create(title='titi', content='oups')
+        art2 = get_article_class().objects.create(title='titi', content='oups')
         node2 = NavNode.objects.create(label=art2.title, content_object=art2, ordering=1, parent=node1)
         art2.navigation_parent = 0
-        ct = ContentType.objects.get_for_model(Article)
+        ct = ContentType.objects.get_for_model(get_article_class())
         node = NavNode.objects.get(content_type=ct, object_id=art2.id)
         self.assertEqual(node.parent, None)
         
     def test_move_in_navigation_to_child(self):
-        art1 = Article.objects.create(title='toto', content='oups')
+        art1 = get_article_class().objects.create(title='toto', content='oups')
         node1 = NavNode.objects.create(label=art1.title, content_object=art1, ordering=1, parent=None)
-        art2 = Article.objects.create(title='titi', content='oups')
+        art2 = get_article_class().objects.create(title='titi', content='oups')
         node2 = NavNode.objects.create(label=art2.title, content_object=art2, ordering=1, parent=None)
         art2.navigation_parent = node1.id
-        ct = ContentType.objects.get_for_model(Article)
+        ct = ContentType.objects.get_for_model(get_article_class())
         node = NavNode.objects.get(content_type=ct, object_id=art2.id)
         self.assertEqual(node.parent.id, node1.id)
         
     def test_remove_from_navigation(self):
-        art1 = Article.objects.create(title='toto', content='oups')
+        art1 = get_article_class().objects.create(title='toto', content='oups')
         node1 = NavNode.objects.create(label=art1.title, content_object=art1, ordering=1, parent=None)
         art1.navigation_parent = None
-        ct = ContentType.objects.get_for_model(Article)
+        ct = ContentType.objects.get_for_model(get_article_class())
         self.assertRaises(NavNode.DoesNotExist, NavNode.objects.get, content_type=ct, object_id=art1.id)
         
     def test_get_navigation_parent(self):
-        art1 = Article.objects.create(title='toto', content='oups')
+        art1 = get_article_class().objects.create(title='toto', content='oups')
         node1 = NavNode.objects.create(label=art1.title, content_object=art1, ordering=1, parent=None)
-        art2 = Article.objects.create(title='titi', content='oups')
+        art2 = get_article_class().objects.create(title='titi', content='oups')
         node2 = NavNode.objects.create(label=art2.title, content_object=art2, ordering=1, parent=node1)
-        art3 = Article.objects.create(title='tutu', content='oups')
+        art3 = get_article_class().objects.create(title='tutu', content='oups')
         self.assertEqual(art1.navigation_parent, 0)
         self.assertEqual(art2.navigation_parent, art1.id)
         self.assertEqual(art3.navigation_parent, None)
@@ -922,7 +923,7 @@ class ArticleTest(TestCase):
             self.assertContains(response, value)
             
     def _check_article_not_changed(self, article, data, initial_data):
-        article = Article.objects.get(id=article.id)
+        article = get_article_class().objects.get(id=article.id)
 
         for (key, value) in data.items():
             self.assertNotEquals(getattr(article, key), value)
@@ -931,7 +932,7 @@ class ArticleTest(TestCase):
             self.assertEquals(getattr(article, key), value)
 
     def test_view_article(self):
-        article = Article.objects.create(title="test", publication=Article.PUBLISHED)
+        article = get_article_class().objects.create(title="test", publication=Article.PUBLISHED)
         self.assertEqual(article.slug, 'test')
         response = self.client.get(article.get_absolute_url())
         self.assertEqual(200, response.status_code)
@@ -941,17 +942,17 @@ class ArticleTest(TestCase):
         self.assertEqual(404, response.status_code)
         
     def test_is_navigable(self):
-        article = Article.objects.create(title="test", publication=Article.PUBLISHED)
+        article = get_article_class().objects.create(title="test", publication=Article.PUBLISHED)
         self.assertEqual('/test', article.get_absolute_url())
 
     def test_create_slug(self):
-        article = Article.objects.create(title=u"voici l'été", publication=Article.PUBLISHED)
+        article = get_article_class().objects.create(title=u"voici l'été", publication=Article.PUBLISHED)
         self.assertEqual(article.slug, 'voici-lete')
         response = self.client.get(article.get_absolute_url())
         self.assertEqual(200, response.status_code)
         
     def test_edit_article(self):
-        article = Article.objects.create(title="test", publication=Article.PUBLISHED)
+        article = get_article_class().objects.create(title="test", publication=Article.PUBLISHED)
         
         data = {"title": 'salut', 'content': 'bonjour!'}
         
@@ -965,17 +966,17 @@ class ArticleTest(TestCase):
         
     def test_article_edition_permission(self):
         initial_data = {'title': "test", 'content': "this is my article content"}
-        article = Article.objects.create(publication=Article.PUBLISHED, **initial_data)
+        article = get_article_class().objects.create(publication=Article.PUBLISHED, **initial_data)
         
         data = {"title": 'salut', "content": 'oups'}
         response = self._edit_article(article, data, 403)
-        article = Article.objects.get(id=article.id)
+        article = get_article_class().objects.get(id=article.id)
         self.assertEquals(article.title, initial_data['title'])
         self.assertEquals(article.content, initial_data['content'])
         
     def test_article_empty_title(self):
         initial_data = {'title': "test", 'content': "this is my article content"}
-        article = Article.objects.create(publication=Article.PUBLISHED, **initial_data)
+        article = get_article_class().objects.create(publication=Article.PUBLISHED, **initial_data)
         data = {'content': "un nouveau contenu"}
         
         self._log_as_editor()
@@ -998,7 +999,7 @@ class ArticleTest(TestCase):
         
     def test_edit_permission(self):
         initial_data = {'title': "ceci est un test", 'content': "this is my article content"}
-        article = Article.objects.create(publication=Article.PUBLISHED, **initial_data)
+        article = get_article_class().objects.create(publication=Article.PUBLISHED, **initial_data)
         response = self.client.get(article.get_absolute_url())
         self.assertEqual(200, response.status_code)
         
@@ -1011,7 +1012,7 @@ class ArticleTest(TestCase):
         
     def test_aloha_loaded(self):
         initial_data = {'title': "ceci est un test", 'content': "this is my article content"}
-        article = Article.objects.create(publication=Article.PUBLISHED, **initial_data)
+        article = get_article_class().objects.create(publication=Article.PUBLISHED, **initial_data)
         response = self.client.get(article.get_absolute_url())
         self.assertFalse(self._is_aloha_found(response))
         
@@ -1022,9 +1023,9 @@ class ArticleTest(TestCase):
     def test_checks_aloah_links(self):
         slugs = ("un", "deux", "trois", "quatre")
         for slug in slugs:
-            Article.objects.create(publication=Article.PUBLISHED, title=slug)
+            get_article_class().objects.create(publication=Article.PUBLISHED, title=slug)
         initial_data = {'title': "test", 'content': "this is my article content"}
-        article = Article.objects.create(**initial_data)
+        article = get_article_class().objects.create(**initial_data)
         
         self._log_as_editor()
         response = self.client.get(reverse('aloha_init'))
@@ -1034,7 +1035,7 @@ class ArticleTest(TestCase):
             self.assertTrue(slug in context_slugs)
         
     def test_view_draft_article(self):
-        article = Article.objects.create(title="test", publication=Article.DRAFT)
+        article = get_article_class().objects.create(title="test", publication=Article.DRAFT)
         response = self.client.get(article.get_absolute_url())
         self.assertEqual(404, response.status_code)
         self._log_as_editor()
@@ -1042,7 +1043,7 @@ class ArticleTest(TestCase):
         self.assertEqual(200, response.status_code)
         
     def test_accept_regular_html(self):
-        article = Article.objects.create(title="test", publication=Article.PUBLISHED)
+        article = get_article_class().objects.create(title="test", publication=Article.PUBLISHED)
         html = '<h1>paul</h1><a href="/" target="_blank">georges</a><p><b>ringo</b></p>'
         html += '<h6>john</h6><img src="/img.jpg"><br><table><tr><th>A</th><td>B</td></tr>'
         data = {'content': html, 'title': 'ok<br>ok'}
@@ -1055,7 +1056,7 @@ class ArticleTest(TestCase):
         
     def test_no_malicious_when_editing(self):
         initial_data = {'title': "test", 'content': "this is my article content"}
-        article = Article.objects.create(publication=Article.PUBLISHED, **initial_data)
+        article = get_article_class().objects.create(publication=Article.PUBLISHED, **initial_data)
         
         data1 = {'content': "<script>alert('aahhh');</script>", 'title': 'ok'}
         data2 = {'title': '<a href="/">home</a>', 'content': 'ok'}

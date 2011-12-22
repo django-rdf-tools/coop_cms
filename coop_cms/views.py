@@ -11,30 +11,40 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError, PermissionDenied
 from django.template.loader import select_template
 from django.db.models.aggregates import Max
-from forms import ArticleForm
+from forms import ArticleForm, AddImageForm
 from django.contrib.messages.api import error as error_message
 from coop_cms.models import get_object_label, create_navigation_node
+from django.contrib.auth.decorators import login_required
+from coop_cms.settings import get_article_class
+
+def get_article_template(article):
+    template = article.template
+    if not template:
+        template = 'coop_cms/article_base.html'
+    return template
 
 def view_article(request, url):
     """view the article"""
     if request.user.has_perm('coop_cms.change_article'):
-        article = get_object_or_404(Article, slug=url) #Draft & Published
+        article = get_object_or_404(get_article_class(), slug=url) #Draft & Published
     else:
-        article = get_object_or_404(Article, slug=url, publication=Article.PUBLISHED) #Published only
+        article = get_object_or_404(get_article_class(), slug=url, publication=Article.PUBLISHED) #Published only
     context_dict = {
         'editable': True, 'edit_mode': False, 'article': article, 'draft': article.publication==Article.DRAFT}
+    
     return render_to_response(
-        'coop_cms/article.html',
+        get_article_template(article),
         context_dict,
         context_instance=RequestContext(request)
     )
 
+@login_required
 def edit_article(request, url):
     """edit the article"""
     if not request.user.has_perm('coop_cms.change_article'):
         raise PermissionDenied
     
-    article = get_object_or_404(Article, slug=url) #Draft and Published
+    article = get_object_or_404(get_article_class(), slug=url) #Draft and Published
     
     if request.method == "POST":
         form = ArticleForm(request.POST, instance=article)
@@ -45,37 +55,64 @@ def edit_article(request, url):
         form = ArticleForm(instance=article)
     
     context_dict = {
-        'form': form,
+        'coop_cms_article_form': form, 
         'editable': True, 'edit_mode': True, 'title': article.title,
         'draft': article.publication==Article.DRAFT,
         'article': article, 'ARTICLE_PUBLISHED': Article.PUBLISHED
     }
     
     return render_to_response(
-        'coop_cms/article_form.html',
+        get_article_template(article),
         context_dict,
         context_instance=RequestContext(request)
     )
 
-
+@login_required
 def publish_article(request, url):
     """change the publication status of an article"""
     can_change_article = request.user.has_perm('coop_cms.change_article')
     if not can_change_article:
         raise PermissionDenied
     elif request.method == "POST":
-        article = get_object_or_404(Article, slug=url, publication=Article.DRAFT)
+        article = get_object_or_404(get_article_class(), slug=url, publication=Article.DRAFT)
         article.publication = Article.PUBLISHED
         article.save()
         return HttpResponseRedirect(article.get_absolute_url())
     raise Http404
 
-def show_media_library(request):
+@login_required
+def show_media_images(request):
     context = {
         'images': Image.objects.all(),
+    }
+    return render_to_response('coop_cms/view_images.html', context, RequestContext(request))
+
+@login_required
+def show_media_documents(request):
+    context = {
         'documents': Document.objects.all(),
     }
-    return render_to_response('coop_cms/media_library.html', context, RequestContext(request))
+    return render_to_response('coop_cms/view_documents.html', context, RequestContext(request))
+
+@login_required
+def upload_image(request):
+    if request.method == "POST":
+        form = AddImageForm(request.POST, request.FILES)
+        if form.is_valid():
+            src = form.cleaned_data['image']
+            descr = form.cleaned_data['descr']
+            image = Image(name=descr)
+            image.file.save(src.name, src)
+            image.save()
+            return HttpResponse('ok')
+    else:
+        form = AddImageForm()
+    print 'upload_image'
+    return render_to_response(
+        'coop_cms/upload_image.html',
+        locals(),
+        context_instance=RequestContext(request)
+    )
     
 #navigation tree --------------------------------------------------------------
 
@@ -302,6 +339,7 @@ def navnode_in_navigation(request):
         response['icon'] = "out_nav"
     return response
     
+@login_required
 def process_nav_edition(request):
     """This handle ajax request sent by the tree component"""
     if request.method == 'POST' and request.is_ajax() and request.POST.has_key('msg_id'):

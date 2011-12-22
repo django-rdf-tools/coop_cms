@@ -1,0 +1,28 @@
+{% load i18n %}
+<html>
+  <head>
+    <style>
+      .library{
+        background: #fff;
+        border: dashed 2px #aaa;
+        margin: auto;
+        text-align: center;
+        height: 100%;
+        font-size: small;
+        font-family: 'calibri';
+      }
+      .slide-user-info {
+        width: 100%;
+        background: #eee;
+        border: solid thin #ccc;
+        font-size: medium;
+        font-weight: bold;
+      }
+    </style>
+    {% block extra_head %}
+    {% endblock %}
+  </head>
+  <body>
+    {% block content %}{% endblock %}
+  </body>
+</html>

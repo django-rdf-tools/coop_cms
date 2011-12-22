@@ -8,6 +8,7 @@ from djaloha.widgets import AlohaInput
 import floppyforms
 import re
 from django.conf import settings
+from coop_cms.settings import get_article_class
 
 class NavTypeForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -28,7 +29,7 @@ class NavTypeForm(forms.ModelForm):
 class ArticleForm(floppyforms.ModelForm):
 
     class Meta:
-        model = Article
+        model = get_article_class()
         fields = ('title', 'content')
         widgets = {
             'title': AlohaInput(),
@@ -57,7 +58,7 @@ def get_node_choices():
     return choices
 
 def get_navigation_parent_help_text():
-    return Article().navigation_parent.__doc__
+    return get_article_class().navigation_parent.__doc__
 
 class ArticleAdminForm(forms.ModelForm):
     
@@ -99,7 +100,14 @@ class ArticleAdminForm(forms.ModelForm):
         return article
     
     class Meta:
-        model = Article
+        model = get_article_class()
         widgets = {
             'title': forms.TextInput(attrs={'size': 100})
         }
+
+class AddImageForm(forms.Form):
+    image = forms.ImageField(required=True, label = _('Image'),)
+    descr = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'size': '30', 'placeholder': _(u'description'),}),
+        label = _('Description'),
+    )

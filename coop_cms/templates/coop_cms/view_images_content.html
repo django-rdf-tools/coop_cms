@@ -1,0 +1,16 @@
+{% load i18n pagination_tags %}
+{% spaceless %}
+  <div class="slide-user-info">{% trans "ESC for closing" %}</div>
+  <div class="media-selector">
+    <a href="{% url coop_cms_media_images %}">{% trans "Images" %}</a>
+    <a href="{% url coop_cms_media_documents %}">{% trans "Documents" %}</a>
+  </div>
+  <h3>{% trans "Images" %}</h3>
+  <div class="library-items library-images">
+  {% autopaginate images 5 %}  
+  {% for img in images %}
+      <img class="djaloha-thumbnail" src="{{ img.as_thumbnail.url }}" title="{{img.name}}" rel="{{img.get_absolute_url}}">
+  {% endfor %}
+  {% paginate %}  
+  </div>
+{% endspaceless %}

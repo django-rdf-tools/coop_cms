@@ -1,0 +1,47 @@
+{% load i18n %}
+<script type="text/javascript">
+
+$(function(){
+    $("#coop-bar a.slide").pageSlide({width:'350px', direction:'right'});
+    
+    $("a#coopbar_addfile").live('click', function () {
+        $.colorbox({
+            href : $(this).attr('href'),
+            onComplete : function(){
+                $("form#upload-image-form").ajaxForm({
+                    success: function (html) {
+                        if(html === 'ok') {
+                          $.colorbox.close();
+                          $("#coopbar_medialibrary").click();
+                        }
+                        else {
+                            $.colorbox({html:html}); 
+                        }
+                    }
+                })
+            }
+        });
+        return false;
+    });
+    
+    $("a.colorbox-form").live('click', function () {
+        $.colorbox({
+            href : $(this).attr('href'),
+            onComplete : function(){
+                $("form#template-form").ajaxForm({
+                    success: function (html) {
+                        if(html === 'ok') {
+                          $.colorbox.close();
+                          $("#coopbar_save").click();
+                        }
+                        else {
+                            $.colorbox({html:html}); 
+                        }
+                    }
+                })
+            }
+        });
+        return false;
+    });
+});
+</script>

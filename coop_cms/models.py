@@ -15,17 +15,21 @@ from django.utils.html import escape
 from django.core.exceptions import ValidationError
 from html_field.db.models import HTMLField
 from html_field import html_cleaner
+from coop_cms.settings import get_article_class
 
 def get_object_label(content_type, object):
     """
     returns the label used in navigation according to the configured rule
     """
-    nt = NavType.objects.get(content_type=content_type)
-    if nt.label_rule == NavType.LABEL_USE_SEARCH_FIELD:
-        label = getattr(object, nt.search_field)
-    elif nt.label_rule == NavType.LABEL_USE_GET_LABEL:
-        label = object.get_label()
-    else:
+    try:
+        nt = NavType.objects.get(content_type=content_type)
+        if nt.label_rule == NavType.LABEL_USE_SEARCH_FIELD:
+            label = getattr(object, nt.search_field)
+        elif nt.label_rule == NavType.LABEL_USE_GET_LABEL:
+            label = object.get_label()
+        else:
+            label = unicode(object)
+    except NavType.DoesNotExist:
         label = unicode(object)
     return escape(label)
     
@@ -206,16 +210,14 @@ class NavTree(models.Model):
     class Meta:
         verbose_name_plural = verbose_name = _(u'Navigation tree')
 
-
-
 content_cleaner = html_cleaner.HTMLCleaner(
     allow_tags=['a', 'img', 'p', 'br', 'b', 'i', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-        'sup', 'pre', 'ul', 'li', 'ol', 'table', 'th', 'tr', 'td', 'tbody'],
+        'sup', 'pre', 'ul', 'li', 'ol', 'table', 'th', 'tr', 'td', 'tbody', 'span', 'div'],
     allow_attrs_for_tag={'a': ['href', 'target'], 'img': ['src', 'alt']}
 )
 title_cleaner = html_cleaner.HTMLCleaner(allow_tags=['br'])
 
-class Article(TimeStampedModel):
+class BaseArticle(TimeStampedModel):
     
     DRAFT = 0
     PUBLISHED = 1
@@ -230,16 +232,18 @@ class Article(TimeStampedModel):
     title = HTMLField(title_cleaner, verbose_name=_(u'title'), default=_('Page title'))
     content = HTMLField(content_cleaner, verbose_name=_(u'content'), default=_('Page content'))
     publication = models.IntegerField(_(u'publication'), choices=PUBLICATION_STATUS, default=DRAFT)
+    template = models.CharField(_(u'template'), max_length=200, default='', blank=True)
     
     class Meta:
         verbose_name = _(u"article")
         verbose_name_plural = _(u"articles")
+        abstract = True
     
     def __unicode__(self):
         return self.slug
     
     def _get_navigation_parent(self):
-        ct = ContentType.objects.get_for_model(Article)
+        ct = ContentType.objects.get_for_model(get_article_class())
         nodes = NavNode.objects.filter(object_id=self.id, content_type=ct)
         if nodes.count():
             return nodes[0].parent.id if nodes[0].parent else 0
@@ -247,7 +251,7 @@ class Article(TimeStampedModel):
             return None
     
     def _set_navigation_parent(self, value):
-        ct = ContentType.objects.get_for_model(Article)
+        ct = ContentType.objects.get_for_model(get_article_class())
         already_in_navigation = self.id and NavNode.objects.filter(content_type=ct, object_id=self.id)
         if not already_in_navigation:
             create_navigation_node(ct, self, value)
@@ -267,7 +271,7 @@ class Article(TimeStampedModel):
         doc=_("set the parent in navigation. WARNING: delete other nodes pointing to this object"))
     
     def save(self, *args, **kwargs):
-        ret = super(Article, self).save(*args, **kwargs)
+        ret = super(BaseArticle, self).save(*args, **kwargs)
         parent_id = getattr(self, '_navigation_parent', None)
         if parent_id != None:
             self.navigation_parent = parent_id
@@ -284,6 +288,9 @@ class Article(TimeStampedModel):
     
     def get_publish_url(self):
         return reverse('coop_cms_publish_article', args=[self.slug])
+
+class Article(BaseArticle):
+    pass
     
 class Link(TimeStampedModel):
     """Link to a given url"""
@@ -336,6 +343,9 @@ class Image(Media):
     
     def as_thumbnail(self):
         return sorl_thumbnail.backend.get_thumbnail(self.file.file, "200x100", crop='center')
+        
+    def get_absolute_url(self):
+        return self.file.url
 
 class Document(Media):
     file = models.FileField(_('file'), upload_to=get_doc_folder)
@@ -348,6 +358,9 @@ class Document(Media):
         else:
             return settings.STATIC_URL+u'img/default-icon.png'
 
-    
-    
-    
+class PieceOfHtml(models.Model):
+    div_id = models.CharField(verbose_name=_(u"identifier"), max_length=100, db_index=True)    
+    content = HTMLField(content_cleaner, verbose_name=_(u"content"), default="", blank=True)
+
+    def __unicode__(self):
+        return self.div_id

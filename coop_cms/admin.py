@@ -42,8 +42,8 @@ class ArticleAdmin(admin.ModelAdmin):
         (_('Publication'), {'fields': ('publication', 'created', 'modified')}),
         (_('Navigation'), {'fields': ('navigation_parent',)}),
     )
-    
-admin.site.register(models.Article, ArticleAdmin)
+from coop_cms.settings import get_article_class
+admin.site.register(get_article_class(), ArticleAdmin)
 
 admin.site.register(models.Link)
 admin.site.register(models.Document)

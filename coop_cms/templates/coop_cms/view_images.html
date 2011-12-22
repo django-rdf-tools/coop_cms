@@ -1,0 +1,38 @@
+{% extends "coop_cms/slide_base.html" %}
+{% load i18n %}
+
+{% block extra_head %}
+    <style>
+      .library img {
+        margin-bottom : 10px;
+      }
+    </style>
+    <script>
+    $(function() {
+      $('.pagination a').live('click', function() {
+        $.ajax({
+          url: "{% url coop_cms_media_images %}"+$(this).attr('href'),
+          success: function(html) {
+            $("#ppanel").html(html);
+          }
+        });
+        return false;
+      });
+      $('.media-selector a').live('click', function() {
+        $.ajax({
+          url: $(this).attr('href'),
+          success: function(html) {
+            $("#ppanel").html(html);
+          }
+        });
+        return false;
+      });
+    });
+    </script>
+{% endblock %}
+
+{% block content %}
+  <div id="ppanel" class="library">
+      {% include "coop_cms/view_images_content.html" %}
+  </div>
+{% endblock %}

@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load i18n djaloha_utils coop_edition %}
+{% block meta_title %}
+    {% if draft %}{% trans "Draft" %} - {% endif %}{{article.title|remove_br}}
+    {% if coop_cms_article_form %}- {% trans "Edition" %}{% endif %}
+{% endblock %}
+
+{% block jquery_declaration %}
+    {% if coop_cms_article_form %}
+    {{coop_cms_article_form.media}}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.colorbox-min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.form.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.pageslide.js"></script>
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/coop_theming.css" type="text/css" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/colorbox.css" type="text/css" />
+    {% else %}
+        {{block.super}}
+    {% endif %}
+{% endblock %}
+
+{% block extra_head %}
+{% if coop_cms_article_form %}
+<script>
+$(function(){
+    //keep the size of the article unchanged in edit and wiew mode
+    $("form#edit_form").height($("#coop_cms_article_form_div").height());
+    
+    //post form when save is clicked
+    $('#coopbar_save').click(function(event) {
+        $("form#edit_form").submit();    
+        event.preventDefault();
+    });
+    
+    {% if draft %}
+    //post publish form when adminbar_publish coop_bar item is clicked
+    $('#coopbar_publish').click(function(event) {
+        $("form#coop_cms_article_publication_form").submit();
+        event.preventDefault();
+    });
+    {% endif %}
+});
+</script>
+{% endif %}
+{% endblock %}
+
+{% block document %}
+{% spaceless %}
+{% if coop_cms_article_form %}
+<form id="edit_form" method="POST" action="{{ article.get_edit_url }}">{% csrf_token %}
+<div id="coop_cms_article_form_div">
+{% include "coop_cms/_form_error.html" with errs=coop_cms_article_form.non_field_errors %}
+{% endif %}
+    <h2 id="title">{% coop_cms_field title %}</h2>
+    <div id="content">
+    {% coop_cms_field content %}
+    </div>
+</div>
+{% if coop_cms_article_form %}
+<input type="submit" style="visibility: hidden">
+</form>
+</div>
+{% if draft %}
+<form style="height: 0" id="coop_cms_article_publication_form" method="POST" action="{{ article.get_publish_url }}"">{% csrf_token %}
+    <input type="hidden" name="status" value="{{ARTICLE_PUBLISHED}}">
+    <input type="submit" style="visibility: hidden">
+</form>
+{% endif %}
+{% endif %}
+{% endspaceless %}
+{% endblock %}
