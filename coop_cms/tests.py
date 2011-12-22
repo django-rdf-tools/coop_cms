@@ -186,8 +186,8 @@ class NavigationTest(TestCase):
         response = self.client.post(self.srv_url, data=data, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
         result = json.loads(response.content)
-        if result['status'] != 'success':
-            print result['message']
+        #if result['status'] != 'success':
+        #    print result['message']
         self.assertEqual(result['status'], 'success')
         
         node = NavNode.objects.get(id=nodes[2].id)
@@ -904,19 +904,27 @@ class TemplateTagsTest(TestCase):
 
 class ArticleTest(TestCase):
     
+    #def setUp(self):
+    #    pass
+    #    #from django.core.management import call_command
+    #    #call_command("sync_rules")
+    
     def _log_as_editor(self):
         user = User.objects.create_user('toto', 'toto@toto.fr', 'toto')
         
-        can_edit_article = Permission.objects.get(content_type__app_label='coop_cms', codename='change_article')
+        ct = ContentType.objects.get_for_model(get_article_class())
+        perm = 'change_{0}'.format(ct.model)
+        
+        can_edit_article = Permission.objects.get(content_type=ct, codename=perm)
         user.user_permissions.add(can_edit_article)
         user.save()
         
         self.client.login(username='toto', password='toto')
         
-    def _edit_article(self, article, data, expected_status=200):
-        response = self.client.post(article.get_edit_url(), data=data, follow=True)
-        self.assertEqual(expected_status, response.status_code)
-        return response
+    #def _edit_article(self, article, data, expected_status=200):
+    #    response = self.client.post(article.get_edit_url(), data=data)#, follow=True)
+    #    self.assertEqual(expected_status, response.status_code)
+    #    return response
 
     def _check_article(self, response, data):
         for (key, value) in data.items():
@@ -938,12 +946,12 @@ class ArticleTest(TestCase):
         self.assertEqual(200, response.status_code)
         
     def test_404_ok(self):
-        response = self.client.get("/jhjhjkahekhj")
+        response = self.client.get("/jhjhjkahekhj", follow=True)
         self.assertEqual(404, response.status_code)
         
     def test_is_navigable(self):
         article = get_article_class().objects.create(title="test", publication=Article.PUBLISHED)
-        self.assertEqual('/test', article.get_absolute_url())
+        self.assertEqual('/test/', article.get_absolute_url())
 
     def test_create_slug(self):
         article = get_article_class().objects.create(title=u"voici l'été", publication=Article.PUBLISHED)
@@ -957,11 +965,13 @@ class ArticleTest(TestCase):
         data = {"title": 'salut', 'content': 'bonjour!'}
         
         self._log_as_editor()
-        response = self._edit_article(article, data)
+        response = self.client.post(article.get_edit_url(), data=data, follow=True)
+        self.assertEqual(response.status_code, 200)
         self._check_article(response, data)
         
         data = {"title": 'bye', 'content': 'au revoir'}
-        response = self._edit_article(article, data)
+        response = self.client.post(article.get_edit_url(), data=data, follow=True)
+        self.assertEqual(response.status_code, 200)
         self._check_article(response, data)
         
     def test_article_edition_permission(self):
@@ -969,7 +979,12 @@ class ArticleTest(TestCase):
         article = get_article_class().objects.create(publication=Article.PUBLISHED, **initial_data)
         
         data = {"title": 'salut', "content": 'oups'}
-        response = self._edit_article(article, data, 403)
+        response = self.client.post(article.get_edit_url(), data=data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        next_url = response.redirect_chain[-1][0]
+        login_url = reverse('django.contrib.auth.views.login')+"?next="+article.get_edit_url()
+        self.assertTrue(login_url in next_url)
+        
         article = get_article_class().objects.get(id=article.id)
         self.assertEquals(article.title, initial_data['title'])
         self.assertEquals(article.content, initial_data['content'])
@@ -981,15 +996,18 @@ class ArticleTest(TestCase):
         
         self._log_as_editor()
         data["title"] = ""
-        response = self._edit_article(article, data)
+        response = self.client.post(article.get_edit_url(), data=data, follow=True)
+        self.assertEqual(response.status_code, 200)
         self._check_article_not_changed(article, data, initial_data)
         
         data["title"] = "<br>"
-        response = self._edit_article(article, data)
+        response = self.client.post(article.get_edit_url(), data=data, follow=True)
+        self.assertEqual(response.status_code, 200)
         self._check_article_not_changed(article, data, initial_data)
         
         data["title"] = " <br> "
-        response = self._edit_article(article, data)
+        response = self.client.post(article.get_edit_url(), data=data, follow=True)
+        self.assertEqual(response.status_code, 200)
         self._check_article_not_changed(article, data, initial_data)
         
     def _is_aloha_found(self, response):
@@ -1000,14 +1018,17 @@ class ArticleTest(TestCase):
     def test_edit_permission(self):
         initial_data = {'title': "ceci est un test", 'content': "this is my article content"}
         article = get_article_class().objects.create(publication=Article.PUBLISHED, **initial_data)
-        response = self.client.get(article.get_absolute_url())
+        response = self.client.get(article.get_absolute_url(), follow=True)
         self.assertEqual(200, response.status_code)
         
-        response = self.client.get(article.get_edit_url())
-        self.assertEqual(403, response.status_code)
+        response = self.client.get(article.get_edit_url(), follow=True)
+        self.assertEqual(200, response.status_code) #if can_edit returns 404 error
+        next_url = response.redirect_chain[-1][0]
+        login_url = reverse('django.contrib.auth.views.login')+"?next="+article.get_edit_url()
+        self.assertTrue(login_url in next_url)
         
         self._log_as_editor()
-        response = self.client.get(article.get_edit_url())
+        response = self.client.get(article.get_edit_url(), follow=True)
         self.assertEqual(200, response.status_code)
         
     def test_aloha_loaded(self):
@@ -1048,7 +1069,7 @@ class ArticleTest(TestCase):
         html += '<h6>john</h6><img src="/img.jpg"><br><table><tr><th>A</th><td>B</td></tr>'
         data = {'content': html, 'title': 'ok<br>ok'}
         self._log_as_editor()
-        response = self._edit_article(article, data)
+        response = self.client.post(article.get_edit_url(), data=data, follow=True)
         self.assertEqual(response.status_code, 200)
         #checking html content would not work. Check that the article is updated
         for b in ['paul', 'georges', 'ringo', 'john']:
@@ -1062,9 +1083,11 @@ class ArticleTest(TestCase):
         data2 = {'title': '<a href="/">home</a>', 'content': 'ok'}
         
         self._log_as_editor()
-        response = self._edit_article(article, data1)
+        response = self.client.post(article.get_edit_url(), data=data1, follow=True)
+        self.assertEqual(response.status_code, 200)
         self._check_article_not_changed(article, data1, initial_data)
         
-        response = self._edit_article(article, data2)
+        response = self.client.post(article.get_edit_url(), data=data2, follow=True)
+        self.assertEqual(response.status_code, 200)
         self._check_article_not_changed(article, data2, initial_data)
         

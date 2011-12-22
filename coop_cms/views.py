@@ -11,11 +11,12 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError, PermissionDenied
 from django.template.loader import select_template
 from django.db.models.aggregates import Max
-from forms import ArticleForm, AddImageForm
+from forms import AddImageForm
 from django.contrib.messages.api import error as error_message
 from coop_cms.models import get_object_label, create_navigation_node
 from django.contrib.auth.decorators import login_required
-from coop_cms.settings import get_article_class
+from coop_cms.settings import get_article_class, get_article_form
+#from coop_cms import perms
 
 def get_article_template(article):
     template = article.template
@@ -25,10 +26,12 @@ def get_article_template(article):
 
 def view_article(request, url):
     """view the article"""
-    if request.user.has_perm('coop_cms.change_article'):
-        article = get_object_or_404(get_article_class(), slug=url) #Draft & Published
-    else:
-        article = get_object_or_404(get_article_class(), slug=url, publication=Article.PUBLISHED) #Published only
+    article = get_object_or_404(get_article_class(), slug=url) #Draft & Published
+    
+    #if not perms.can_view(request.user, article):
+    if not request.user.has_perm('can_view_article', article):
+        raise Http404
+    
     context_dict = {
         'editable': True, 'edit_mode': False, 'article': article, 'draft': article.publication==Article.DRAFT}
     
@@ -41,18 +44,22 @@ def view_article(request, url):
 @login_required
 def edit_article(request, url):
     """edit the article"""
-    if not request.user.has_perm('coop_cms.change_article'):
+    article_class = get_article_class()
+    article_form_class = get_article_form()
+    
+    article = get_object_or_404(article_class, slug=url)
+    
+    #if not perms.can_edit(request.user, article):
+    if not request.user.has_perm('can_edit_article', article):
         raise PermissionDenied
     
-    article = get_object_or_404(get_article_class(), slug=url) #Draft and Published
-    
     if request.method == "POST":
-        form = ArticleForm(request.POST, instance=article)
+        form = article_form_class(request.POST, instance=article)
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(article.get_absolute_url())
     else:
-        form = ArticleForm(instance=article)
+        form = article_form_class(instance=article)
     
     context_dict = {
         'coop_cms_article_form': form, 
@@ -70,11 +77,13 @@ def edit_article(request, url):
 @login_required
 def publish_article(request, url):
     """change the publication status of an article"""
-    can_change_article = request.user.has_perm('coop_cms.change_article')
-    if not can_change_article:
+    
+    article = get_object_or_404(get_article_class(), slug=url, publication=Article.DRAFT)
+    
+    #if not perms.can_publish(request.user, article):
+    if not request.user.has_perm('can_publish_article', article):
         raise PermissionDenied
     elif request.method == "POST":
-        article = get_object_or_404(get_article_class(), slug=url, publication=Article.DRAFT)
         article.publication = Article.PUBLISHED
         article.save()
         return HttpResponseRedirect(article.get_absolute_url())
@@ -107,7 +116,7 @@ def upload_image(request):
             return HttpResponse('ok')
     else:
         form = AddImageForm()
-    print 'upload_image'
+    
     return render_to_response(
         'coop_cms/upload_image.html',
         locals(),
@@ -345,6 +354,7 @@ def process_nav_edition(request):
     if request.method == 'POST' and request.is_ajax() and request.POST.has_key('msg_id'):
         try:
             #check permissions
+            #if not perms.can_edit_navigation(request.user):
             if not request.user.has_perm('coop_cms.change_navtree'):
                 raise PermissionDenied
             
@@ -369,7 +379,7 @@ def process_nav_edition(request):
         except ValidationError, ex:
            response = {'status': 'error', 'message': u' - '.join(ex.messages)}
         except Exception, msg:
-            print msg
+            #print msg
             response = {'status': 'error', 'message': _("An error occured")}
         except:
             response = {'status': 'error', 'message': _("An error occured")}

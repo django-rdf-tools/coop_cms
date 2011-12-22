@@ -218,6 +218,7 @@ content_cleaner = html_cleaner.HTMLCleaner(
 title_cleaner = html_cleaner.HTMLCleaner(allow_tags=['br'])
 
 class BaseArticle(TimeStampedModel):
+    """An article : static page, blog item, ..."""
     
     DRAFT = 0
     PUBLISHED = 1
@@ -227,7 +228,6 @@ class BaseArticle(TimeStampedModel):
         (PUBLISHED, _(u'Published')),
     )
     
-    """An article : static page, blog item, ..."""
     slug = AutoSlugField(populate_from='title', max_length=100, unique=True)
     title = HTMLField(title_cleaner, verbose_name=_(u'title'), default=_('Page title'))
     content = HTMLField(content_cleaner, verbose_name=_(u'content'), default=_('Page content'))
@@ -288,6 +288,23 @@ class BaseArticle(TimeStampedModel):
     
     def get_publish_url(self):
         return reverse('coop_cms_publish_article', args=[self.slug])
+        
+    def _can_change(self, user):
+        ct = ContentType.objects.get_for_model(get_article_class())
+        perm = '{0}.change_{1}'.format(ct.app_label, ct.model)
+        return user.has_perm(perm)
+        
+    def can_view_article(self, user):
+        if self.publication != Article.PUBLISHED:
+            return self.can_edit_article(user)
+        else:
+            return True
+    
+    def can_edit_article(self, user):
+        return self._can_change(user)
+    
+    def can_publish_article(self, user):
+        return self._can_change(user)
 
 class Article(BaseArticle):
     pass

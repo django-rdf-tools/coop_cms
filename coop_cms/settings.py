@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from django.contrib.contenttypes.models import ContentType
 import config # not unused, needed by livesettings !
 from livesettings import config_value
@@ -16,12 +18,31 @@ def get_navigable_content_types():
         
 
 def get_article_class():
+    if hasattr(get_article_class, '_cache_class'):
+        return getattr(get_article_class, '_cache_class')
+    else:
+        try:
+            full_class_name = getattr(settings, 'COOP_CMS_ARTICLE_CLASS')
+            module_name, class_name = full_class_name.rsplit('.', 1)
+            module = import_module(module_name)
+            article_class = getattr(module, class_name)
+        
+        except AttributeError:
+            from coop_cms.models import Article
+            article_class = Article
+        
+        setattr(get_article_class, '_cache_class', article_class)
+        return article_class
+    
+def get_article_form():
     try:
-        full_class_name = getattr(settings, 'COOP_CMS_ARTICLE_CLASS')
+        full_class_name = getattr(settings, 'COOP_CMS_ARTICLE_FORM')
         module_name, class_name = full_class_name.rsplit('.', 1)
         module = import_module(module_name)
-        return getattr(module, class_name)
+        article_form = getattr(module, class_name)
     
     except AttributeError:
-        from coop_cms.models import CmsArticle
-        return CmsArticle
+        from coop_cms.forms import ArticleForm
+        article_form = ArticleForm
+    
+    return article_form

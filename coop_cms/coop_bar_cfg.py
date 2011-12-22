@@ -8,16 +8,22 @@ def django_admin(request, context):
     if request.user.is_staff:
         return u'<a href="{0}">{1}</a>'.format(reverse("admin:index"), _('Admin'))
 
-def can_edit(func):
-    def wrapper(request, context):
-        try:
-            editable = context['editable']
-            if editable and request.user.has_perm('coop_cms.can_change_article'):
-                return func(request, context)
-        except KeyError:
-            pass
-        return None
-    return wrapper
+def can_do(perm):
+    def inner_decorator(func):
+        def wrapper(request, context):
+            try:
+                editable = context['editable']
+                article = context['article']
+                if editable and request.user.has_perm(perm, article):
+                    return func(request, context)
+            except KeyError:
+                pass
+            return None
+        return wrapper
+    return inner_decorator
+
+can_edit = can_do('can_edit_article')
+can_publish = can_do('can_publish_article')
 
 @can_edit
 def cms_media_library(request, context):
@@ -46,7 +52,7 @@ def cms_edit(request, context):
         article = context['article']
         return u'<a href="{0}">{1}</a>'.format(article.get_edit_url(), _('Edit'))
 
-@can_edit
+@can_publish
 def cms_publish(request, context):
     if context['edit_mode'] and context['draft']:
         return u'<a id="coopbar_publish" href="{0}">{1}</a>'.format('', _('Publish'))
