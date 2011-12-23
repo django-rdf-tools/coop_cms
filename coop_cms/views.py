@@ -21,7 +21,7 @@ from coop_cms.settings import get_article_class, get_article_form
 def get_article_template(article):
     template = article.template
     if not template:
-        template = 'coop_cms/article_base.html'
+        template = 'coop_cms/article.html'
     return template
 
 def view_article(request, url):

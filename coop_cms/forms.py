@@ -35,6 +35,12 @@ class ArticleForm(floppyforms.ModelForm):
             'title': AlohaInput(),
             'content': AlohaInput(),
         }
+    
+    class Media:
+        css = {
+            'all': ('css/colorbox.css',),
+        }
+        js = ('js/jquery.form.js', 'js/jquery.pageslide.js', 'js/jquery.colorbox-min.js')
 
     def clean_title(self):
         title = self.cleaned_data['title'].strip()

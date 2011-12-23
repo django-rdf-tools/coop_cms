@@ -1,0 +1,18 @@
+{% load i18n %}
+
+{% if draft %}
+<script>
+$(function(){
+    //post publish form when adminbar_publish coop_bar item is clicked
+    $('#coopbar_publish').click(function(event) {
+        $("form#coop_cms_article_publication_form").submit();
+        event.preventDefault();
+    });
+});
+</script>
+
+<form style="height: 0" id="coop_cms_article_publication_form" method="POST" action="{{ article.get_publish_url }}"">{% csrf_token %}
+    <input type="hidden" name="status" value="{{ARTICLE_PUBLISHED}}">
+    <input type="submit" style="visibility: hidden">
+</form>
+{% endif %}

@@ -1,25 +1,40 @@
 {% extends "base.html" %}
-{% load i18n djaloha_utils %}
-{% block meta_title %}{% if draft %}{% trans "Draft" %} - {% endif %}{{article.title|remove_br}}{% endblock %}
+{% load i18n djaloha_utils coop_edition %}
+
+{% block meta_title %}
+    {% article_title %}
+{% endblock %}
+
+{% block jquery_declaration %}
+    {% if_article_edition %}
+        {% article_form_media %}
+    {% else %}
+        {{block.super}}
+    {% endif %}
+{% endblock %}
+
 {% block extra_head %}
-{% if editable and perms.coop_cms.can_change_article %}
+{% if_article_edition %}
 <script>
 $(function(){
-    $('#adminbar_edit').attr('href', '{{article.get_edit_url}}');
+    //move the form submit to the coop_bar
+    $("form#article_form input[type='submit']").hide();
+    $('#coopbar_save').click(function(event) {
+        $("form#article_form").submit();    
+        event.preventDefault();
+    });
 });
 </script>
 {% endif %}
 {% endblock %}
 
 {% block document %}
-{% spaceless %}
-<div class="document article">
-{% block title %}
-    <h2 id="title">{{article.title|safe}}</h2>
-{% endblock %}
-    <div id="content"><div>
-    {{article.content|safe}}
-    </div></div>
-</div>
-{% endspaceless %}
+    {% block article %}
+        {% include "coop_cms/_article_form.html" %}
+        
+        {% if_article_edition %}
+        {% include "coop_cms/_article_publication.html" %}
+        {% endif %}
+    
+    {% endblock %}
 {% endblock %}
