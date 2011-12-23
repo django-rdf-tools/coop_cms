@@ -5,6 +5,8 @@ register = template.Library()
 from djaloha.templatetags.djaloha_utils import DjalohaEditNode
 from coop_cms.models import PieceOfHtml, Article
 from django.utils.translation import ugettext_lazy as _
+from django.core.context_processors import csrf
+from django.utils.safestring import mark_safe
 
 class PieceOfHtmlEditNode(DjalohaEditNode):
     def render(self, context):
@@ -106,12 +108,18 @@ def if_article_edition(parser, token):
 
 ################################################################################
 article_form_template = """
-    <form id="article_form" method="POST" action="{{ post_url }}">{% csrf_token %}
+    <form id="article_form" method="POST" action="{{post_url}}">{% csrf_token %}
     {% include "coop_cms/_form_error.html" with errs=form.non_field_errors %}
-    {{inner}}
-    <input type="submit">
-    </form>
+    {{inner}} <input type="submit"> </form>
 """
+
+class SafeWrapper:
+    
+    def __init__(self, wrapped):
+        self._wrapped = wrapped
+    
+    def __getattr__(self, field):
+        return mark_safe(getattr(self._wrapped, field))
 
 class ArticleNode(template.Node):
     
@@ -124,15 +132,20 @@ class ArticleNode(template.Node):
 
     def render(self, context):
         coop_cms_article_form = context.get('coop_cms_article_form', None)
+        request = context.get('request')
+        article = context.get('article')
         inner_context = {}
+        outer_context = {'post_url': article.get_edit_url()}
         if coop_cms_article_form:
             t = template.Template(article_form_template)
             inner_context['article'] = coop_cms_article_form
+            outer_context.update(csrf(request))
+            
         else:
-            t = template.Template("{{inner}}")
-            inner_context['article'] = context.get('article')
-        inner = self.nodelist_article.render(template.Context(inner_context))
-        return t.render(template.Context({'inner': inner}))
+            t = template.Template("{{inner|safe}}")
+            inner_context['article'] = SafeWrapper(article)
+        outer_context['inner'] = self.nodelist_article.render(template.Context(inner_context))
+        return t.render(template.Context(outer_context))
 
 @register.tag
 def article(parser, token):
