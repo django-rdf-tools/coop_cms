@@ -62,3 +62,21 @@ def get_article_templates(article, user):
         article_templates = None
     
     return article_templates
+
+def get_article_logo_size(article):
+    try:
+        get_size_name = getattr(settings, 'COOP_CMS_ARTICLE_LOGO_SIZE')
+        try:
+            module_name, fct_name = get_size_name.rsplit('.', 1)
+            module = import_module(module_name)
+            get_size = getattr(module, fct_name)
+            if callable(get_size):
+                size = get_size(article)
+            else:
+                size = get_size
+        except ValueError:
+            size = get_size_name
+    
+    except AttributeError:
+        size = "48x48"
+    return size

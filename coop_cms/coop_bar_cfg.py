@@ -69,6 +69,11 @@ def cms_extra_js(request, context):
     t = get_template("coop_cms/_coop_bar_js.html")
     return t.render(Context({}))
 
+def log_out(request, context):
+    if request.user.is_authenticated():
+        return u'<a href="{0}">{1}</a>'.format(reverse("django.contrib.auth.views.logout"), _('Logout'))
+
+
 def load_commands(coop_bar):
     coop_bar.register_command(django_admin)
     coop_bar.register_command(cms_save)
@@ -79,4 +84,5 @@ def load_commands(coop_bar):
     coop_bar.register_command(cms_upload_image)
     coop_bar.register_command(cms_change_template)
     coop_bar.register_command(cms_extra_js)
+    coop_bar.register_command(log_out)
     

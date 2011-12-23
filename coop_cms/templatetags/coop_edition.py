@@ -87,7 +87,7 @@ def if_article_edition(parser, token):
 
 ################################################################################
 article_form_template = """
-    <form id="article_form" method="POST" action="{{post_url}}">{% csrf_token %}
+    <form id="article_form" enctype="multipart/form-data"  method="POST" action="{{post_url}}">{% csrf_token %}
     {% include "coop_cms/_form_error.html" with errs=form.non_field_errors %}
     {{inner}} <input type="submit"> </form>
 """
@@ -98,7 +98,15 @@ class SafeWrapper:
         self._wrapped = wrapped
     
     def __getattr__(self, field):
-        return mark_safe(getattr(self._wrapped, field))
+        value = getattr(self._wrapped, field)
+        if field=='logo':
+            print 'field: logo'
+            src = getattr(self._wrapped, 'logo_thumbnail')()
+            if src:
+                value = u'<img class="article-logo" src="{0}">'.format(src.url)
+            else:
+                value = u'' #TODO : default icon
+        return mark_safe(value)
 
 class FormWrapper:
     

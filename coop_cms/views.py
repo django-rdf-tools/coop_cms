@@ -52,13 +52,17 @@ def edit_article(request, url):
         raise PermissionDenied
     
     if request.method == "POST":
-        form = article_form_class(request.POST, instance=article)
+        form = article_form_class(request.POST, request.FILES, instance=article)
         
         forms_args = djaloha_utils.extract_forms_args(request.POST)
         djaloha_forms = djaloha_utils.make_forms(forms_args, request.POST)
         
         if form.is_valid() and all([f.is_valid() for f in djaloha_forms]):
-            form.save()
+            article = form.save()
+            
+            logo = form.cleaned_data["logo"]
+            if logo:
+                article.logo.save(logo.name, logo)
             
             if djaloha_forms:
                 [f.save() for f in djaloha_forms]

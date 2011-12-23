@@ -15,7 +15,7 @@ from django.utils.html import escape
 from django.core.exceptions import ValidationError
 from html_field.db.models import HTMLField
 from html_field import html_cleaner
-from coop_cms.settings import get_article_class
+from coop_cms.settings import get_article_class, get_article_logo_size
 
 def get_object_label(content_type, object):
     """
@@ -217,6 +217,20 @@ content_cleaner = html_cleaner.HTMLCleaner(
 )
 title_cleaner = html_cleaner.HTMLCleaner(allow_tags=['br'])
 
+
+def get_logo_folder(instance, filename):
+    try:
+        img_root = settings.CMS_ARTICLE_LOGO_FOLDER
+    except AttributeError:
+        img_root = 'cms_logos'
+    return u'{0}/{1}/{2}'.format(img_root, instance.id, filename)
+    
+class ArticleSection(models.Model):
+    name = models.CharField(_(u'name'), max_length=100)
+    
+    def __unicode__(self):
+        return self.name
+    
 class BaseArticle(TimeStampedModel):
     """An article : static page, blog item, ..."""
     
@@ -233,6 +247,16 @@ class BaseArticle(TimeStampedModel):
     content = HTMLField(content_cleaner, verbose_name=_(u'content'), default=_('Page content'))
     publication = models.IntegerField(_(u'publication'), choices=PUBLICATION_STATUS, default=DRAFT)
     template = models.CharField(_(u'template'), max_length=200, default='', blank=True)
+    logo = models.ImageField(upload_to=get_logo_folder, blank=True, null=True, default='')
+    summary = models.TextField(blank=True, default='')
+    section = models.ForeignKey(ArticleSection, blank=True, null=True, default=None, related_name="%(app_label)s_%(class)s_rel")
+    
+    def logo_thumbnail(self):
+        if self.logo:
+            size = get_article_logo_size(self)
+            return sorl_thumbnail.backend.get_thumbnail(self.logo.file, size, crop='center')
+        else:
+            return ""
     
     class Meta:
         verbose_name = _(u"article")
