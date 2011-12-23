@@ -126,7 +126,10 @@ class ArticleNode(template.Node):
         request = context.get('request')
         article = context.get('article')
         inner_context = {}
+        for x in context.dicts:
+            inner_context.update(x)
         outer_context = {'post_url': article.get_edit_url()}
+        
         if coop_cms_article_form:
             t = template.Template(article_form_template)
             inner_context['article'] = FormWrapper(coop_cms_article_form)

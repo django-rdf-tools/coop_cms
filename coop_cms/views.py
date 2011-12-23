@@ -11,12 +11,12 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError, PermissionDenied
 from django.template.loader import select_template
 from django.db.models.aggregates import Max
-from forms import AddImageForm
+from forms import AddImageForm, ArticleTemplateForm
 from django.contrib.messages.api import error as error_message
 from coop_cms.models import get_object_label, create_navigation_node
 from django.contrib.auth.decorators import login_required
 from coop_cms.settings import get_article_class, get_article_form
-#from coop_cms import perms
+from djaloha import utils as djaloha_utils
 
 def get_article_template(article):
     template = article.template
@@ -28,7 +28,6 @@ def view_article(request, url):
     """view the article"""
     article = get_object_or_404(get_article_class(), slug=url) #Draft & Published
     
-    #if not perms.can_view(request.user, article):
     if not request.user.has_perm('can_view_article', article):
         raise Http404
     
@@ -49,14 +48,20 @@ def edit_article(request, url):
     
     article = get_object_or_404(article_class, slug=url)
     
-    #if not perms.can_edit(request.user, article):
     if not request.user.has_perm('can_edit_article', article):
         raise PermissionDenied
     
     if request.method == "POST":
         form = article_form_class(request.POST, instance=article)
-        if form.is_valid():
+        
+        forms_args = djaloha_utils.extract_forms_args(request.POST)
+        djaloha_forms = djaloha_utils.make_forms(forms_args, request.POST)
+        
+        if form.is_valid() and all([f.is_valid() for f in djaloha_forms]):
             form.save()
+            
+            if djaloha_forms:
+                [f.save() for f in djaloha_forms]
             return HttpResponseRedirect(article.get_absolute_url())
     else:
         form = article_form_class(instance=article)
@@ -80,7 +85,6 @@ def publish_article(request, url):
     
     article = get_object_or_404(get_article_class(), slug=url, publication=Article.DRAFT)
     
-    #if not perms.can_publish(request.user, article):
     if not request.user.has_perm('can_publish_article', article):
         raise PermissionDenied
     elif request.method == "POST":
@@ -119,6 +123,24 @@ def upload_image(request):
     
     return render_to_response(
         'coop_cms/upload_image.html',
+        locals(),
+        context_instance=RequestContext(request)
+    )
+    
+@login_required
+def change_template(request, article_id):
+    article = get_object_or_404(get_article_class(), id=article_id)
+    if request.method == "POST":
+        form = ArticleTemplateForm(article, request.user, request.POST, request.FILES)
+        if form.is_valid():
+            article.template = form.cleaned_data['template']
+            article.save()
+            return HttpResponse('ok')
+    else:
+        form = ArticleTemplateForm(article, request.user)
+    
+    return render_to_response(
+        'coop_cms/change_template.html',
         locals(),
         context_instance=RequestContext(request)
     )
@@ -354,7 +376,6 @@ def process_nav_edition(request):
     if request.method == 'POST' and request.is_ajax() and request.POST.has_key('msg_id'):
         try:
             #check permissions
-            #if not perms.can_edit_navigation(request.user):
             if not request.user.has_perm('coop_cms.change_navtree'):
                 raise PermissionDenied
             

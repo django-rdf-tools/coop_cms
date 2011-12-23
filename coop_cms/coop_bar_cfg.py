@@ -35,6 +35,13 @@ def cms_upload_image(request, context):
     if context['edit_mode']:
         return u'<a href="{0}" id="coopbar_addfile" class="colorbox-form">{1}</a>'.format(reverse('coop_cms_upload_image'), _('Add image'))
 
+@can_edit    
+def cms_change_template(request, context):
+    if context['edit_mode']:
+        article = context['article']
+        url = reverse('coop_cms_change_template', args=[article.id])
+        return u'<a href="{0}" id="coopbar_changetemplate" class="colorbox-form">{1}</a>'.format(url, _('Template'))
+
 @can_edit
 def cms_save(request, context):
     if context['edit_mode']:
@@ -70,5 +77,6 @@ def load_commands(coop_bar):
     coop_bar.register_command(cms_edit)
     coop_bar.register_command(cms_media_library)
     coop_bar.register_command(cms_upload_image)
+    coop_bar.register_command(cms_change_template)
     coop_bar.register_command(cms_extra_js)
     

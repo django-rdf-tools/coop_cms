@@ -46,3 +46,19 @@ def get_article_form():
         article_form = ArticleForm
     
     return article_form
+
+def get_article_templates(article, user):
+    try:
+        full_class_name = getattr(settings, 'COOP_CMS_ARTICLE_TEMPLATES')
+        module_name, object_name = full_class_name.rsplit('.', 1)
+        module = import_module(module_name)
+        article_templates_object = getattr(module, object_name)
+        if callable(article_templates_object):
+            article_templates = article_templates_object(article, user)
+        else:
+            article_templates = article_templates_object
+    
+    except AttributeError:
+        article_templates = None
+    
+    return article_templates

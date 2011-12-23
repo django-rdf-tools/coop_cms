@@ -8,7 +8,7 @@ from djaloha.widgets import AlohaInput
 import floppyforms
 import re
 from django.conf import settings
-from coop_cms.settings import get_article_class
+from coop_cms.settings import get_article_class, get_article_templates
 
 class NavTypeForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -117,3 +117,15 @@ class AddImageForm(forms.Form):
         attrs={'size': '30', 'placeholder': _(u'description'),}),
         label = _('Description'),
     )
+
+class ArticleTemplateForm(forms.Form):
+    def __init__(self, article, user, *args, **kwargs):
+        super(ArticleTemplateForm, self).__init__(*args, **kwargs)
+        choices = get_article_templates(article, user)
+        if choices:
+            self.fields["template"] = forms.ChoiceField(choices=choices)
+        else:
+            self.fields["template"] = forms.CharField()
+        self.fields["template"].initial = article.template
+        
+    
