@@ -8,6 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.context_processors import csrf
 from django.utils.safestring import mark_safe
 
+################################################################################
 class PieceOfHtmlEditNode(DjalohaEditNode):
     def render(self, context):
         if context.get('coop_cms_article_form', None):
@@ -19,28 +20,6 @@ class PieceOfHtmlEditNode(DjalohaEditNode):
 def coop_piece_of_html(parser, token):
     div_id = token.split_contents()[1]
     return PieceOfHtmlEditNode(PieceOfHtml, {'div_id': div_id}, 'content')
-
-class CoopFieldNode(template.Node):
-    
-    def __init__(self, field_name):
-        super(CoopFieldNode, self).__init__()
-        self._field_name = field_name
-    
-    def render(self, context):
-        coop_cms_article_form = context.get('coop_cms_article_form', None)
-        if coop_cms_article_form:
-            t = template.Template("""
-                {%% with form.%s.errors as errs %%}{%% include "coop_cms/_form_error.html" %%}{%% endwith %%}{{form.%s}}
-            """ % (self._field_name, self._field_name))
-            return t.render(template.Context({'form': coop_cms_article_form}))
-        else:
-            article = context.get('article')
-            return getattr(article, self._field_name)
-
-@register.tag
-def coop_cms_field(parser, token):
-    field_name = token.split_contents()[1]
-    return CoopFieldNode(field_name)
 
 ################################################################################
 class ArticleTitleNode(template.Node):
@@ -121,6 +100,18 @@ class SafeWrapper:
     def __getattr__(self, field):
         return mark_safe(getattr(self._wrapped, field))
 
+class FormWrapper:
+    
+    def __init__(self, form):
+        self._form = form
+    
+    def __getitem__(self, field):
+        if field in self._form.fields.keys():
+            t = template.Template("""
+                    {%% with form.%s.errors as errs %%}{%% include "coop_cms/_form_error.html" %%}{%% endwith %%}{{form.%s}}
+                """ % (field, field))
+            return t.render(template.Context({'form': self._form}))
+
 class ArticleNode(template.Node):
     
     def __init__(self, nodelist_article):
@@ -138,7 +129,7 @@ class ArticleNode(template.Node):
         outer_context = {'post_url': article.get_edit_url()}
         if coop_cms_article_form:
             t = template.Template(article_form_template)
-            inner_context['article'] = coop_cms_article_form
+            inner_context['article'] = FormWrapper(coop_cms_article_form)
             outer_context.update(csrf(request))
             
         else:

@@ -23,12 +23,14 @@ $(function(){
         $("form#article_form").submit();    
         event.preventDefault();
     });
-});
+})
 </script>
+
 {% endif %}
 {% endblock %}
 
 {% block document %}
+
     {% block article %}
         {% include "coop_cms/_article_form.html" %}
         

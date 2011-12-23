@@ -347,7 +347,7 @@ def get_img_folder(instance, filename):
         instance.created.strftime('%Y%d%m%H%M%S'), filename)
 
 class Media(TimeStampedModel):
-    name = models.CharField(_('name'), max_length=200)
+    name = models.CharField(_('name'), max_length=200, blank=True, default='')
 
     def __unicode__(self):
         return self.name
