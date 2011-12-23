@@ -38,11 +38,11 @@ class ArticleAdmin(admin.ModelAdmin):
     list_editable = ['publication']
     readonly_fields = ['slug', 'created', 'modified']
     fieldsets = (
+        (_('Navigation'), {'fields': ('navigation_parent',)}),
         (_('General'), {'fields': ('slug', 'title', 'content',)}),
         (_('Advanced'), {'fields': ('template', 'section', 'logo')}),
         (_('Publication'), {'fields': ('publication', 'created', 'modified')}),
         (_('Summary'), {'fields': ('summary',)}),
-        (_('Navigation'), {'fields': ('navigation_parent',)}),
     )
 from coop_cms.settings import get_article_class
 admin.site.register(get_article_class(), ArticleAdmin)

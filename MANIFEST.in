@@ -1,2 +1,3 @@
 recursive-include coop_cms/templates *.html
 recursive-include coop_cms/static *.js *.css *.png *.jpg *.gif
+recursive-include coop_cms/locale *.mo *.po
