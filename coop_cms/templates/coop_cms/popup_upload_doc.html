@@ -1,6 +1,6 @@
 {% extends "coop_cms/popup_base_form.html" %}
 {% load i18n %}
-{% block title %}{% trans "Upload image" %}{% endblock %}
+{% block title %}{% trans "Upload document" %}{% endblock %}
 {% block form_enctype %}enctype="multipart/form-data"{% endblock %}
-{% block form_url %}{% url coop_cms_upload_image %}{% endblock %}
+{% block form_url %}{% url coop_cms_upload_doc %}{% endblock %}
 {% block form_ok %}{% trans "Add" %}{% endblock %}

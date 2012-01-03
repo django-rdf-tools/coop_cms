@@ -4,9 +4,10 @@
 $(function(){
     $("#coop-bar a.slide").pageSlide({width:'350px', direction:'right'});
     
-    $("a#coopbar_addfile").live('click', function () {
+    $("a.coopbar_addfile").live('click', function () {
         $.colorbox({
             href : $(this).attr('href'),
+			title : '...',  
             onComplete : function(){
                 $("form#template-form").ajaxForm({
                     success: function (html) {
@@ -15,7 +16,7 @@ $(function(){
                           $("#coopbar_medialibrary").click();
                         }
                         else {
-                            $.colorbox({html:html}); 
+                            $.colorbox({html:html, title : '...',}); 
                         }
                     }
                 })

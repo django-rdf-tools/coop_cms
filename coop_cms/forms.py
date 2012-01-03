@@ -128,7 +128,14 @@ class AddImageForm(forms.Form):
     image = forms.ImageField(required=True, label = _('Image'),)
     descr = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'size': '30', 'placeholder': _(u'description'),}),
-        label = _('Description'),
+        label = _('Optional description'),
+    )
+
+class AddDocForm(forms.Form):
+    doc = forms.FileField(required=True, label = _('File'),)
+    descr = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'size': '30', 'placeholder': _(u'description'),}),
+        label = _('Optional description'),
     )
 
 class ArticleTemplateForm(forms.Form):

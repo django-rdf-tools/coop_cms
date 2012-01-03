@@ -10,6 +10,7 @@ urlpatterns += patterns('coop_cms.views',
     url(r'^cms/media-images/$', 'show_media', {'media_type': 'image'}, name='coop_cms_media_images'),
     url(r'^cms/media-documents/$', 'show_media', {'media_type': 'document'}, name='coop_cms_media_documents'),
     url(r'^cms/upload-image/$', 'upload_image', name="coop_cms_upload_image"),
+    url(r'^cms/upload-doc/$', 'upload_doc', name="coop_cms_upload_doc"),
     url(r'^cms/change-template/(?P<article_id>\d*)/$', 'change_template', name="coop_cms_change_template"),
     url(r'^cms/update-logo/(?P<article_id>\d*)/$', 'update_logo', name="coop_cms_update_logo"),
     

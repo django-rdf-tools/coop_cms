@@ -33,7 +33,12 @@ def cms_media_library(request, context):
 @can_edit    
 def cms_upload_image(request, context):
     if context['edit_mode']:
-        return u'<a href="{0}" id="coopbar_addfile" class="colorbox-form">{1}</a>'.format(reverse('coop_cms_upload_image'), _('Add image'))
+        return u'<a href="{0}" class="coopbar_addfile colorbox-form">{1}</a>'.format(reverse('coop_cms_upload_image'), _('Add image'))
+
+@can_edit    
+def cms_upload_doc(request, context):
+    if context['edit_mode']:
+        return u'<a href="{0}" class="coopbar_addfile colorbox-form">{1}</a>'.format(reverse('coop_cms_upload_doc'), _('Add doc'))
 
 @can_edit    
 def cms_change_template(request, context):
@@ -82,6 +87,7 @@ def load_commands(coop_bar):
     coop_bar.register_command(cms_edit)
     coop_bar.register_command(cms_media_library)
     coop_bar.register_command(cms_upload_image)
+    coop_bar.register_command(cms_upload_doc)
     coop_bar.register_command(cms_change_template)
     coop_bar.register_command(cms_extra_js)
     coop_bar.register_command(log_out)
