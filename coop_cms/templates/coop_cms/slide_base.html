@@ -18,11 +18,68 @@
         font-size: medium;
         font-weight: bold;
       }
+      .library h3 {
+        color: #000;
+      }
+      .library img {
+        margin: 5px 5px 5px 5px;
+      }
+      .library .pagination .page, .library .pagination .prev, .library .pagination .next {
+        padding: 0 1px 0 1px;
+      }
+      a.disabled {
+        color: #000;
+        text-decoration: none;
+      }
     </style>
-    {% block extra_head %}
-    {% endblock %}
+    <script>
+    $(function() {
+      $('.pagination a').live('click', function() {
+        $.ajax({
+          url: "{{ media_url }}"+$(this).attr('href'),
+          success: function(data) {
+            $("#media_slide_content").html(data["html"]);
+          }
+        });
+        return false;
+      });
+      $('.media-selector a').live('click', function() {
+        $.ajax({
+          url: $(this).attr('href'),
+          dataType: 'json',
+          success: function(data) {
+            $("#media_slide_content").html(data["html"]);
+            if (data['media_type'] == 'image') {
+              $(".media-selector a.doc-sel").unbind('click').removeClass('disabled');
+              $(".media-selector a.img-sel").bind('click', function() {return false}).addClass('disabled');
+            } else if (data['media_type'] == 'document') {
+              $(".media-selector a.img-sel").unbind('click').removeClass('disabled');
+              $(".media-selector a.doc-sel").bind('click', function() {return false}).addClass('disabled');
+            }
+          }
+        });
+        return false;
+      });
+      $(".media-selector a.img-sel").bind('click', function() {return false});
+    });
+    </script>
   </head>
   <body>
-    {% block content %}{% endblock %}
+    {% if is_ajax %}
+      {% include media_slide_template %}
+    {% else %}
+      <div class="library">
+        <div class="slide-user-info">{% trans "ESC for closing" %}</div>
+        <div class="media-selector">
+          {% url coop_cms_media_images as images_url %}
+          {% url coop_cms_media_documents as docs_url %}
+          <a class="img-sel disabled" href="{{images_url}}?page=1">{% trans "Images" %}</a>
+          <a class="doc-sel" href="{{docs_url}}?page=1">{% trans "Documents" %}</a>
+        </div>
+        <div id="media_slide_content">
+        {% include media_slide_template %}
+        </div>
+      </div>
+    {% endif %}
   </body>
 </html>

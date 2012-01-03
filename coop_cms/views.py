@@ -113,18 +113,34 @@ def publish_article(request, url):
     raise Http404
 
 @login_required
-def show_media_images(request):
-    context = {
-        'images': Image.objects.all().order_by("-created"),
-    }
-    return render_to_response('coop_cms/slide_images.html', context, RequestContext(request))
-
-@login_required
-def show_media_documents(request):
-    context = {
-        'documents': Document.objects.all(),
-    }
-    return render_to_response('coop_cms/view_documents.html', context, RequestContext(request))
+def show_media(request, media_type):
+    is_ajax = request.GET.get('page', 0)
+    
+    if media_type == 'image':
+        context = {
+            'images': Image.objects.all().order_by("-created"),
+            'media_url': reverse('coop_cms_media_images'),
+            'media_slide_template': 'coop_cms/slide_images_content.html'
+        }
+    else:
+        context = {
+            'documents': Document.objects.all().order_by("-created"),
+            'media_url': reverse('coop_cms_media_documents'),
+            'media_slide_template': 'coop_cms/slide_docs_content.html',
+        }
+    context['is_ajax'] = is_ajax
+    
+    t = get_template('coop_cms/slide_base.html')
+    html = t.render(RequestContext(request, context))
+    
+    if is_ajax:
+        data = {
+            'html': html,
+            'media_type': media_type,
+        }
+        return HttpResponse(json.dumps(data), mimetype="application/json")
+    else:
+        return HttpResponse(html)
 
 @login_required
 def upload_image(request):

@@ -1,0 +1,9 @@
+{% load i18n pagination_tags %}
+<h3>{% trans "Documents" %}</h3>
+<div class="library-items library-docs">
+  {% autopaginate documents 20 %}  
+  {% for doc in documents %}
+      <a class="djaloha-document"><img src="{{ doc.get_ico_url }}" title="{{doc.name}}" rel="{{doc.file.url}}"></a>
+  {% endfor %}
+  {% paginate %}  
+</div>
