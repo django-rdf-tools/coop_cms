@@ -6,7 +6,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext, Context
 from django.template.loader import get_template
 from django.core.urlresolvers import reverse
-import json
+import json, os.path
 from django.utils.translation import ugettext as _
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError, PermissionDenied
@@ -117,7 +117,7 @@ def show_media_images(request):
     context = {
         'images': Image.objects.all(),
     }
-    return render_to_response('coop_cms/view_images.html', context, RequestContext(request))
+    return render_to_response('coop_cms/slide_images.html', context, RequestContext(request))
 
 @login_required
 def show_media_documents(request):
@@ -133,6 +133,8 @@ def upload_image(request):
         if form.is_valid():
             src = form.cleaned_data['image']
             descr = form.cleaned_data['descr']
+            if not descr:
+                descr = os.path.splitext(src.name)[0]
             image = Image(name=descr)
             image.file.save(src.name, src)
             image.save()
@@ -141,7 +143,7 @@ def upload_image(request):
         form = AddImageForm()
     
     return render_to_response(
-        'coop_cms/upload_image.html',
+        'coop_cms/popup_upload_image.html',
         locals(),
         context_instance=RequestContext(request)
     )
@@ -159,7 +161,7 @@ def change_template(request, article_id):
         form = ArticleTemplateForm(article, request.user)
     
     return render_to_response(
-        'coop_cms/change_template.html',
+        'coop_cms/popup_change_template.html',
         locals(),
         context_instance=RequestContext(request)
     )

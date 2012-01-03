@@ -48,7 +48,7 @@ class ArticleForm(floppyforms.ModelForm):
 
     class Media:
         css = {
-            'all': ('css/colorbox.css', 'css/coop_cms.css'),
+            'all': ('css/colorbox.css',),
         }
         js = ('js/jquery.form.js', 'js/jquery.pageslide.js', 'js/jquery.colorbox-min.js')
 

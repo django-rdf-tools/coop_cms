@@ -8,7 +8,7 @@ $(function(){
         $.colorbox({
             href : $(this).attr('href'),
             onComplete : function(){
-                $("form#upload-image-form").ajaxForm({
+                $("form#template-form").ajaxForm({
                     success: function (html) {
                         if(html === 'ok') {
                           $.colorbox.close();
