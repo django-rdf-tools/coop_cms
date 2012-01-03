@@ -9,6 +9,7 @@ import floppyforms
 import re
 from django.conf import settings
 from coop_cms.settings import get_article_class, get_article_templates
+from coop_cms.widgets import ImageEdit
 
 class NavTypeForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -27,6 +28,10 @@ class NavTypeForm(forms.ModelForm):
         model = NavType
 
 class ArticleForm(floppyforms.ModelForm):
+    
+    def __init__(self, *args, **kwargs):
+        super(ArticleForm, self).__init__(*args, **kwargs)
+        self.article = kwargs.get('instance', None)
 
     class Meta:
         model = get_article_class()
@@ -34,11 +39,16 @@ class ArticleForm(floppyforms.ModelForm):
         widgets = {
             'title': AlohaInput(),
             'content': AlohaInput(),
+            'logo': ImageEdit(),
         }
-    
+        
+    def logo_thumbnail(self):
+        if self.article:
+            return self.article.logo_thumbnail(True)
+
     class Media:
         css = {
-            'all': ('css/colorbox.css',),
+            'all': ('css/colorbox.css', 'css/coop_cms.css'),
         }
         js = ('js/jquery.form.js', 'js/jquery.pageslide.js', 'js/jquery.colorbox-min.js')
 
@@ -129,3 +139,5 @@ class ArticleTemplateForm(forms.Form):
         self.fields["template"].initial = article.template
         
     
+class ArticleLogoForm(forms.Form):
+    image = forms.ImageField(required=True, label = _('Logo'),)

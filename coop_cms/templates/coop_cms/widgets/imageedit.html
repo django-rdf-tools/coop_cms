@@ -1,0 +1,27 @@
+<script>
+    $(function() {
+        $('a.update-logo').colorbox({
+            title: function(data){
+                return document.title;
+            },
+            onComplete : function(){
+                $("form#template-form").ajaxForm({
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data['src']){
+                            $.colorbox.close();
+                            $('a.update-logo img').attr('src', data['src']);
+                        } else {
+                            $.colorbox({
+                                title: function(data){
+                                    return document.title;
+                                },
+                                html:data['html']
+                            }); 
+                        }
+                    }
+                })
+            }
+        })
+    });
+</script>

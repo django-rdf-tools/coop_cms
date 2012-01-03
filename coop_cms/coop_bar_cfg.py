@@ -51,7 +51,7 @@ def cms_save(request, context):
 def cms_cancel(request, context):
     if context['edit_mode']:
         article = context['article']
-        return u'<a href="{0}">{1}</a>'.format(article.get_absolute_url(), _('Cancel'))
+        return u'<a href="{0}">{1}</a>'.format(article.get_cancel_url(), _('Cancel'))
 
 @can_edit
 def cms_edit(request, context):

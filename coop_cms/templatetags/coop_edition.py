@@ -7,6 +7,7 @@ from coop_cms.models import PieceOfHtml, Article
 from django.utils.translation import ugettext_lazy as _
 from django.core.context_processors import csrf
 from django.utils.safestring import mark_safe
+from coop_cms.widgets import ImageEdit
 
 ################################################################################
 class PieceOfHtmlEditNode(DjalohaEditNode):
@@ -100,7 +101,6 @@ class SafeWrapper:
     def __getattr__(self, field):
         value = getattr(self._wrapped, field)
         if field=='logo':
-            print 'field: logo'
             src = getattr(self._wrapped, 'logo_thumbnail')()
             if src:
                 value = u'<img class="article-logo" src="{0}">'.format(src.url)
@@ -115,9 +115,16 @@ class FormWrapper:
     
     def __getitem__(self, field):
         if field in self._form.fields.keys():
-            t = template.Template("""
-                    {%% with form.%s.errors as errs %%}{%% include "coop_cms/_form_error.html" %%}{%% endwith %%}{{form.%s}}
-                """ % (field, field))
+            if field=='logo':
+                t = template.Template("""
+                        {%% with form.%s.errors as errs %%}{%% include "coop_cms/_form_error.html" %%}{%% endwith %%}
+                        <a class="update-logo" href="{%% url coop_cms_update_logo form.article.id %%}">
+                        <img class="article-logo" src="{{form.%s_thumbnail.url}}"></a>{{form.%s}}
+                    """ % (field, field, field))
+            else:
+                t = template.Template("""
+                        {%% with form.%s.errors as errs %%}{%% include "coop_cms/_form_error.html" %%}{%% endwith %%}{{form.%s}}
+                    """ % (field, field))
             return t.render(template.Context({'form': self._form}))
 
 class ArticleNode(template.Node):

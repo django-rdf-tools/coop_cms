@@ -43,6 +43,7 @@ class ArticleAdmin(admin.ModelAdmin):
         (_('Advanced'), {'fields': ('template', 'section', 'logo')}),
         (_('Publication'), {'fields': ('publication', 'created', 'modified')}),
         (_('Summary'), {'fields': ('summary',)}),
+        (_('Debug'), {'fields': ('temp_logo',)}),
     )
 from coop_cms.settings import get_article_class
 admin.site.register(get_article_class(), ArticleAdmin)

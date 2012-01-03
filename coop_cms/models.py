@@ -217,13 +217,6 @@ content_cleaner = html_cleaner.HTMLCleaner(
 )
 title_cleaner = html_cleaner.HTMLCleaner(allow_tags=['br'])
 
-
-def get_logo_folder(instance, filename):
-    try:
-        img_root = settings.CMS_ARTICLE_LOGO_FOLDER
-    except AttributeError:
-        img_root = 'cms_logos'
-    return u'{0}/{1}/{2}'.format(img_root, instance.id, filename)
     
 class ArticleSection(models.Model):
     name = models.CharField(_(u'name'), max_length=100)
@@ -241,6 +234,13 @@ class BaseArticle(TimeStampedModel):
         (DRAFT, _(u'Draft')),
         (PUBLISHED, _(u'Published')),
     )
+
+    def get_logo_folder(self, filename):
+        try:
+            img_root = settings.CMS_ARTICLE_LOGO_FOLDER
+        except AttributeError:
+            img_root = 'cms_logos'
+        return u'{0}/{1}/{2}'.format(img_root, self.id, filename)
     
     slug = AutoSlugField(populate_from='title', max_length=100, unique=True)
     title = HTMLField(title_cleaner, verbose_name=_(u'title'), default=_('Page title'))
@@ -248,13 +248,15 @@ class BaseArticle(TimeStampedModel):
     publication = models.IntegerField(_(u'publication'), choices=PUBLICATION_STATUS, default=DRAFT)
     template = models.CharField(_(u'template'), max_length=200, default='', blank=True)
     logo = models.ImageField(upload_to=get_logo_folder, blank=True, null=True, default='')
+    temp_logo = models.ImageField(upload_to=get_logo_folder, blank=True, null=True, default='')
     summary = models.TextField(blank=True, default='')
     section = models.ForeignKey(ArticleSection, blank=True, null=True, default=None, related_name="%(app_label)s_%(class)s_rel")
-    
-    def logo_thumbnail(self):
-        if self.logo:
+
+    def logo_thumbnail(self, temp=False):
+        logo = self.temp_logo if (temp and self.temp_logo) else self.logo
+        if logo:
             size = get_article_logo_size(self)
-            return sorl_thumbnail.backend.get_thumbnail(self.logo.file, size, crop='center')
+            return sorl_thumbnail.backend.get_thumbnail(logo.file, size, crop='center')
         else:
             return ""
     
@@ -309,6 +311,9 @@ class BaseArticle(TimeStampedModel):
         
     def get_edit_url(self):
         return reverse('coop_cms_edit_article', args=[self.slug])
+        
+    def get_cancel_url(self):
+        return reverse('coop_cms_cancel_edit_article', args=[self.slug])
     
     def get_publish_url(self):
         return reverse('coop_cms_publish_article', args=[self.slug])
@@ -405,3 +410,4 @@ class PieceOfHtml(models.Model):
 
     def __unicode__(self):
         return self.div_id
+

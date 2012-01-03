@@ -4,6 +4,7 @@ from django.http import HttpResponse, Http404, HttpResponseRedirect, HttpRespons
 from coop_cms.models import NavNode, NavType, Article, Image, Document
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext, Context
+from django.template.loader import get_template
 from django.core.urlresolvers import reverse
 import json
 from django.utils.translation import ugettext as _
@@ -11,7 +12,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError, PermissionDenied
 from django.template.loader import select_template
 from django.db.models.aggregates import Max
-from forms import AddImageForm, ArticleTemplateForm
+from forms import AddImageForm, ArticleTemplateForm, ArticleLogoForm
 from django.contrib.messages.api import error as error_message
 from coop_cms.models import get_object_label, create_navigation_node
 from django.contrib.auth.decorators import login_required
@@ -60,9 +61,14 @@ def edit_article(request, url):
         if form.is_valid() and all([f.is_valid() for f in djaloha_forms]):
             article = form.save()
             
-            logo = form.cleaned_data["logo"]
-            if logo:
-                article.logo.save(logo.name, logo)
+            if article.temp_logo:
+                article.logo = article.temp_logo
+                article.temp_logo = ''
+                article.save()
+            
+            #logo = form.cleaned_data["logo"]
+            #if logo:
+            #    article.logo.save(logo.name, logo)
             
             if djaloha_forms:
                 [f.save() for f in djaloha_forms]
@@ -82,6 +88,15 @@ def edit_article(request, url):
         context_dict,
         context_instance=RequestContext(request)
     )
+
+@login_required
+def cancel_edit_article(request, url):
+    """if cancel_edit, delete the preview image"""
+    article = get_object_or_404(get_article_class(), slug=url)
+    if article.temp_logo:
+        article.temp_logo = ''
+        article.save()
+    return HttpResponseRedirect(article.get_absolute_url())
 
 @login_required
 def publish_article(request, url):
@@ -145,6 +160,31 @@ def change_template(request, article_id):
     
     return render_to_response(
         'coop_cms/change_template.html',
+        locals(),
+        context_instance=RequestContext(request)
+    )
+
+@login_required
+def update_logo(request, article_id):
+    article = get_object_or_404(get_article_class(), id=article_id)
+    if request.method == "POST":
+        form = ArticleLogoForm(request.POST, request.FILES)
+        if form.is_valid():
+            article.temp_logo = form.cleaned_data['image']
+            article.save()
+            url = article.logo_thumbnail(True).url
+            data = {'ok': True, 'src': url}
+            return HttpResponse(json.dumps(data), mimetype='application/json')
+        else:
+            t = get_template('coop_cms/popup_update_logo.html')
+            html = t.render(Context(locals()))
+            data = {'ok': False, 'html': html}
+            return HttpResponse(json.dumps(data), mimetype='application/json')
+    else:
+        form = ArticleLogoForm()
+    
+    return render_to_response(
+        'coop_cms/popup_update_logo.html',
         locals(),
         context_instance=RequestContext(request)
     )
