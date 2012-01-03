@@ -115,7 +115,7 @@ def publish_article(request, url):
 @login_required
 def show_media_images(request):
     context = {
-        'images': Image.objects.all(),
+        'images': Image.objects.all().order_by("-created"),
     }
     return render_to_response('coop_cms/slide_images.html', context, RequestContext(request))
 

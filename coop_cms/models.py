@@ -388,7 +388,7 @@ class Image(Media):
     file = models.ImageField(_('file'), upload_to=get_img_folder)
     
     def as_thumbnail(self):
-        return sorl_thumbnail.backend.get_thumbnail(self.file.file, "200x100", crop='center')
+        return sorl_thumbnail.backend.get_thumbnail(self.file.file, "64x64", crop='center')
         
     def get_absolute_url(self):
         return self.file.url

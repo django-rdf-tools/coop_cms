@@ -7,7 +7,7 @@
   </div>
   <h3>{% trans "Images" %}</h3>
   <div class="library-items library-images">
-  {% autopaginate images 5 %}  
+  {% autopaginate images 20 %}  
   {% for img in images %}
       <img class="djaloha-thumbnail" src="{{ img.as_thumbnail.url }}" title="{{img.name}}" rel="{{img.get_absolute_url}}">
   {% endfor %}
