@@ -10,6 +10,7 @@ import re
 from django.conf import settings
 from coop_cms.settings import get_article_class, get_article_templates
 from coop_cms.widgets import ImageEdit
+from django.core.urlresolvers import reverse
 
 class NavTypeForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -32,6 +33,9 @@ class ArticleForm(floppyforms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ArticleForm, self).__init__(*args, **kwargs)
         self.article = kwargs.get('instance', None)
+        update_url = reverse('coop_cms_update_logo', args=[self.article.id])
+        thumbnail_src = self.logo_thumbnail()
+        self.fields['logo'].widget = ImageEdit(update_url, thumbnail_src.url if thumbnail_src else '')
 
     class Meta:
         model = get_article_class()
@@ -39,7 +43,6 @@ class ArticleForm(floppyforms.ModelForm):
         widgets = {
             'title': AlohaInput(),
             'content': AlohaInput(),
-            'logo': ImageEdit(),
         }
         
     def logo_thumbnail(self):

@@ -115,16 +115,9 @@ class FormWrapper:
     
     def __getitem__(self, field):
         if field in self._form.fields.keys():
-            if field=='logo':
-                t = template.Template("""
-                        {%% with form.%s.errors as errs %%}{%% include "coop_cms/_form_error.html" %%}{%% endwith %%}
-                        <a class="update-logo" href="{%% url coop_cms_update_logo form.article.id %%}">
-                        <img class="article-logo" src="{{form.%s_thumbnail.url}}"></a>{{form.%s}}
-                    """ % (field, field, field))
-            else:
-                t = template.Template("""
-                        {%% with form.%s.errors as errs %%}{%% include "coop_cms/_form_error.html" %%}{%% endwith %%}{{form.%s}}
-                    """ % (field, field))
+            t = template.Template("""
+                    {%% with form.%s.errors as errs %%}{%% include "coop_cms/_form_error.html" %%}{%% endwith %%}{{form.%s}}
+                """ % (field, field))
             return t.render(template.Context({'form': self._form}))
 
 class ArticleNode(template.Node):
