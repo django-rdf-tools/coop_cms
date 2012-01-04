@@ -8,7 +8,7 @@ from django.template import Context
 from django_extensions.db.models import TimeStampedModel, AutoSlugField
 from django.conf import settings
 from sorl.thumbnail import default as sorl_thumbnail
-import os.path
+import os, os.path, shutil
 from django.core.urlresolvers import reverse
 from django.db.models.aggregates import Max
 from django.utils.html import escape
@@ -16,6 +16,8 @@ from django.core.exceptions import ValidationError
 from html_field.db.models import HTMLField
 from html_field import html_cleaner
 from coop_cms.settings import get_article_class, get_article_logo_size
+from django.contrib.staticfiles import finders
+from django.core.files import File
 
 def get_object_label(content_type, object):
     """
@@ -254,11 +256,24 @@ class BaseArticle(TimeStampedModel):
 
     def logo_thumbnail(self, temp=False):
         logo = self.temp_logo if (temp and self.temp_logo) else self.logo
+        size = get_article_logo_size(self)
         if logo:
-            size = get_article_logo_size(self)
-            return sorl_thumbnail.backend.get_thumbnail(logo.file, size, crop='center')
+            file = logo.file
         else:
-            return ""
+            file = self._get_default_logo()
+        return sorl_thumbnail.backend.get_thumbnail(file, size, crop='center')
+    
+    def _get_default_logo(self):
+        #copy from static to media in order to use sorl thumbnail without raising a suspicious operation
+        filename = 'img/default-logo.png'
+        media_filename = os.path.normpath(settings.MEDIA_ROOT+'/coop_cms/'+filename)
+        if not os.path.exists(media_filename):
+            dir = os.path.dirname(media_filename)
+            if not os.path.exists(dir):
+                os.makedirs(dir)
+            static_filename = finders.find(filename)
+            shutil.copyfile(static_filename, media_filename)
+        return File(open(media_filename, 'r'))
     
     class Meta:
         verbose_name = _(u"article")
