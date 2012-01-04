@@ -2,5 +2,5 @@
 {% load i18n %}
     
     {% block navtree_content_extracommand%}
-    <li><a href="{{content.get_absolute_url}}?mode=edit">{% trans "Edit on site"%}</a></li>
+    <li><a href="{{content.get_edit_url}}">{% trans "Edit on site"%}</a></li>
     {% endblock %}

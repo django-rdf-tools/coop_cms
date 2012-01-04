@@ -9,7 +9,7 @@
     {% if_article_edition %}
         {% article_form_media %}
     {% else %}
-        {{block.super}}
+        <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}js/jquery-1.7.1.min.js"></script>
         {% if request.user.is_authenticated %}
             <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}js/jquery.colorbox-min.js"></script>
             <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}js/jquery.form.js"></script>

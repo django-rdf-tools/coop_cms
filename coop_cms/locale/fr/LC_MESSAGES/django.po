@@ -20,7 +20,6 @@ msgstr ""
 "X-Poedit-Country: FRANCE\n"
 
 #: admin.py:41 config.py:17
-#, fuzzy
 msgid "Navigation"
 msgstr "Arborescence"
 
@@ -240,15 +239,15 @@ msgstr "le noeud est à présent visible dans l'arborescence."
 
 #: views.py:297 templates/coop_cms/navtree_content/default.html:5
 msgid "Remove from navigation"
-msgstr "Supprimer de l'arborescence"
+msgstr "Supprimer de l arborescence"
 
 #: views.py:300
 msgid "The node has been removed of the navigation."
-msgstr "Le noeud a été supprimé de l'arborescence"
+msgstr "Le noeud a été supprimé de l arborescence"
 
 #: views.py:301 templates/coop_cms/navtree_content/default.html:7
 msgid "Add to navigation"
-msgstr "Rendre le noeud visible dans l'arborescence"
+msgstr "Rendre le noeud visible dans l arborescence"
 
 #: views.py:328
 msgid "Unsupported message {0}"
