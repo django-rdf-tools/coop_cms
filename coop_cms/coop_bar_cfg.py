@@ -45,7 +45,7 @@ def cms_change_template(request, context):
     if context['edit_mode']:
         article = context['article']
         url = reverse('coop_cms_change_template', args=[article.id])
-        return u'<a href="{0}" id="coopbar_changetemplate" class="colorbox-form">{1}</a>'.format(url, _('Template'))
+        return u'<a class="colorbox-form" href="{0}">{1}</a>'.format(url, _('Template'))
 
 @can_edit
 def cms_save(request, context):

@@ -42,24 +42,30 @@
         });
         return false;
       });
+      
+      var enable_selector = function(media_type) {
+        if (media_type === 'image') {
+          $(".media-selector a.doc-sel").removeClass('disabled').unbind('click');
+          $(".media-selector a.img-sel").bind('click', function() {return false}).addClass('disabled');
+        } else if (media_type === 'document') {
+          $(".media-selector a.img-sel").removeClass('disabled').unbind('click');
+          $(".media-selector a.doc-sel").bind('click', function() {return false}).addClass('disabled');
+        }  
+      }
+      
       $('.media-selector a').live('click', function() {
         $.ajax({
           url: $(this).attr('href'),
           dataType: 'json',
           success: function(data) {
             $("#media_slide_content").html(data["html"]);
-            if (data['media_type'] == 'image') {
-              $(".media-selector a.doc-sel").unbind('click').removeClass('disabled');
-              $(".media-selector a.img-sel").bind('click', function() {return false}).addClass('disabled');
-            } else if (data['media_type'] == 'document') {
-              $(".media-selector a.img-sel").unbind('click').removeClass('disabled');
-              $(".media-selector a.doc-sel").bind('click', function() {return false}).addClass('disabled');
-            }
+            enable_selector(data['media_type']);
           }
         });
         return false;
       });
-      $(".media-selector a.img-sel").bind('click', function() {return false});
+      //$(".media-selector a.img-sel").bind('click', function() {return false});
+      {% if not is_ajax %}enable_selector('{{media_type}}');{% endif %}
     });
     </script>
   </head>
@@ -73,7 +79,7 @@
           {% url coop_cms_media_images as images_url %}
           {% url coop_cms_media_documents as docs_url %}
           <a class="img-sel disabled" href="{{images_url}}?page=1">{% trans "Images" %}</a>
-          <a class="doc-sel" href="{{docs_url}}?page=1">{% trans "Documents" %}</a>
+          <a class="doc-sel disabled" href="{{docs_url}}?page=1">{% trans "Documents" %}</a>
         </div>
         <div id="media_slide_content">
         {% include media_slide_template %}

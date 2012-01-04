@@ -5,40 +5,23 @@ $(function(){
 	{% if edit_mode %}
     $("#coop-bar a.slide").pageSlide({width:'350px', direction:'right'});
 	{% endif %}
-    
-    $("a.coopbar_addfile").live('click', function () {
+	
+    $("a.colorbox-form").live('click', function () {
         $.colorbox({
             href : $(this).attr('href'),
 			title : '...',  
             onComplete : function(){
                 $("form#template-form").ajaxForm({
                     success: function (html) {
-                        if(html === 'ok') {
-                          $.colorbox.close();
-                          $("#coopbar_medialibrary").click();
-                        }
-                        else {
-                            $.colorbox({html:html, title : '...',}); 
-                        }
-                    }
-                })
-            }
-        });
-        return false;
-    });
-    
-    $("a.colorbox-form").live('click', function () {
-        $.colorbox({
-            href : $(this).attr('href'),
-            onComplete : function(){
-                $("form#template-form").ajaxForm({
-                    success: function (html) {
-                        if(html === 'ok') {
-                          $.colorbox.close();
-                          //$("#coopbar_save").click();
-                        }
-                        else {
-                            $.colorbox({html:html}); 
+						if (html.match(/^<script>.*<\/script>$/)) {
+							$('body').append(html);
+						} else if (html === 'close_popup') {
+							$.colorbox.close();
+						} else if (html === 'close_popup_and_media_slide') {
+							$.colorbox.close();
+							$("#coopbar_medialibrary").click();
+						} else {
+                            $.colorbox({html:html, title : '...'}); 
                         }
                     }
                 })

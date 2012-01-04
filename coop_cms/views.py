@@ -17,6 +17,7 @@ from coop_cms import models
 from django.contrib.auth.decorators import login_required
 from coop_cms.settings import get_article_class, get_article_form
 from djaloha import utils as djaloha_utils
+from coop_cms.decorators import popup_redirect, popup_close, HttpResponseClosePopupAndMediaSlide
 
 def get_article_template(article):
     template = article.template
@@ -98,6 +99,7 @@ def cancel_edit_article(request, url):
     return HttpResponseRedirect(article.get_absolute_url())
 
 @login_required
+@popup_redirect
 def publish_article(request, url):
     """change the publication status of an article"""
     article = get_object_or_404(get_article_class(), slug=url, publication=models.Article.DRAFT)
@@ -120,19 +122,20 @@ def publish_article(request, url):
         locals(),
         context_instance=RequestContext(request)
     )   
-    #t = get_template('coop_cms/popup_publish_article.html')
-    #return t.render(RequestContext(request, {'form': form, 'a}))
-    
 
 @login_required
 def show_media(request, media_type):
     is_ajax = request.GET.get('page', 0)
     
+    if request.session.get("coop_cms_media_doc", False):
+        media_type = 'document' #force the doc
+        del request.session["coop_cms_media_doc"]
+    
     if media_type == 'image':
         context = {
             'images': models.Image.objects.all().order_by("-created"),
             'media_url': reverse('coop_cms_media_images'),
-            'media_slide_template': 'coop_cms/slide_images_content.html'
+            'media_slide_template': 'coop_cms/slide_images_content.html',
         }
     else:
         context = {
@@ -141,6 +144,7 @@ def show_media(request, media_type):
             'media_slide_template': 'coop_cms/slide_docs_content.html',
         }
     context['is_ajax'] = is_ajax
+    context['media_type'] = media_type
     
     t = get_template('coop_cms/slide_base.html')
     html = t.render(RequestContext(request, context))
@@ -154,6 +158,7 @@ def show_media(request, media_type):
     else:
         return HttpResponse(html)
 
+
 @login_required
 def upload_image(request):
     if request.method == "POST":
@@ -166,7 +171,7 @@ def upload_image(request):
             image = models.Image(name=descr)
             image.file.save(src.name, src)
             image.save()
-            return HttpResponse('ok')
+            return HttpResponseClosePopupAndMediaSlide()
     else:
         form = forms.AddImageForm()
     
@@ -188,7 +193,10 @@ def upload_doc(request):
             doc = models.Document(name=descr)
             doc.file.save(src.name, src)
             doc.save()
-            return HttpResponse('ok')
+            
+            request.session["coop_cms_media_doc"] = True
+            
+            return HttpResponseClosePopupAndMediaSlide()
     else:
         form = forms.AddDocForm()
     
@@ -200,6 +208,7 @@ def upload_doc(request):
 
     
 @login_required
+@popup_redirect
 def change_template(request, article_id):
     article = get_object_or_404(get_article_class(), id=article_id)
     if request.method == "POST":
@@ -207,7 +216,7 @@ def change_template(request, article_id):
         if form.is_valid():
             article.template = form.cleaned_data['template']
             article.save()
-            return HttpResponse('ok')
+            return HttpResponseRedirect(article.get_absolute_url())
     else:
         form = forms.ArticleTemplateForm(article, request.user)
     
@@ -218,6 +227,7 @@ def change_template(request, article_id):
     )
 
 @login_required
+#@popup_close
 def update_logo(request, article_id):
     article = get_object_or_404(get_article_class(), id=article_id)
     if request.method == "POST":

@@ -1,5 +1,4 @@
 {% extends "coop_cms/popup_base_form.html" %}
 {% load i18n %}
 {% block title %}{% trans "Change article logo" %}{% endblock %}
-{% block form_enctype %}enctype="multipart/form-data"{% endblock %}
 {% block form_url %}{% url coop_cms_update_logo article.id %}{% endblock %}

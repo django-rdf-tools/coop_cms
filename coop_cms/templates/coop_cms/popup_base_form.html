@@ -16,7 +16,7 @@
 </head>
 <body>
   <div class="main">
-  <form id="template-form" {% block form_enctype%}{% endblock %} action="{% block form_url %}{% endblock %}" method="post">
+  <form id="template-form" {% if form.is_multipart %}enctype="multipart/form-data"{% endif %} action="{% block form_url %}{% endblock %}" method="post">
   {% csrf_token %}
   <table class="popup_form">
       {{form.as_table}}
