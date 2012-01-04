@@ -11,6 +11,7 @@ from django.conf import settings
 from coop_cms.settings import get_article_class, get_article_templates
 from coop_cms.widgets import ImageEdit
 from django.core.urlresolvers import reverse
+from coop_cms.utils import dehtml
 
 class NavTypeForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -151,3 +152,21 @@ class ArticleTemplateForm(forms.Form):
     
 class ArticleLogoForm(forms.Form):
     image = forms.ImageField(required=True, label = _('Logo'),)
+
+class PublishArticleForm(forms.ModelForm):
+    class Meta:
+        model = get_article_class()
+        fields = ('summary', 'section')
+    
+    def __init__(self, *args, **kwargs):
+        article = kwargs['instance']
+        try:
+            initials = kwargs['initial']
+        except:
+            initials = {}
+        initials.update({'summary': dehtml(article.content)[:250]})
+        kwargs['initial'] = initials
+        super(PublishArticleForm, self).__init__(*args, **kwargs)
+        
+            
+        

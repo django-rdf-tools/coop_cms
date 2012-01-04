@@ -1,0 +1,5 @@
+{% extends "coop_cms/popup_base_form.html" %}
+{% load i18n %}
+{% block title %}{% trans "Do you want to publish this article?" %}{% endblock %}
+{% block form_url %}{{article.get_publish_url }}{% endblock %}
+{% block form_ok %}{% trans "Publish" %}{% endblock %}

@@ -100,16 +100,29 @@ def cancel_edit_article(request, url):
 @login_required
 def publish_article(request, url):
     """change the publication status of an article"""
-    
     article = get_object_or_404(get_article_class(), slug=url, publication=models.Article.DRAFT)
     
     if not request.user.has_perm('can_publish_article', article):
         raise PermissionDenied
-    elif request.method == "POST":
-        article.publication = models.Article.PUBLISHED
-        article.save()
-        return HttpResponseRedirect(article.get_absolute_url())
-    raise Http404
+    
+    if request.method == "POST":
+        form = forms.PublishArticleForm(request.POST, instance=article)
+        if form.is_valid():
+            article = form.save()
+            article.publication = models.Article.PUBLISHED
+            article.save()
+            return HttpResponseRedirect(article.get_absolute_url())
+    else:
+        form = forms.PublishArticleForm(instance=article)
+    
+    return render_to_response(
+        'coop_cms/popup_publish_article.html',
+        locals(),
+        context_instance=RequestContext(request)
+    )   
+    #t = get_template('coop_cms/popup_publish_article.html')
+    #return t.render(RequestContext(request, {'form': form, 'a}))
+    
 
 @login_required
 def show_media(request, media_type):

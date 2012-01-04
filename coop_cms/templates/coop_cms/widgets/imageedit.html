@@ -14,6 +14,7 @@
                         if (data['src']){
                             $.colorbox.close();
                             $('a.update-logo img').attr('src', data['src']);
+                            $('a.update-logo img').change();
                         } else {
                             $.colorbox({
                                 title: function(data){

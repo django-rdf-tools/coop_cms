@@ -50,7 +50,7 @@ def cms_change_template(request, context):
 @can_edit
 def cms_save(request, context):
     if context['edit_mode']:
-        return u'<a id="coopbar_save" href="{0}">{1}</a>'.format('', _('Save'))
+        return u'<a class="edited" id="coopbar_save" href="{0}">{1}</a>'.format('', _('Save'))
 
 @can_edit
 def cms_cancel(request, context):
@@ -66,13 +66,17 @@ def cms_edit(request, context):
 
 @can_publish
 def cms_publish(request, context):
-    if context['edit_mode'] and context['draft']:
-        return u'<a id="coopbar_publish" href="{0}">{1}</a>'.format('', _('Publish'))
+    if context['draft']:
+        article = context['article']
+        return u'<a class="publish colorbox-form" href="{0}">{1}</a>'.format(article.get_publish_url(), _('Publish'))
 
 @can_edit
 def cms_extra_js(request, context):
     t = get_template("coop_cms/_coop_bar_js.html")
-    return t.render(Context({}))
+    return t.render(context)
+
+#def sep(request, context):
+#    return '<div style="height: 8px;"></div>'
 
 def log_out(request, context):
     if request.user.is_authenticated():
@@ -81,14 +85,19 @@ def log_out(request, context):
 
 def load_commands(coop_bar):
     coop_bar.register_command(django_admin)
-    coop_bar.register_command(cms_save)
-    coop_bar.register_command(cms_cancel)
-    coop_bar.register_command(cms_publish)
+    coop_bar.register_separator()
     coop_bar.register_command(cms_edit)
+    coop_bar.register_separator()
+    coop_bar.register_command(cms_save)
+    coop_bar.register_command(cms_publish)
+    coop_bar.register_command(cms_cancel)
+    coop_bar.register_separator()
+    coop_bar.register_command(cms_change_template)
+    coop_bar.register_separator()
     coop_bar.register_command(cms_media_library)
     coop_bar.register_command(cms_upload_image)
     coop_bar.register_command(cms_upload_doc)
-    coop_bar.register_command(cms_change_template)
-    coop_bar.register_command(cms_extra_js)
+    coop_bar.register_separator()
     coop_bar.register_command(log_out)
+    coop_bar.register_command(cms_extra_js)
     
