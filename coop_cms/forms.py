@@ -128,15 +128,15 @@ class ArticleAdminForm(forms.ModelForm):
 class AddImageForm(forms.Form):
     image = forms.ImageField(required=True, label = _('Image'),)
     descr = forms.CharField(required=False, widget=forms.TextInput(
-        attrs={'size': '30', 'placeholder': _(u'description'),}),
-        label = _('Optional description'),
+        attrs={'size': '35', 'placeholder': _(u'Optional description'),}),
+        label = _('Description'),
     )
 
 class AddDocForm(forms.Form):
     doc = forms.FileField(required=True, label = _('File'),)
     descr = forms.CharField(required=False, widget=forms.TextInput(
-        attrs={'size': '30', 'placeholder': _(u'description'),}),
-        label = _('Optional description'),
+        attrs={'size': '35', 'placeholder': _(u'Optional description'),}),
+        label = _('Description'),
     )
 
 class ArticleTemplateForm(forms.Form):
@@ -164,7 +164,10 @@ class PublishArticleForm(forms.ModelForm):
             initials = kwargs['initial']
         except:
             initials = {}
-        initials.update({'summary': dehtml(article.content)[:250]})
+        summary = article.summary
+        if not summary:
+            summary = dehtml(article.content)[:250]
+        initials.update({'summary': summary})
         kwargs['initial'] = initials
         super(PublishArticleForm, self).__init__(*args, **kwargs)
         

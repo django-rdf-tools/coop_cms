@@ -71,3 +71,7 @@
 	float: right;
     margin-top: 5px;
 }
+
+.popup_form {
+    min-width: 300px;
+}

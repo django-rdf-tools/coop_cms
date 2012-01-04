@@ -227,7 +227,6 @@ def change_template(request, article_id):
     )
 
 @login_required
-#@popup_close
 def update_logo(request, article_id):
     article = get_object_or_404(get_article_class(), id=article_id)
     if request.method == "POST":
