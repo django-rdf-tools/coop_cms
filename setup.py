@@ -15,7 +15,7 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
-    name='django-coop-cms',
+    name='coop-cms',
     version = VERSION,
     description='Small CMS built around a tree navigation open to any django models',
     packages=[  'coop_cms',
