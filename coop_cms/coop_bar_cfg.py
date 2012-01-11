@@ -3,10 +3,24 @@ from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext as _
 from django.template.loader import get_template
 from django.template import Context
+from coop_cms.settings import get_article_class
 
 def django_admin(request, context):
     if request.user.is_staff:
-        return u'<a href="{0}">{1}</a>'.format(reverse("admin:index"), _('Admin'))
+        return u'<a href="{0}">{1}</a>'.format(reverse("admin:index"), _('Admin: Index'))
+
+def django_admin_add_article(request, context):
+    if request.user.is_staff:
+        article_class = get_article_class()
+        view_name = 'admin:%s_%s_add' % (article_class._meta.app_label,  article_class._meta.module_name)
+        return u'<a href="{0}">{1}</a>'.format(reverse(view_name), _('Admin: Add article'))
+        
+def django_admin_edit_article(request, context):
+    if request.user.is_staff:
+        article_class = get_article_class()
+        article = context['article']
+        view_name = 'admin:%s_%s_change' % (article_class._meta.app_label,  article_class._meta.module_name)
+        return u'<a href="{0}">{1}</a>'.format(reverse(view_name, args=[article.id]), _('Admin: Edit article'))
 
 def can_do(perm):
     def inner_decorator(func):
@@ -85,6 +99,8 @@ def log_out(request, context):
 
 def load_commands(coop_bar):
     coop_bar.register_command(django_admin)
+    coop_bar.register_command(django_admin_add_article)
+    coop_bar.register_command(django_admin_edit_article)
     coop_bar.register_separator()
     coop_bar.register_command(cms_edit)
     coop_bar.register_separator()
