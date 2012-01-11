@@ -1,0 +1,26 @@
+{% extends "coop_cms/article.html" %}
+{% load i18n coop_edition %}
+
+{% block document %}
+    {% block article %}
+    {% article %}
+        {% block rightcol %}
+        <div class="rightcol">
+            {% coop_piece_of_html "hello" %}
+        </div>
+        {% endblock %}
+        <div class="article">
+            <h2 id="title">{{ article.title }}</h2>
+            <div class="article-content">
+                <span class="the-logo">{{ article.logo }}</span>
+                {{ article.content }}
+            </div>
+            <div class="article-content-after"></div>
+            <div id="author">{% trans "Author" %}: {{ article.author }}</div>
+        </div>
+        <div class="footer">
+            {% coop_piece_of_html "footer" %}
+        </div>
+    {% endarticle %}
+    {% endblock %}
+{% endblock %}

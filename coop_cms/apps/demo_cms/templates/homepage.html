@@ -1,0 +1,9 @@
+{% extends "standard.html" %}
+{% load i18n coop_edition %}
+
+{% block rightcol %}
+<div class="rightcol">
+    {% coop_piece_of_html "homepage" %}
+    {{block.super}}
+</div>
+{% endblock %}

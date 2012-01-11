@@ -338,7 +338,7 @@ class BaseArticle(TimeStampedModel):
         return user.has_perm(perm)
         
     def can_view_article(self, user):
-        if self.publication != Article.PUBLISHED:
+        if self.publication != BaseArticle.PUBLISHED:
             return self.can_edit_article(user)
         else:
             return True

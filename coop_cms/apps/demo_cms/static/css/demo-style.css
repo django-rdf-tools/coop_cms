@@ -1,0 +1,328 @@
+body {
+	background-color: #eef;
+	font-family: Calibri;
+	font-size: 0.9em;
+}
+
+#container {
+    margin: auto;
+    width: 950px;
+    border: solid thin #ddd;
+    padding: 10px 10px 10px 10px;
+}
+
+.header{
+	/*background-color: white;*/
+/*	height: 80px;*/
+
+}
+
+div#main{
+	border-top-style: none;
+	border-bottom-style: none;
+	background-color: white;
+	padding-bottom: 20px;
+	width: 950px;
+	margin: auto;
+}
+
+.document {
+padding: 0 10px 0 10px;	
+}
+
+span.unicon{
+	font-size: 1.6em;
+	display: inline-block;
+	margin-top: -0.2em;
+	height: 1em;
+	margin-right: 0.2em;
+	position: relative;
+	top: 0.1em;
+}
+
+
+#content{
+	padding-bottom: 20px;
+	padding-top: 20px;
+	min-height: 400px;
+}
+
+p{
+	margin-bottom: 1em;
+}
+
+table td{
+	border-collapse: collapse;
+	border: 1px solid silver;
+}
+
+h1,h2,h3,h4,h5,h6, nav{
+	font-family: "PT Sans Narrow", "Trebuchet MS", Trebuchet, Tahoma, Arial;
+}
+
+h1{
+	font-size: 3.5em;
+	padding-top: 10px;
+	padding-left: 20px;
+}
+
+
+header h1 a, header h1 a:visited{
+	color: #6c6c6c;
+	text-decoration: none;
+}
+
+header h1 a:active{
+	background-color: white;
+}
+
+h2{
+	font-size: 2.7em;
+}
+
+h3{
+	font-size: 2.3em;
+	padding-top: 10px;
+	margin-bottom: 10px;
+}
+
+h4{
+	font-size: 1.6em;
+}
+
+#content{
+	font-size: 1.1em;
+}
+
+#pageslide-slide-wrap{
+	background-color: #797979;
+}
+
+#ppanel h3{
+	text-align: center;
+	color: #fffeff;
+}
+
+
+#tags a{
+	font-size: 14px;
+	display: inline-block;
+	border: 1px solid #8fc6db;
+	background-color: #daf2f4;
+	margin-top: 4px;
+	padding: 4px;
+	font-style: italic;
+	
+-webkit-border-radius: 4px;
+-moz-border-radius: 4px;
+border-radius: 4px;
+background: #FFFFFF;
+background: -webkit-gradient(linear, 0 0, 0 bottom, from(#FFFFFF), to(#A8D7E1));
+background: -webkit-linear-gradient(#FFFFFF, #A8D7E1);
+background: -moz-linear-gradient(#FFFFFF, #A8D7E1);
+background: -ms-linear-gradient(#FFFFFF, #A8D7E1);
+background: -o-linear-gradient(#FFFFFF, #A8D7E1);
+background: linear-gradient(#FFFFFF, #A8D7E1);
+	text-decoration: none;
+	color: #1d1e1e;
+}
+
+#tags a:hover{
+	
+	background: #FDFCF7;
+background: -webkit-gradient(linear, 0 0, 0 bottom, from(#FDFCF7), to(#F0DA2D));
+background: -webkit-linear-gradient(#FDFCF7, #F0DA2D);
+background: -moz-linear-gradient(#FDFCF7, #F0DA2D);
+background: -ms-linear-gradient(#FDFCF7, #F0DA2D);
+background: -o-linear-gradient(#FDFCF7, #F0DA2D);
+background: linear-gradient(#FDFCF7, #F0DA2D);
+	border-color: #fff6ca;
+	color: black;
+}
+
+
+/* @group Basic CSS Menu */
+
+/* 
+http://www.htmldog.com/articles/suckerfish/dropdowns/
+Laisser tranquille , surclasser ailleurs 
+*/
+
+
+
+#nav, #nav ul {
+	padding: 0;
+	margin: 0;
+	list-style: none;
+	position: relative;
+}
+
+#nav a {
+	display: block;
+	width: 12em;
+}
+
+#nav li {
+	float: left;
+	width: 12em;
+}
+
+#nav li ul {
+	position: absolute;
+	width: 12em;
+	left: -999em;
+}
+
+#nav li:hover ul {
+	left: auto;
+}
+
+#nav li:hover ul, #nav li.sfhover ul {
+	left: auto;
+}
+
+/* Mulit-level*/
+
+#nav li ul ul {
+	margin: -1em 0 0 12em;
+}
+
+
+#nav, #nav ul {
+	padding: 0;
+	margin: 0;
+	list-style: none; 
+	line-height: 1;
+}
+
+
+#nav li:hover ul ul, #nav li.sfhover ul ul {
+	left: -999em;
+}
+
+
+#nav li:hover ul, #nav li li:hover ul, #nav li.sfhover ul, #nav li li.sfhover ul {
+	left: auto;
+}
+
+
+/* @end */
+
+/* @group Personnalisation Menu CSS */
+
+
+#nav {
+	background-color: #999;
+	border: 1px solid #fff;
+	width: 100%;
+	height: 2em;	
+	border-right-style: none;
+	border-left-style: none;
+}
+
+#nav li {
+    width: 100px;
+}
+
+#nav li a{
+	position: relative;
+	text-decoration: none;
+	color: #fff;
+	padding-left: 0.5em;
+	font-weight: bold;
+	font-size: 1.2em;
+}
+
+#nav li a:hover{
+    color: #ff7;
+}
+
+#nav, #nav ul {
+	padding: 0;
+	line-height: 2;
+}
+
+#nav li ul ul {
+	margin: -2.4em 0 0 12em;
+}
+
+#nav > li {
+	height: 100%;
+	border-right: 1px solid #ffff9f;
+}
+
+#nav ul{
+	background-color: #d1453e;
+	border: 1px solid #cd887f;
+	border-top-style: none;
+}
+
+#nav ul > li a{
+	font-size: 1.2em;
+}
+
+#nav ul ul > li a{
+	font-size: 1.1em;
+}
+
+
+#nav li ul li:hover{
+	color: #07f;
+}
+
+.footer {
+    background: #999;
+    color: #fff;
+    padding: 1px 5px;
+}
+
+.rightcol {
+    float: right;
+    width: 20%;
+    margin-top: 25px;
+    padding: 20px 5px 20px 5px;
+    background: #999;
+    height: 300px
+}
+
+.article h2, .rightcol h2{
+    font-size: 1.8em;
+}
+
+.article h3, .rightcol h3{
+    font-size: 1.5em;
+}
+
+.article h4, .rightcol h4{
+    font-size: 1.2em;
+}
+
+.article h5, .article h6, .rightcol h5, .rightcol h6{
+    font-size: 1em;
+}
+    
+.article {
+    width: 75%;
+}
+
+.the-logo {
+    border: solid thin #fc7;
+    width: 128px;
+    height: 128px;
+    float: left;
+    margin: 0 5px 0 5px;
+    vertical-align: top;
+}
+
+.article-content {
+    min-height: 300px;
+    vertical-align: top;
+}
+
+#author {
+    color: #999;
+}
+
+.article-content-after {
+    clear: left;
+}
