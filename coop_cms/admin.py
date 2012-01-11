@@ -5,6 +5,7 @@ import models
 from forms import NavTypeForm, ArticleAdminForm
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
+from coop_cms.settings import get_article_class
 
 class NavNodeAdmin(admin.ModelAdmin):
     list_display = ["label", 'parent', 'ordering', 'in_navigation', 'content_type', 'object_id']
@@ -45,7 +46,6 @@ class ArticleAdmin(admin.ModelAdmin):
         (_('Summary'), {'fields': ('summary',)}),
         (_('Debug'), {'fields': ('temp_logo',)}),
     )
-from coop_cms.settings import get_article_class
 admin.site.register(get_article_class(), ArticleAdmin)
 
 admin.site.register(models.Link)

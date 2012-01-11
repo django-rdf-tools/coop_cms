@@ -3,7 +3,7 @@
 from django import template
 register = template.Library()
 from djaloha.templatetags.djaloha_utils import DjalohaEditNode
-from coop_cms.models import PieceOfHtml, Article
+from coop_cms.models import PieceOfHtml, BaseArticle
 from django.utils.translation import ugettext_lazy as _
 from django.core.context_processors import csrf
 from django.utils.safestring import mark_safe
@@ -31,7 +31,7 @@ class ArticleTitleNode(template.Node):
         return u"{0}".format(
             article.title,
             _(u" [EDITION]") if is_edition_mode else u"",
-            _(u" [DRAFT]") if article.publication == Article.PUBLISHED else u"",
+            _(u" [DRAFT]") if article.publication == BaseArticle.PUBLISHED else u"",
         )
 
 @register.tag

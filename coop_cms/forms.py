@@ -1,5 +1,5 @@
 from django import forms
-from coop_cms.models import NavType, Article, NavNode
+from coop_cms.models import NavType, NavNode
 from django.contrib.contenttypes.models import ContentType
 from settings import get_navigable_content_types
 from django.core.exceptions import ValidationError
@@ -40,7 +40,7 @@ class ArticleForm(floppyforms.ModelForm):
 
     class Meta:
         model = get_article_class()
-        fields = ('title', 'content')
+        fields = ('title', 'content', 'logo')
         widgets = {
             'title': AlohaInput(),
             'content': AlohaInput(),
@@ -99,7 +99,7 @@ class ArticleAdminForm(forms.ModelForm):
         parent_id = self.cleaned_data['navigation_parent']
         parent_id = int(parent_id) if parent_id != 'None' else None
         if self.article:
-            ct = ContentType.objects.get_for_model(Article)
+            ct = ContentType.objects.get_for_model(get_article_class())
             try:
                 node = NavNode.objects.get(object_id=self.article.id, content_type=ct)
                 #raise ValidationError if own parent or child of its own child

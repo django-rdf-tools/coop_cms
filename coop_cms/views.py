@@ -33,7 +33,7 @@ def view_article(request, url):
         raise Http404
     
     context_dict = {
-        'editable': True, 'edit_mode': False, 'article': article, 'draft': article.publication==models.Article.DRAFT}
+        'editable': True, 'edit_mode': False, 'article': article, 'draft': article.publication==models.BaseArticle.DRAFT}
     
     return render_to_response(
         get_article_template(article),
@@ -79,8 +79,8 @@ def edit_article(request, url):
     context_dict = {
         'coop_cms_article_form': form, 
         'editable': True, 'edit_mode': True, 'title': article.title,
-        'draft': article.publication==models.Article.DRAFT,
-        'article': article, 'ARTICLE_PUBLISHED': models.Article.PUBLISHED
+        'draft': article.publication==models.BaseArticle.DRAFT,
+        'article': article, 'ARTICLE_PUBLISHED': models.BaseArticle.PUBLISHED
     }
     
     return render_to_response(
@@ -102,7 +102,7 @@ def cancel_edit_article(request, url):
 @popup_redirect
 def publish_article(request, url):
     """change the publication status of an article"""
-    article = get_object_or_404(get_article_class(), slug=url, publication=models.Article.DRAFT)
+    article = get_object_or_404(get_article_class(), slug=url, publication=models.BaseArticle.DRAFT)
     
     if not request.user.has_perm('can_publish_article', article):
         raise PermissionDenied
@@ -111,7 +111,7 @@ def publish_article(request, url):
         form = forms.PublishArticleForm(request.POST, instance=article)
         if form.is_valid():
             article = form.save()
-            article.publication = models.Article.PUBLISHED
+            article.publication = models.BaseArticle.PUBLISHED
             article.save()
             return HttpResponseRedirect(article.get_absolute_url())
     else:

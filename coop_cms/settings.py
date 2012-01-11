@@ -21,6 +21,7 @@ def get_article_class():
     if hasattr(get_article_class, '_cache_class'):
         return getattr(get_article_class, '_cache_class')
     else:
+        article_class = None
         try:
             full_class_name = getattr(settings, 'COOP_CMS_ARTICLE_CLASS')
             module_name, class_name = full_class_name.rsplit('.', 1)
@@ -28,8 +29,12 @@ def get_article_class():
             article_class = getattr(module, class_name)
         
         except AttributeError:
-            from coop_cms.models import Article
-            article_class = Article
+            if 'coop_cms.apps.basic_cms' in settings.INSTALLED_APPS:
+                from coop_cms.apps.basic_cms.models import Article
+                article_class = Article
+        
+        if not article_class:
+            raise Exception('No article class configured')
         
         setattr(get_article_class, '_cache_class', article_class)
         return article_class

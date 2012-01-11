@@ -112,7 +112,6 @@ class NavNode(models.Model):
         verbose_name_plural = _(u'navigation nodes')
         unique_together = ('content_type', 'object_id')
 
-    
     def get_children(self, in_navigation=None):
         nodes = NavNode.objects.filter(parent=self).order_by("ordering")
         if in_navigation != None:
@@ -349,9 +348,6 @@ class BaseArticle(TimeStampedModel):
     
     def can_publish_article(self, user):
         return self._can_change(user)
-
-class Article(BaseArticle):
-    pass
     
 class Link(TimeStampedModel):
     """Link to a given url"""
