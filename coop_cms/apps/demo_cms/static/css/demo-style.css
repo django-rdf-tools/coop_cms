@@ -215,7 +215,7 @@ Laisser tranquille , surclasser ailleurs
 	background-color: #999;
 	border: 1px solid #fff;
 	width: 100%;
-	height: 2em;	
+	height: 2.35em;	
 	border-right-style: none;
 	border-left-style: none;
 }
@@ -252,8 +252,8 @@ Laisser tranquille , surclasser ailleurs
 }
 
 #nav ul{
-	background-color: #d1453e;
-	border: 1px solid #cd887f;
+	background-color: #bbb;
+	border: 1px solid #ff7;
 	border-top-style: none;
 }
 
@@ -262,7 +262,7 @@ Laisser tranquille , surclasser ailleurs
 }
 
 #nav ul ul > li a{
-	font-size: 1.1em;
+	font-size: 1.2em;
 }
 
 
