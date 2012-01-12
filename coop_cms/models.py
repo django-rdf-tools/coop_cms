@@ -99,7 +99,9 @@ class NavNode(models.Model):
     in_navigation = models.BooleanField(_("in navigation"), default=True)
     
     def get_absolute_url(self):
-        return self.content_object.get_absolute_url()
+        if self.content_object:
+            return self.content_object.get_absolute_url()
+        return ""
     
     def get_content_name(self):
         return self.content_type.model_class()._meta.verbose_name
@@ -422,3 +424,15 @@ class PieceOfHtml(models.Model):
     def __unicode__(self):
         return self.div_id
 
+
+#delete node when content object is deleted
+from django.db.models.signals import pre_delete
+
+def remove_from_navigation(sender, instance, **kwargs):
+    ct = ContentType.objects.get_for_model(instance)
+    try:
+        node = NavNode.objects.get(content_type=ct, object_id=instance.id)
+        node.delete()
+    except NavNode.DoesNotExist:
+        pass
+pre_delete.connect(remove_from_navigation)
