@@ -429,10 +429,11 @@ class PieceOfHtml(models.Model):
 from django.db.models.signals import pre_delete
 
 def remove_from_navigation(sender, instance, **kwargs):
-    ct = ContentType.objects.get_for_model(instance)
-    try:
-        node = NavNode.objects.get(content_type=ct, object_id=instance.id)
-        node.delete()
-    except NavNode.DoesNotExist:
-        pass
+    if hasattr(instance, 'id'):
+        try:
+            ct = ContentType.objects.get_for_model(instance)
+            node = NavNode.objects.get(content_type=ct, object_id=instance.id)
+            node.delete()
+        except (NavNode.DoesNotExist, ContentType.DoesNotExist):
+            pass
 pre_delete.connect(remove_from_navigation)

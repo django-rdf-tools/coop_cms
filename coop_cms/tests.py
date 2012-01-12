@@ -548,7 +548,26 @@ class NavigationTest(TestCase):
         self.assertEqual(result['icon'], 'in_nav')
         node = NavNode.objects.get(id=node.id)
         self.assertTrue(node.in_navigation)
-
+        
+    def test_delete_object(self):
+        addrs = ("http://www.google.fr", "http://www.python.org", "http://www.quinode.fr", "http://www.apidev.fr")
+        links = [Link.objects.create(url=a) for a in addrs]
+        
+        nodes = []
+        parent = None
+        for i, link in enumerate(links):
+            parent = NavNode.objects.create(label=link.url, content_object=link, ordering=i+1, parent=parent)
+            
+        links[1].delete()
+        
+        self.assertEqual(0, Link.objects.filter(url=addrs[1]).count())
+        for url in addrs[:1]+addrs[2:]:
+            self.assertEqual(1, Link.objects.filter(url=url).count())
+            
+        nodes = NavNode.objects.all()
+        self.assertEqual(1, nodes.count())
+        node = nodes[0]
+        self.assertEqual(addrs[0], node.content_object.url)
 
 class NavigationParentTest(TestCase):
     
