@@ -3,17 +3,9 @@
 from django.test import TestCase
 from django.conf import settings
 from model_mommy import mommy
-from django.contrib.auth.models import User#, Permission
-
-#from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-#from django.template import Template, Context
-#from coop_cms.models import Link, NavNode, NavType
-#from coop_cms.apps.demo_cms.models import Article
-#import json
-#from django.core.exceptions import ValidationError
 from coop_cms.settings import get_article_class
-
 from coop_cms.apps.basic_cms import tests as basic_cms_tests
 
 class ArticleTest(basic_cms_tests.ArticleTest): 

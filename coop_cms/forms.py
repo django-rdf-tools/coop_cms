@@ -138,6 +138,7 @@ class AddDocForm(forms.Form):
         attrs={'size': '35', 'placeholder': _(u'Optional description'),}),
         label = _('Description'),
     )
+    is_private = forms.BooleanField(required=False)
 
 class ArticleTemplateForm(forms.Form):
     def __init__(self, article, user, *args, **kwargs):

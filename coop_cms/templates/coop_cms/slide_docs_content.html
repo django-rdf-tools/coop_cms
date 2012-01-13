@@ -3,7 +3,7 @@
 <div class="library-items library-docs">
   {% autopaginate documents 20 %}  
   {% for doc in documents %}
-      <a class="djaloha-document"><img src="{{ doc.get_ico_url }}" title="{{doc.name}}" rel="{{doc.file.url}}"></a>
+      <a class="djaloha-document{% if doc.is_private %} private-doc{% endif %}"><img src="{{ doc.get_ico_url }}" title="{{doc.name}}" rel="{{doc.get_download_url}}"></a>
   {% endfor %}
   {% paginate %}  
 </div>

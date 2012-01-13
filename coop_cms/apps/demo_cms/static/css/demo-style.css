@@ -326,3 +326,7 @@ Laisser tranquille , surclasser ailleurs
 .article-content-after {
     clear: left;
 }
+
+a.private-doc {
+	border: solid thin red;
+}

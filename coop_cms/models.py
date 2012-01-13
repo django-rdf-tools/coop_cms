@@ -370,15 +370,6 @@ class Link(TimeStampedModel):
         verbose_name = _(u"link")
         verbose_name_plural = _(u"links")
 
-def get_doc_folder(instance, filename):
-    try:
-        doc_root = settings.DOCUMENT_FOLDER
-    except AttributeError:
-        doc_root = 'doc'
-        
-    return u'{0}/{1}/{2}'.format(doc_root,
-        instance.created.strftime('%Y%d%m%H%M%S'), filename)
-
 def get_img_folder(instance, filename):
     try:
         img_root = settings.IMAGE_FOLDER
@@ -407,8 +398,35 @@ class Image(Media):
         return self.file.url
 
 class Document(Media):
+    def get_doc_folder(self, filename):
+        if self.is_private:
+            try:
+                doc_root = settings.DOCUMENT_FOLDER
+            except AttributeError:
+                doc_root = 'docs'
+        else:
+            try:
+                doc_root = settings.PRIVATE_DOCUMENT_FOLDER
+            except AttributeError:
+                doc_root = 'private_docs'    
+        
+        filename = os.path.basename(filename)
+        
+        return u'{0}/{1}/{2}'.format(doc_root,
+            self.created.strftime('%Y%d%m%H%M%S'), filename)
+    
     file = models.FileField(_('file'), upload_to=get_doc_folder)
+    is_private = models.BooleanField(default=False)
 
+    def can_download_doc(self, user):
+        return user.is_authenticated()
+        
+    def get_download_url(self):
+        if self.is_private:
+            return reverse('coop_cms_download_doc', args=[self.id])
+        else:
+            return self.file.url
+    
     def get_ico_url(self):
         root, ext = os.path.splitext(self.file.name)
         ext = ext[1:] #remove leading dot

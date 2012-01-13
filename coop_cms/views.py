@@ -18,6 +18,8 @@ from django.contrib.auth.decorators import login_required
 from coop_cms.settings import get_article_class, get_article_form
 from djaloha import utils as djaloha_utils
 from coop_cms.decorators import popup_redirect, popup_close, HttpResponseClosePopupAndMediaSlide
+from django.core.servers.basehttp import FileWrapper
+import mimetypes, unicodedata
 
 def get_article_template(article):
     template = article.template
@@ -188,9 +190,10 @@ def upload_doc(request):
         if form.is_valid():
             src = form.cleaned_data['doc']
             descr = form.cleaned_data['descr']
+            is_private = form.cleaned_data['is_private']
             if not descr:
                 descr = os.path.splitext(src.name)[0]
-            doc = models.Document(name=descr)
+            doc = models.Document(name=descr, is_private=is_private)
             doc.file.save(src.name, src)
             doc.save()
             
@@ -250,6 +253,24 @@ def update_logo(request, article_id):
         locals(),
         context_instance=RequestContext(request)
     )
+    
+@login_required
+def download_doc(request, doc_id):
+    doc = get_object_or_404(models.Document, id=doc_id)
+    if not request.user.has_perm('can_download_doc', doc):
+        raise PermissionDenied
+    file = doc.file
+    file.open('rb')
+    wrapper = FileWrapper(file)
+    mime_type = mimetypes.guess_type(file.name)[0]
+    if not mime_type:
+        mime_type = u'application/octet-stream'
+    response = HttpResponse(wrapper, mimetype=mime_type)
+    response['Content-Length'] = file.size
+    filename = unicodedata.normalize('NFKD', os.path.split(file.name)[1]).encode("utf8",'ignore')
+    filename = filename.replace(' ', '-')
+    response['Content-Disposition'] = 'attachment; filename={0}'.format(filename)
+    return response
     
 #navigation tree --------------------------------------------------------------
 

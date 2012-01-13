@@ -5,10 +5,14 @@ from django.contrib.auth.models import User, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.template import Template, Context
-from coop_cms.models import Link, NavNode, NavType
+from coop_cms.models import Link, NavNode, NavType, Document
 import json
 from django.core.exceptions import ValidationError
 from coop_cms.settings import get_article_class
+from model_mommy import mommy
+from django.conf import settings
+import os.path, shutil
+from django.core.files import File
 
 class NavigationTest(TestCase):
 
@@ -920,4 +924,156 @@ class TemplateTagsTest(TestCase):
         html = tpl.render(Context({'obj': link})).replace(' ', '')
         self.assertEqual(html, '')
         
+class DownloadDocTest(TestCase):
 
+    def _clean_files(self):
+        dirs = (settings.DOCUMENT_FOLDER, settings.PRIVATE_DOCUMENT_FOLDER)
+        for d in dirs:
+            try:
+                dir_name = '{0}/{1}'.format(settings.MEDIA_ROOT, d)
+                shutil.rmtree(dir_name)
+            except:
+                pass
+    
+    def setUp(self):
+        settings.DOCUMENT_FOLDER = '_unittest_docs'
+        settings.PRIVATE_DOCUMENT_FOLDER = '_unittest_private_docs'
+        self._clean_files()
+        u = User.objects.create(username='toto')
+        u.is_superuser = True
+        u.set_password('toto')
+        u.save()
+
+    def tearDown(self):
+        self._clean_files()
+        
+    def _get_file(self, file_name='unittest1.txt'):
+        full_name = os.path.normpath(os.path.dirname(__file__) + '/fixtures/' + file_name)
+        return open(full_name, 'rb')
+    
+    def test_upload_public_doc(self):
+        data = {
+            'doc': self._get_file(),
+            'is_private': False,
+            'descr': 'a test file',
+        }
+        self.assertTrue(self.client.login(username='toto', password='toto'))
+        response = self.client.post(reverse('coop_cms_upload_doc'), data=data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content, 'close_popup_and_media_slide')
+        public_docs = Document.objects.filter(is_private=False)
+        self.assertEquals(1, public_docs.count())
+        self.assertEqual(public_docs[0].name, data['descr'])
+        f = public_docs[0].file
+        f.open('rb')
+        self.assertEqual(f.read(), self._get_file().read())
+        
+    def test_upload_doc_missing_fields(self):
+        data = {
+            'is_private': False,
+        }
+        self.assertTrue(self.client.login(username='toto', password='toto'))
+        response = self.client.post(reverse('coop_cms_upload_doc'), data=data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotEqual(response.content, 'close_popup_and_media_slide')
+        self.assertEquals(0, Document.objects.all().count())
+
+    def test_upload_doc_anonymous_user(self):
+        data = {
+            'doc': self._get_file(),
+            'is_private': False,
+        }
+        response = self.client.post(reverse('coop_cms_upload_doc'), data=data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotEqual(response.content, 'close_popup_and_media_slide')
+        self.assertEquals(0, Document.objects.all().count())
+        redirect_url = response.redirect_chain[-1][0]
+        login_url = reverse('django.contrib.auth.views.login')
+        self.assertTrue(redirect_url.find(login_url)>0)
+
+        
+    def test_upload_private_doc(self):
+        data = {
+            'doc': self._get_file(),
+            'is_private': True,
+        }
+        self.assertTrue(self.client.login(username='toto', password='toto'))
+        response = self.client.post(reverse('coop_cms_upload_doc'), data=data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content, 'close_popup_and_media_slide')
+        private_docs = Document.objects.filter(is_private=True)
+        self.assertEquals(1, private_docs.count())
+        self.assertEqual(private_docs[0].name, 'unittest1')
+        f = private_docs[0].file
+        f.open('rb')
+        self.assertEqual(f.read(), self._get_file().read())
+    
+    def test_view_docs(self):
+        file1 = File(self._get_file())
+        doc1 = mommy.make_one(Document, is_private=True, file=file1)
+        file2 = File(self._get_file())
+        doc2 = mommy.make_one(Document, is_private=False, file=file2)
+        
+        self.assertTrue(self.client.login(username='toto', password='toto'))
+        response = self.client.get(reverse('coop_cms_media_documents'))
+        self.assertEqual(response.status_code, 200)
+        
+        self.assertContains(response, reverse('coop_cms_download_doc', args=[doc1.id]))
+        self.assertNotContains(response, doc1.file.url)
+        self.assertNotContains(response, reverse('coop_cms_download_doc', args=[doc2.id]))
+        self.assertContains(response, doc2.file.url)
+        
+    def test_view_docs_anonymous(self):
+        response = self.client.get(reverse('coop_cms_media_documents'), follow=True)
+        self.assertEqual(response.status_code, 200)
+        redirect_url = response.redirect_chain[-1][0]
+        login_url = reverse('django.contrib.auth.views.login')
+        self.assertTrue(redirect_url.find(login_url)>0)
+    
+    def test_download_public(self):
+        #create a public doc
+        file = File(self._get_file())
+        doc = mommy.make_one(Document, is_private=False, file=file)
+        
+        #check the url
+        private_url = reverse('coop_cms_download_doc', args=[doc.id])
+        self.assertNotEqual(doc.get_download_url(), private_url)
+        
+        #login and download
+        self.assertTrue(self.client.login(username='toto', password='toto'))
+        response = self.client.get(doc.get_download_url())
+        self.assertEqual(response.status_code, 200)
+
+        self.assertEqual(response.content, self._get_file().read())
+        
+        #logout and download
+        self.client.logout()
+        response = self.client.get(doc.get_download_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content, self._get_file().read())
+        
+    
+    def test_download_private(self):
+        #create a public doc
+        file = File(self._get_file())
+        doc = mommy.make_one(Document, is_private=True, file=file)
+        
+        #check the url
+        private_url = reverse('coop_cms_download_doc', args=[doc.id])
+        self.assertEqual(doc.get_download_url(), private_url)
+        
+        #login and download
+        self.assertTrue(self.client.login(username='toto', password='toto'))
+        response = self.client.get(doc.get_download_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertEquals(response['Content-Disposition'], "attachment; filename=unittest1.txt")
+        self.assertEquals(response['Content-Type'], "text/plain")
+        self.assertEqual(response.content, self._get_file().read())
+        
+        #logout and download
+        self.client.logout()
+        response = self.client.get(doc.get_download_url(), follow=True)
+        self.assertEqual(response.status_code, 200)
+        redirect_url = response.redirect_chain[-1][0]
+        login_url = reverse('django.contrib.auth.views.login')
+        self.assertTrue(redirect_url.find(login_url)>0)

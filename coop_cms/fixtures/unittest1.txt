@@ -1,0 +1,1 @@
+This file is used for unit-testing the download doc feature.
