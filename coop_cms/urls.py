@@ -1,11 +1,7 @@
 # -*- coding:utf-8 -*-
 from django.conf.urls.defaults import patterns, include, url
 
-urlpatterns = patterns('',
-    url(r'^djaloha/aloah-config.js', 'djaloha.views.aloha_init', name='aloha_init'),
-)
-
-urlpatterns += patterns('coop_cms.views',
+urlpatterns = patterns('coop_cms.views',
     url(r'^cms/tree/$', 'process_nav_edition', name='navigation_tree'),
     url(r'^cms/media-images/$', 'show_media', {'media_type': 'image'}, name='coop_cms_media_images'),
     url(r'^cms/media-documents/$', 'show_media', {'media_type': 'document'}, name='coop_cms_media_documents'),
