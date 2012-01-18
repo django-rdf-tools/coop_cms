@@ -5,7 +5,8 @@ from django import template
 
 register = template.Library()
 
-from coop_cms.models import Article
+from coop_cms.settings import get_article_class
+
 
 @register.tag
 def last_articles(parser, token):
@@ -27,7 +28,7 @@ class ArticleListNode(template.Node):
 
     def last_articles(self,number):
         article_list = []
-        all_articles = Article.objects.all()[:number]
+        all_articles = get_article_class().objects.all()[:number]
         for a in all_articles:
             if a.navigation_parent == None :
                 article_list.append(a)
