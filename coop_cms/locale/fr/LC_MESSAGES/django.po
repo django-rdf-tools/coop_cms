@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coop_cms\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-19 13:14+0100\n"
+"POT-Creation-Date: 2012-01-19 13:54+0100\n"
 "PO-Revision-Date: 2011-12-01 15:47+0100\n"
 "Last-Translator: Dominique Guardiola <dguardiola@quinode.fr>\n"
 "Language-Team: Apidev, Quinode <contact@quinode.fr>\n"
@@ -36,7 +36,7 @@ msgstr "Avancé"
 msgid "Publication"
 msgstr "Publication"
 
-#: .\admin.py:46 .\models.py:255
+#: .\admin.py:46 .\models.py:256
 msgid "Summary"
 msgstr "Résumé"
 
@@ -50,54 +50,56 @@ msgstr "Sélection des applications"
 
 #: .\config.py:24
 msgid "Selection applications with navigable objects"
-msgstr "Sélectionnez des applications contenant des objets à inclure dans la navigation"
+msgstr ""
+"Sélectionnez des applications contenant des objets à inclure dans la "
+"navigation"
 
 #: .\coop_bar_cfg.py:10
-msgid "Admin: Index"
-msgstr "Admin: Index"
+msgid "Administration"
+msgstr "Administration"
 
 #: .\coop_bar_cfg.py:16
-msgid "Admin: Add article"
-msgstr "Admin: Ajouter un article"
+msgid "Add article"
+msgstr "Ajouter un article"
 
 #: .\coop_bar_cfg.py:23
-msgid "Admin: Edit article"
-msgstr "Admin: Editer l'article"
+msgid "Article settings"
+msgstr "Réglages article"
 
-#: .\coop_bar_cfg.py:45
+#: .\coop_bar_cfg.py:46
 msgid "Media library"
 msgstr "Médiathèque"
 
-#: .\coop_bar_cfg.py:50
+#: .\coop_bar_cfg.py:51
 msgid "Add image"
-msgstr "Ajouter une Image"
+msgstr "Ajouter une image"
 
-#: .\coop_bar_cfg.py:55
-msgid "Add doc"
+#: .\coop_bar_cfg.py:56
+msgid "Add document"
 msgstr "Ajouter un document"
 
-#: .\coop_bar_cfg.py:62
+#: .\coop_bar_cfg.py:63
 msgid "Template"
-msgstr "Gabarit"
+msgstr "Modèle d'article"
 
-#: .\coop_bar_cfg.py:67
+#: .\coop_bar_cfg.py:68
 msgid "Save"
 msgstr "Enregistrer"
 
-#: .\coop_bar_cfg.py:73 .\templates\coop_cms\popup_base_form.html.py:25
+#: .\coop_bar_cfg.py:74 .\templates\coop_cms\popup_base_form.html.py:25
 msgid "Cancel"
 msgstr "Annuler"
 
-#: .\coop_bar_cfg.py:79
+#: .\coop_bar_cfg.py:80
 msgid "Edit"
 msgstr "Editer"
 
-#: .\coop_bar_cfg.py:85 .\templates\coop_cms\popup_publish_article.html.py:5
+#: .\coop_bar_cfg.py:86 .\templates\coop_cms\popup_publish_article.html.py:5
 msgid "Publish"
 msgstr "Publier"
 
-#: .\coop_bar_cfg.py:94
-msgid "Logout"
+#: .\coop_bar_cfg.py:95
+msgid "Log out"
 msgstr "Déconnexion"
 
 #: .\forms.py:26
@@ -216,55 +218,55 @@ msgstr "Un noeud ne peut pas être son propre enfant"
 msgid "Navigation tree"
 msgstr "Arborescence"
 
-#: .\models.py:225 .\models.py:383
+#: .\models.py:226 .\models.py:384
 msgid "name"
 msgstr "nom"
 
-#: .\models.py:237
+#: .\models.py:238
 msgid "Draft"
 msgstr "Brouillon"
 
-#: .\models.py:238
+#: .\models.py:239
 msgid "Published"
 msgstr "Publié"
 
-#: .\models.py:249
+#: .\models.py:250
 msgid "title"
 msgstr "titre"
 
-#: .\models.py:249
+#: .\models.py:250
 msgid "Page title"
 msgstr "Titre de la page"
 
-#: .\models.py:250 .\models.py:440
+#: .\models.py:251 .\models.py:441
 msgid "content"
 msgstr "contenu"
 
-#: .\models.py:250
+#: .\models.py:251
 msgid "Page content"
 msgstr "Contenu de la page"
 
-#: .\models.py:251
+#: .\models.py:252
 msgid "publication"
 msgstr "publication"
 
-#: .\models.py:252
+#: .\models.py:253
 msgid "template"
-msgstr "gabarit"
+msgstr "modèle"
 
-#: .\models.py:256
+#: .\models.py:257
 msgid "Section"
 msgstr "Catégorie"
 
-#: .\models.py:280
+#: .\models.py:281
 msgid "article"
 msgstr "article"
 
-#: .\models.py:281
+#: .\models.py:282
 msgid "articles"
 msgstr "articles"
 
-#: .\models.py:313
+#: .\models.py:314
 msgid ""
 "set the parent in navigation. WARNING: delete other nodes pointing to this "
 "object"
@@ -272,25 +274,25 @@ msgstr ""
 "définit le noeud parant. Attention : efface les noeuds pointant vers cet "
 "objet"
 
-#: .\models.py:370
+#: .\models.py:371
 msgid "link"
 msgstr "lien"
 
-#: .\models.py:371
+#: .\models.py:372
 msgid "links"
 msgstr "liens"
 
-#: .\models.py:392 .\models.py:418
+#: .\models.py:393 .\models.py:419
 msgid "file"
 msgstr "fichier"
 
-#: .\models.py:439
+#: .\models.py:440
 msgid "identifier"
-msgstr "identifiant"
+msgstr "identifier"
 
 #: .\views.py:79
 msgid "The article has been saved properly"
-msgstr "L'article a été enregistré"
+msgstr "L'article a été enregistré avec succès"
 
 #: .\views.py:300
 msgid "Node content loaded."
@@ -409,11 +411,11 @@ msgstr "Ok"
 
 #: .\templates\coop_cms\popup_change_template.html.py:3
 msgid "Change the article template"
-msgstr "Changer le gabarit de l'article"
+msgstr "Changer de modèle de page"
 
 #: .\templates\coop_cms\popup_publish_article.html.py:3
 msgid "Do you want to publish this article?"
-msgstr "Voulez-vous publier cet article"
+msgstr "Voulez-vous publier cet article ?"
 
 #: .\templates\coop_cms\popup_update_logo.html.py:3
 msgid "Change article logo"
@@ -474,14 +476,14 @@ msgstr "navigation_children requiert un objet en argument"
 msgid "navigation_siblings requires object as argument"
 msgstr "navigation_siblings requiert un objet en argument"
 
-#~ msgid "Admin"
-#~ msgstr "Admin"
+#~ msgid "Admin: Index"
+#~ msgstr "Admin: Index"
 
-#~ msgid "Edit draft"
-#~ msgstr "Editer le brouillon"
+#~ msgid "Admin: Add article"
+#~ msgstr "Admin: Ajouter un article"
 
-#~ msgid "Edition"
-#~ msgstr "Edition"
+#~ msgid "Admin: Edit article"
+#~ msgstr "Admin: Editer l'article"
 
-#~ msgid "Last articles"
-#~ msgstr "Derniers articles"
+#~ msgid "ESC for closing"
+#~ msgstr "ESC pour ferme"

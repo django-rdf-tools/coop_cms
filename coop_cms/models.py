@@ -215,10 +215,11 @@ class NavTree(models.Model):
 
 content_cleaner = html_cleaner.HTMLCleaner(
     allow_tags=['a', 'img', 'p', 'br', 'b', 'i', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-        'sup', 'pre', 'ul', 'li', 'ol', 'table', 'th', 'tr', 'td', 'tbody', 'span', 'div'],
+        'sup', 'pre', 'ul', 'li', 'ol', 'table', 'th', 'tr', 'td', 'tbody', 'span', 'div',
+        'strong','u','dd','dt','dl','hr','em','font'],
     allow_attrs_for_tag={'a': ['href', 'target'], 'img': ['src', 'alt']}
 )
-title_cleaner = html_cleaner.HTMLCleaner(allow_tags=['br'])
+title_cleaner = html_cleaner.HTMLCleaner(allow_tags=['br','span','em','i','strong','b','font','u'])
 
     
 class ArticleSection(models.Model):

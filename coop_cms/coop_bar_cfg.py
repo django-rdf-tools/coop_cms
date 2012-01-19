@@ -7,20 +7,20 @@ from coop_cms.settings import get_article_class
 
 def django_admin(request, context):
     if request.user.is_staff:
-        return u'<a class="alert_on_click" href="{0}">{1}</a>'.format(reverse("admin:index"), _('Admin: Index'))
+        return u'<a class="alert_on_click" href="{0}">{1}</a>'.format(reverse("admin:index"), _('Administration'))
 
 def django_admin_add_article(request, context):
     if request.user.is_staff:
         article_class = get_article_class()
         view_name = 'admin:%s_%s_add' % (article_class._meta.app_label,  article_class._meta.module_name)
-        return u'<a class="alert_on_click" href="{0}">{1}</a>'.format(reverse(view_name), _('Admin: Add article'))
+        return u'<a class="alert_on_click" href="{0}">{1}</a>'.format(reverse(view_name), _('Add article'))
         
 def django_admin_edit_article(request, context):
     if request.user.is_staff and 'article' in context:
         article_class = get_article_class()
         article = context['article']
         view_name = 'admin:%s_%s_change' % (article_class._meta.app_label,  article_class._meta.module_name)
-        return u'<a class="alert_on_click" href="{0}">{1}</a>'.format(reverse(view_name, args=[article.id]), _('Admin: Edit article'))
+        return u'<a class="alert_on_click" href="{0}">{1}</a>'.format(reverse(view_name, args=[article.id]), _('Article settings'))
 
 def can_do(perm):
     def inner_decorator(func):
@@ -39,6 +39,7 @@ def can_do(perm):
 can_edit = can_do('can_edit_article')
 can_publish = can_do('can_publish_article')
 
+
 @can_edit
 def cms_media_library(request, context):
     if context['edit_mode']:
@@ -52,7 +53,7 @@ def cms_upload_image(request, context):
 @can_edit    
 def cms_upload_doc(request, context):
     if context['edit_mode']:
-        return u'<a href="{0}" class="coopbar_addfile colorbox-form">{1}</a>'.format(reverse('coop_cms_upload_doc'), _('Add doc'))
+        return u'<a href="{0}" class="coopbar_addfile colorbox-form">{1}</a>'.format(reverse('coop_cms_upload_doc'), _('Add document'))
 
 @can_edit    
 def cms_change_template(request, context):
@@ -91,7 +92,7 @@ def cms_extra_js(request, context):
 
 def log_out(request, context):
     if request.user.is_authenticated():
-        return u'<a class="alert_on_click" href="{0}">{1}</a>'.format(reverse("django.contrib.auth.views.logout"), _('Logout'))
+        return u'<a class="alert_on_click" href="{0}">{1}</a>'.format(reverse("django.contrib.auth.views.logout"), _('Log out'))
 
 def load_commands(coop_bar):
     coop_bar.register_command(log_out)
