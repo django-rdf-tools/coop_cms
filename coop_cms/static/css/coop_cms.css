@@ -1,0 +1,20 @@
+ul.messages {
+	list-style: none;
+	border: #ccc solid 3px;
+	width: 900px;
+	position: absolute;
+	top: 5px;
+	background: #fff;
+}
+
+ul.messages li {
+	font-weight: bolder;
+}
+
+ul.messages li.success {
+	color: #af5;
+}
+
+ul.messages li.error {
+	color: #f55;
+}

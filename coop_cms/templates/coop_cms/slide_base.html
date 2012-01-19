@@ -3,20 +3,23 @@
   <head>
     <style>
       .library{
-        background: #dfdfdf;
+        background: #eee;
         margin: auto;
         text-align: center;
         height: 100%;
         font-size: small;
         font-family: 'calibri';
+        border-right: solid thin #777;
       }
-      .slide-user-info {
-        width: 100%;
-        background: #eee;
-        border: solid thin #ccc;
-        font-size: medium;
-        font-weight: bold;
+      .close-slider a{
+        float: right;
+        background: url("{{STATIC_URL}}css/images/controls.png") no-repeat scroll -25px 0 transparent;
+        height: 25px;
+        width: 25px;
+        margin-right: 1px;
+        margin-top: 1px;
       }
+      
       .library h3 {
         color: #000;
       }
@@ -29,6 +32,15 @@
       a.disabled {
         color: #000;
         text-decoration: none;
+      }
+      .media-selector {
+        background: #ccc;
+        font-size: 1.1em;
+        height: 25px;
+        padding-top: 2px;
+      }
+      .media-selector, .media-selector a, .media-selector a:hover{
+        color: #949494;
       }
     </style>
     <script>
@@ -64,6 +76,7 @@
         });
         return false;
       });
+      //$(".slide-user-info").click(function() {alert('close'); });
       //$(".media-selector a.img-sel").bind('click', function() {return false});
       {% if not is_ajax %}enable_selector('{{media_type}}');{% endif %}
     });
@@ -74,7 +87,7 @@
       {% include media_slide_template %}
     {% else %}
       <div class="library">
-        <div class="slide-user-info">{% trans "ESC for closing" %}</div>
+        <div class="close-slider"><a href="javascript:$.fn.pageSlideClose();"></a></div>
         <div class="media-selector">
           {% url coop_cms_media_images as images_url %}
           {% url coop_cms_media_documents as docs_url %}

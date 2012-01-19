@@ -95,13 +95,14 @@ article_form_template = """
 
 class SafeWrapper:
     
-    def __init__(self, wrapped):
+    def __init__(self, wrapped, logo_size=None):
         self._wrapped = wrapped
+        self._logo_size = logo_size
     
     def __getattr__(self, field):
         value = getattr(self._wrapped, field)
         if field=='logo':
-            src = getattr(self._wrapped, 'logo_thumbnail')()
+            src = getattr(self._wrapped, 'logo_thumbnail')(False, self._logo_size)
             if src:
                 value = u'<img class="article-logo" src="{0}">'.format(src.url)
             else:
@@ -110,10 +111,12 @@ class SafeWrapper:
 
 class FormWrapper:
     
-    def __init__(self, form):
+    def __init__(self, form, logo_size=None):
         self._form = form
+        if logo_size:
+            self._form.set_logo_size(logo_size)
     
-    def __getitem__(self, field):
+    def __getitem__(self, field, logo_size=None):
         if field in self._form.fields.keys():
             t = template.Template("""
                     {%% with form.%s.errors as errs %%}{%% include "coop_cms/_form_error.html" %%}{%% endwith %%}{{form.%s}}
@@ -122,8 +125,9 @@ class FormWrapper:
 
 class ArticleNode(template.Node):
     
-    def __init__(self, nodelist_article):
+    def __init__(self, nodelist_article, logo_size=None):
         self.nodelist_article = nodelist_article
+        self._logo_size = logo_size
         
     def __iter__(self):
         for node in self.nodelist_article:
@@ -140,17 +144,21 @@ class ArticleNode(template.Node):
         
         if coop_cms_article_form:
             t = template.Template(article_form_template)
-            inner_context['article'] = FormWrapper(coop_cms_article_form)
+            inner_context['article'] = FormWrapper(coop_cms_article_form, logo_size=self._logo_size)
             outer_context.update(csrf(request))
-            
         else:
             t = template.Template("{{inner|safe}}")
-            inner_context['article'] = SafeWrapper(article)
+            inner_context['article'] = SafeWrapper(article, logo_size=self._logo_size)
         outer_context['inner'] = self.nodelist_article.render(template.Context(inner_context))
         return t.render(template.Context(outer_context))
 
 @register.tag
 def article(parser, token):
+    args = token.split_contents()[1:]
+    data = {}
+    for arg in args:
+        k, v = arg.split('=')
+        data[k] = v
     nodelist_article = parser.parse(('endarticle',))
     token = parser.next_token()
-    return ArticleNode(nodelist_article)
+    return ArticleNode(nodelist_article, **data)

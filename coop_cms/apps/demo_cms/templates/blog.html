@@ -1,13 +1,23 @@
 {% extends "coop_cms/article.html" %}
 
+{% block extra_head %}
+{{block.super}}
+<style>
+.the-logo {
+    width: 256px;
+    height: 128px;
+}
+</style>
+{% endblock %}
+
 {% load i18n coop_edition %}
 
 {% block document %}
     {% block article %}
-    {% article %}
+    {% article logo_size=256x128 %}
         {% block rightcol %}
         <div class="rightcol">
-            {% coop_piece_of_html "hello" %}
+            {% coop_piece_of_html "blog" %}
         </div>
         {% endblock %}
         <div class="article">

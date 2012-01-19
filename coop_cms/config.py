@@ -20,8 +20,8 @@ COOPTREE_MAPPING = ConfigurationGroup('coop_cms', _('Navigation'))
 config_register(MultipleStringValue(
     COOPTREE_MAPPING,
     'CONTENT_APPS',
-    description=_("Selection des applications"),
-    help_text=_("Selectionnez des applications contenant des objets navigables"),
+    description=_("Applications selection"),
+    help_text=_("Selection applications with navigable objects"),
     choices=all_apps,
     default=""
 ))

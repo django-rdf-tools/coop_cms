@@ -1,0 +1,15 @@
+{% load i18n %}
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+<script>
+$(function () {
+	setTimeout(function() {
+		$(".messages").hide("slow");
+	}, 2000);
+})
+</script>
+{% endif %}

@@ -327,6 +327,6 @@ Laisser tranquille , surclasser ailleurs
     clear: left;
 }
 
-a.private-doc {
+a.private-doc img{
 	border: solid thin red;
 }

@@ -252,12 +252,12 @@ class BaseArticle(TimeStampedModel):
     template = models.CharField(_(u'template'), max_length=200, default='', blank=True)
     logo = models.ImageField(upload_to=get_logo_folder, blank=True, null=True, default='')
     temp_logo = models.ImageField(upload_to=get_logo_folder, blank=True, null=True, default='')
-    summary = models.TextField(blank=True, default='')
-    section = models.ForeignKey(ArticleSection, blank=True, null=True, default=None, related_name="%(app_label)s_%(class)s_rel")
+    summary = models.TextField(_(u'Summary'), blank=True, default='')
+    section = models.ForeignKey(ArticleSection, verbose_name=_(u'Section'), blank=True, null=True, default=None, related_name="%(app_label)s_%(class)s_rel")
 
-    def logo_thumbnail(self, temp=False):
+    def logo_thumbnail(self, temp=False, logo_size=None):
         logo = self.temp_logo if (temp and self.temp_logo) else self.logo
-        size = get_article_logo_size(self)
+        size = logo_size or get_article_logo_size(self)
         if logo:
             file = logo.file
         else:

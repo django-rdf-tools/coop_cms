@@ -1,7 +1,6 @@
 {% load i18n %}
 <script type="text/javascript">
-
-$(function(){
+$(document).ready(function(){
 	{% if edit_mode %}
     $("#coop-bar a.slide").pageSlide({width:'350px', direction:'right'});
 	{% endif %}
@@ -29,11 +28,18 @@ $(function(){
         });
         return false;
     });
-
-	{% if article and draft and edit_mode %}
+	
+	{% if article and edit_mode %}
 	var toggle_save = function() {
-		$(".edited").show();
+	    if (!$(".edited").is(":visible")) {
+			$(".edited").show();
+			$("a.alert_on_click").bind('click', function(event) {
+				return confirm("{% trans 'Your modifications are not saved and will be lost. Continue?' %}");
+			});
+		}
+		{% if draft %}
 		$(".publish").hide();
+		{% endif %}
 	}
 	$(".edited").hide();
 	GENTICS.Aloha.EventRegistry.subscribe(GENTICS.Aloha, "editableDeactivated",

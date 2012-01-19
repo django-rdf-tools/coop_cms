@@ -7,20 +7,20 @@ from coop_cms.settings import get_article_class
 
 def django_admin(request, context):
     if request.user.is_staff:
-        return u'<a href="{0}">{1}</a>'.format(reverse("admin:index"), _('Admin: Index'))
+        return u'<a class="alert_on_click" href="{0}">{1}</a>'.format(reverse("admin:index"), _('Admin: Index'))
 
 def django_admin_add_article(request, context):
     if request.user.is_staff:
         article_class = get_article_class()
         view_name = 'admin:%s_%s_add' % (article_class._meta.app_label,  article_class._meta.module_name)
-        return u'<a href="{0}">{1}</a>'.format(reverse(view_name), _('Admin: Add article'))
+        return u'<a class="alert_on_click" href="{0}">{1}</a>'.format(reverse(view_name), _('Admin: Add article'))
         
 def django_admin_edit_article(request, context):
     if request.user.is_staff and 'article' in context:
         article_class = get_article_class()
         article = context['article']
         view_name = 'admin:%s_%s_change' % (article_class._meta.app_label,  article_class._meta.module_name)
-        return u'<a href="{0}">{1}</a>'.format(reverse(view_name, args=[article.id]), _('Admin: Edit article'))
+        return u'<a class="alert_on_click" href="{0}">{1}</a>'.format(reverse(view_name, args=[article.id]), _('Admin: Edit article'))
 
 def can_do(perm):
     def inner_decorator(func):
@@ -59,7 +59,7 @@ def cms_change_template(request, context):
     if context['edit_mode']:
         article = context['article']
         url = reverse('coop_cms_change_template', args=[article.id])
-        return u'<a class="colorbox-form" href="{0}">{1}</a>'.format(url, _('Template'))
+        return u'<a class="alert_on_click colorbox-form" href="{0}">{1}</a>'.format(url, _('Template'))
 
 @can_edit
 def cms_save(request, context):
@@ -70,7 +70,7 @@ def cms_save(request, context):
 def cms_cancel(request, context):
     if context['edit_mode']:
         article = context['article']
-        return u'<a href="{0}">{1}</a>'.format(article.get_cancel_url(), _('Cancel'))
+        return u'<a class="alert_on_click" href="{0}">{1}</a>'.format(article.get_cancel_url(), _('Cancel'))
 
 @can_edit
 def cms_edit(request, context):
@@ -89,31 +89,27 @@ def cms_extra_js(request, context):
     t = get_template("coop_cms/_coop_bar_js.html")
     return t.render(context)
 
-#def sep(request, context):
-#    return '<div style="height: 8px;"></div>'
-
 def log_out(request, context):
     if request.user.is_authenticated():
-        return u'<a href="{0}">{1}</a>'.format(reverse("django.contrib.auth.views.logout"), _('Logout'))
-
+        return u'<a class="alert_on_click" href="{0}">{1}</a>'.format(reverse("django.contrib.auth.views.logout"), _('Logout'))
 
 def load_commands(coop_bar):
+    coop_bar.register_command(log_out)
+    coop_bar.register_separator()
     coop_bar.register_command(django_admin)
     coop_bar.register_command(django_admin_add_article)
     coop_bar.register_command(django_admin_edit_article)
-    coop_bar.register_separator()
-    coop_bar.register_command(cms_edit)
-    coop_bar.register_separator()
-    coop_bar.register_command(cms_save)
-    coop_bar.register_command(cms_publish)
-    coop_bar.register_command(cms_cancel)
-    coop_bar.register_separator()
-    coop_bar.register_command(cms_change_template)
     coop_bar.register_separator()
     coop_bar.register_command(cms_media_library)
     coop_bar.register_command(cms_upload_image)
     coop_bar.register_command(cms_upload_doc)
     coop_bar.register_separator()
-    coop_bar.register_command(log_out)
-    coop_bar.register_command(cms_extra_js)
+    coop_bar.register_command(cms_edit)
+    coop_bar.register_separator()
+    coop_bar.register_command(cms_change_template)
+    coop_bar.register_separator()
+    coop_bar.register_command(cms_save)
+    coop_bar.register_command(cms_publish)
+    coop_bar.register_command(cms_cancel)
     
+    coop_bar.register_header(cms_extra_js)

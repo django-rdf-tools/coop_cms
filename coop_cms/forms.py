@@ -34,9 +34,7 @@ class ArticleForm(floppyforms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ArticleForm, self).__init__(*args, **kwargs)
         self.article = kwargs.get('instance', None)
-        update_url = reverse('coop_cms_update_logo', args=[self.article.id])
-        thumbnail_src = self.logo_thumbnail()
-        self.fields['logo'].widget = ImageEdit(update_url, thumbnail_src.url if thumbnail_src else '')
+        self.set_logo_size()
 
     class Meta:
         model = get_article_class()
@@ -46,9 +44,14 @@ class ArticleForm(floppyforms.ModelForm):
             'content': AlohaInput(),
         }
         
-    def logo_thumbnail(self):
+    def set_logo_size(self, logo_size=None):
+        thumbnail_src = self.logo_thumbnail(logo_size)
+        update_url = reverse('coop_cms_update_logo', args=[self.article.id])
+        self.fields['logo'].widget = ImageEdit(update_url, thumbnail_src.url if thumbnail_src else '')
+        
+    def logo_thumbnail(self, logo_size=None):
         if self.article:
-            return self.article.logo_thumbnail(True)
+            return self.article.logo_thumbnail(True, logo_size=logo_size)
 
     class Media:
         css = {

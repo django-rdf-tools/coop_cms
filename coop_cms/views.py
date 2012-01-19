@@ -12,7 +12,7 @@ from django.core.exceptions import ValidationError, PermissionDenied
 from django.template.loader import select_template
 from django.db.models.aggregates import Max
 from coop_cms import forms
-from django.contrib.messages.api import error as error_message
+from django.contrib.messages.api import success as success_message
 from coop_cms import models
 from django.contrib.auth.decorators import login_required
 from coop_cms.settings import get_article_class, get_article_form
@@ -46,6 +46,7 @@ def view_article(request, url):
 @login_required
 def edit_article(request, url):
     """edit the article"""
+    
     article_class = get_article_class()
     article_form_class = get_article_form()
     
@@ -74,7 +75,10 @@ def edit_article(request, url):
             
             if djaloha_forms:
                 [f.save() for f in djaloha_forms]
-            return HttpResponseRedirect(article.get_absolute_url())
+                
+            success_message(request, _(u'The article has been saved properly'))
+                
+            return HttpResponseRedirect(article.get_edit_url())
     else:
         form = article_form_class(instance=article)
     
@@ -219,7 +223,7 @@ def change_template(request, article_id):
         if form.is_valid():
             article.template = form.cleaned_data['template']
             article.save()
-            return HttpResponseRedirect(article.get_absolute_url())
+            return HttpResponseRedirect(article.get_edit_url())
     else:
         form = forms.ArticleTemplateForm(article, request.user)
     
