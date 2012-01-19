@@ -28,13 +28,27 @@ setup(
     author='Luc Jean',
     author_email='ljean@apidev.fr',
     license='BSD',
-    #long_description=read('README.txt'),
-    #download_url='git://github.com/quinode/coop_cms.git',
     zip_safe=False,
     install_requires = ['Django==1.3.1',
                         'django-floppyforms==0.4.7',
                         'django-livesettings==1.4-7',
                         'sorl-thumbnail==11.09',
                         ],
+    long_description = open('README.rst').read(),
+    download_url = "https://github.com/quinode/coop_cms/tarball/master",
+    classifiers = [
+        'Development Status :: 4 - Beta',
+        'Environment :: Web Environment',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: BSD License',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python',
+        'Framework :: Django',
+        'Natural Language :: English',
+        'Natural Language :: French',
+        'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
+        'Topic :: Internet :: WWW/HTTP :: WSGI :: Application',
+    ]                    
+
 )
 
