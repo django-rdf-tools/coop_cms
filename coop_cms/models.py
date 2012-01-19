@@ -219,7 +219,7 @@ content_cleaner = html_cleaner.HTMLCleaner(
         'strong','u','dd','dt','dl','hr','em','font'],
     allow_attrs_for_tag={'a': ['href', 'target'], 'img': ['src', 'alt']}
 )
-title_cleaner = html_cleaner.HTMLCleaner(allow_tags=['br'])
+title_cleaner = html_cleaner.HTMLCleaner(allow_tags=['br','span','em','i','strong','b','font','u'])
 
     
 class ArticleSection(models.Model):
