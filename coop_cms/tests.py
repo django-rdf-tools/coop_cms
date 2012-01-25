@@ -635,6 +635,16 @@ class NavigationParentTest(TestCase):
         ct = ContentType.objects.get_for_model(get_article_class())
         self.assertRaises(NavNode.DoesNotExist, NavNode.objects.get, content_type=ct, object_id=art1.id)
         
+    def test_remove_from_navigation_twice(self):
+        art1 = get_article_class().objects.create(title='toto', content='oups')
+        node1 = NavNode.objects.create(label=art1.title, content_object=art1, ordering=1, parent=None)
+        art1.navigation_parent = None
+        ct = ContentType.objects.get_for_model(get_article_class())
+        self.assertRaises(NavNode.DoesNotExist, NavNode.objects.get, content_type=ct, object_id=art1.id)
+        art1.navigation_parent = None
+        ct = ContentType.objects.get_for_model(get_article_class())
+        self.assertRaises(NavNode.DoesNotExist, NavNode.objects.get, content_type=ct, object_id=art1.id)
+        
     def test_get_navigation_parent(self):
         art1 = get_article_class().objects.create(title='toto', content='oups')
         node1 = NavNode.objects.create(label=art1.title, content_object=art1, ordering=1, parent=None)
