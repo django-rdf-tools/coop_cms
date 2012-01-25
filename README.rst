@@ -1,9 +1,5 @@
 Coop-cms, a really pluggable CMS
 ===============================================
-
-
-Quick Start, Docs, Contributing
--------------------------------
 * `Yet another CMS ?`_
 * `Quick start`_
 
@@ -24,6 +20,7 @@ Coop-cms has some sister apps to make it more usable:
 
 * `coop_bar <https://github.com/quinode/coop-bar/>`_, an extensible toolbar (same concept : any app you create can add links in the toolbar)
 * `djaloha <https://github.com/quinode/djaloha/>`_, a great in-site editor based on `Aloha Editor <http://aloha-editor.org/>`_
+* rss-sync, a RSS syndication module that will import new articles from your defined RSS sources right in the django admin.
 
 
 .. _quick-start:
@@ -45,5 +42,6 @@ The ``apps```folder contains two example projects of how coop-cms can be used.
 License
 =======
 
-coop_cm uses the same license as Django (BSD).
+coop-cms uses the same license as Django (BSD).
 
+coop-cms development was funded by `CREDIS <http://credis.org/>`_, FSE (European Social Fund) and Conseil Régional d'Auvergne.

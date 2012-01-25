@@ -35,7 +35,8 @@ setup(
                         'sorl-thumbnail==11.09',
                         ],
     long_description = open('README.rst').read(),
-    download_url = "https://github.com/quinode/coop_cms/tarball/master",
+    url = 'https://github.com/quinode/coop_cms/',
+    download_url = 'https://github.com/quinode/coop_cms/tarball/master',
     classifiers = [
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',

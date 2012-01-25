@@ -216,7 +216,8 @@ class NavTree(models.Model):
 content_cleaner = html_cleaner.HTMLCleaner(
     allow_tags=['a', 'img', 'p', 'br', 'b', 'i', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
         'sup', 'pre', 'ul', 'li', 'ol', 'table', 'th', 'tr', 'td', 'tbody', 'span', 'div',
-        'strong','u','dd','dt','dl','hr','em','font'],
+        'strong','u','dd','dt','dl','hr','em','font','iframe'],
+        #iframe is a security risk but needed until we find how to integrate oembed
     allow_attrs_for_tag={'a': ['href', 'target'], 'img': ['src', 'alt']}
 )
 title_cleaner = html_cleaner.HTMLCleaner(allow_tags=['br','span','em','i','strong','b','font','u'])
