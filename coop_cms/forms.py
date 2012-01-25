@@ -97,6 +97,9 @@ class ArticleAdminForm(forms.ModelForm):
         )
         if self.article:
             self.initial['navigation_parent'] = self.article.navigation_parent
+        templates = get_article_templates(self.article, self.current_user)
+        if templates:
+            self.fields['template'].widget = forms.Select(choices=templates)
     
     def clean_navigation_parent(self):
         parent_id = self.cleaned_data['navigation_parent']

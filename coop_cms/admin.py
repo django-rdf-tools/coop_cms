@@ -46,6 +46,10 @@ class ArticleAdmin(admin.ModelAdmin):
         (_('Summary'), {'fields': ('summary',)}),
         (_('Debug'), {'fields': ('temp_logo',)}),
     )
+    def get_form(self, request, obj=None, **kwargs):
+        form = super(ArticleAdmin, self).get_form(request, obj, **kwargs)
+        form.current_user = request.user
+        return form
 admin.site.register(get_article_class(), ArticleAdmin)
 
 admin.site.register(models.Link)
