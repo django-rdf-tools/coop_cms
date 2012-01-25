@@ -49,7 +49,7 @@ setup(
         'Natural Language :: French',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
         'Topic :: Internet :: WWW/HTTP :: WSGI :: Application',
-    ]                    
+    ],
 
 )
 
