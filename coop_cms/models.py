@@ -296,19 +296,22 @@ class BaseArticle(TimeStampedModel):
     def _set_navigation_parent(self, value):
         ct = ContentType.objects.get_for_model(get_article_class())
         already_in_navigation = self.id and NavNode.objects.filter(content_type=ct, object_id=self.id)
-        if not already_in_navigation:
+        if value != None and not already_in_navigation:
             create_navigation_node(ct, self, value)
         else:
-            node = NavNode.objects.get(content_type=ct, object_id=self.id)
-            if value == None:
-                node.delete()
-            else:
-                node.parent = NavNode.objects.get(id=value) if value else None
-                if node.parent:
-                    #raise ValidationError if new parent is not valid
-                    node.check_new_navigation_parent(node.parent.id)
-                set_node_ordering(node, node.parent.id if node.parent else 0)
-                node.save()
+            try:
+                node = NavNode.objects.get(content_type=ct, object_id=self.id)
+                if value == None:
+                    node.delete()
+                else:
+                    node.parent = NavNode.objects.get(id=value) if value else None
+                    if node.parent:
+                        #raise ValidationError if new parent is not valid
+                        node.check_new_navigation_parent(node.parent.id)
+                    set_node_ordering(node, node.parent.id if node.parent else 0)
+                    node.save()
+            except NavNode.DoesNotExist:
+                pass
     
     navigation_parent = property(_get_navigation_parent, _set_navigation_parent,
         doc=_("set the parent in navigation. WARNING: delete other nodes pointing to this object"))
