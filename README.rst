@@ -44,4 +44,4 @@ License
 
 coop-cms uses the same license as Django (BSD).
 
-coop-cms development was funded by `CREDIS <http://credis.org/>`_, FSE (European Social Fund) and Conseil Régional d'Auvergne.
+coop-cms development was funded by `CREDIS <http://credis.org/>`_, FSE (European Social Fund) and Conseil Regional d'Auvergne.
