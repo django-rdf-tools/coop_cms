@@ -53,17 +53,28 @@ def get_article_form():
     return article_form
 
 def get_article_templates(article, user):
-    try:
-        full_class_name = getattr(settings, 'COOP_CMS_ARTICLE_TEMPLATES')
-        module_name, object_name = full_class_name.rsplit('.', 1)
-        module = import_module(module_name)
-        article_templates_object = getattr(module, object_name)
-        if callable(article_templates_object):
-            article_templates = article_templates_object(article, user)
+    if hasattr(settings, 'COOP_CMS_ARTICLE_TEMPLATES'):
+        coop_cms_article_templates = getattr(settings, 'COOP_CMS_ARTICLE_TEMPLATES')
+        
+        if type(coop_cms_article_templates) in (str, unicode):
+            #COOP_CMS_ARTICLE_TEMPLATES is a string :
+            # - a function name that will return a tuple
+            # - a variable name taht contains a tuple
+            
+            #extract module and function/var names
+            module_name, object_name = coop_cms_article_templates.rsplit('.', 1)
+            module = import_module(module_name) #import module
+            article_templates_object = getattr(module, object_name) #get the object
+            if callable(article_templates_object):
+                #function: call it
+                article_templates = article_templates_object(article, user)
+            else:
+                #var: assign
+                article_templates = article_templates_object
         else:
-            article_templates = article_templates_object
-    
-    except AttributeError:
+            #COOP_CMS_ARTICLE_TEMPLATES is directly a tuple, assign it
+            article_templates = coop_cms_article_templates
+    else:
         article_templates = None
     
     return article_templates
