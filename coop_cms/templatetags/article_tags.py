@@ -28,7 +28,7 @@ class ArticleListNode(template.Node):
 
     def last_articles(self,number):
         article_list = []
-        all_articles = get_article_class().objects.all()[:number]
+        all_articles = get_article_class().objects.all().order_by('-created')[:number]
         for a in all_articles:
             if a.navigation_parent == None :
                 article_list.append(a)

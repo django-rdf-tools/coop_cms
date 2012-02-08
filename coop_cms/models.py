@@ -216,7 +216,8 @@ class NavTree(models.Model):
 content_cleaner = html_cleaner.HTMLCleaner(
     allow_tags=['a', 'img', 'p', 'br', 'b', 'i', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
         'sup', 'pre', 'ul', 'li', 'ol', 'table', 'th', 'tr', 'td', 'tbody', 'span', 'div',
-        'strong','u','dd','dt','dl','hr','em','font'],
+        'strong','u','dd','dt','dl','hr','em','font','iframe','object','param','embed'],
+        #iframe is a security risk but needed until we find how to integrate oembed
     allow_attrs_for_tag={'a': ['href', 'target'], 'img': ['src', 'alt']}
 )
 title_cleaner = html_cleaner.HTMLCleaner(allow_tags=['br','span','em','i','strong','b','font','u'])
@@ -248,7 +249,8 @@ class BaseArticle(TimeStampedModel):
     
     slug = AutoSlugField(populate_from='title', max_length=100, unique=True)
     title = HTMLField(title_cleaner, verbose_name=_(u'title'), default=_('Page title'))
-    content = HTMLField(content_cleaner, verbose_name=_(u'content'), default=_('Page content'))
+    #content = HTMLField(content_cleaner, verbose_name=_(u'content'), default=_('Page content'))
+    content = models.TextField(_(u'content'), default=_('Page content'))
     publication = models.IntegerField(_(u'publication'), choices=PUBLICATION_STATUS, default=DRAFT)
     template = models.CharField(_(u'template'), max_length=200, default='', blank=True)
     logo = models.ImageField(upload_to=get_logo_folder, blank=True, null=True, default='')
