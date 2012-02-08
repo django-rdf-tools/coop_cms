@@ -1,0 +1,5 @@
+{% if node.has_children %}
+<a class="dropdown-toogle" href="{{node.get_absolute_url}}">{{node.label}}</a>
+{% else %}
+<a href="{{node.get_absolute_url}}">{{node.label}}</a>
+{% endif %}

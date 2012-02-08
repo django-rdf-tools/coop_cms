@@ -1,5 +1,5 @@
 from django import forms
-from coop_cms.models import NavType, NavNode
+from coop_cms.models import NavType, NavNode, Newsletter
 from django.contrib.contenttypes.models import ContentType
 from settings import get_navigable_content_types
 from django.core.exceptions import ValidationError
@@ -8,7 +8,7 @@ from djaloha.widgets import AlohaInput
 import floppyforms
 import re
 from django.conf import settings
-from coop_cms.settings import get_article_class, get_article_templates
+from coop_cms.settings import get_article_class, get_article_templates, get_newsletter_templates
 from coop_cms.widgets import ImageEdit
 from django.core.urlresolvers import reverse
 from coop_cms.utils import dehtml
@@ -57,7 +57,7 @@ class ArticleForm(floppyforms.ModelForm):
         css = {
             'all': ('css/colorbox.css',),
         }
-        js = ('js/jquery.form.js', 'js/jquery.pageslide.js', 'js/jquery.colorbox-min.js')
+        js = ('js/jquery.form.js', 'js/jquery.pageslide.js', 'js/jquery.colorbox-min.js', 'js/colorbox.coop.js')
 
     def clean_title(self):
         title = self.cleaned_data['title'].strip()
@@ -82,6 +82,21 @@ def get_node_choices():
 
 def get_navigation_parent_help_text():
     return get_article_class().navigation_parent.__doc__
+
+class NewsletterItemAdminForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(NewsletterItemAdminForm, self).__init__(*args, **kwargs)
+        self.item = kwargs.get('instance', None)
+        article_choices = [(a.id, unicode(a)) for a in get_article_class().objects.all()]
+        self.fields['object_id'] = forms.ChoiceField(
+           choices=article_choices, required=True, help_text=_(u"Select an article")
+        )
+        self.fields['content_type'].required = False
+        self.fields['content_type'].widget = forms.HiddenInput()
+        
+    def clean_content_type(self):
+        return ContentType.objects.get_for_model(get_article_class())
+        
 
 class ArticleAdminForm(forms.ModelForm):
     
@@ -180,3 +195,27 @@ class PublishArticleForm(forms.ModelForm):
         
             
         
+class NewsletterForm(floppyforms.ModelForm):
+    
+    class Meta:
+        model = Newsletter
+        fields = ('content',)
+        widgets = {
+            'content': AlohaInput(),
+        }
+        
+    class Media:
+        css = {
+            'all': ('css/colorbox.css',),
+        }
+        js = ('js/jquery.form.js', 'js/jquery.pageslide.js', 'js/jquery.colorbox-min.js', 'js/colorbox.coop.js')
+
+class NewsletterTemplateForm(forms.Form):
+    def __init__(self, newsletter, user, *args, **kwargs):
+        super(NewsletterTemplateForm, self).__init__(*args, **kwargs)
+        choices = get_newsletter_templates(newsletter, user)
+        if choices:
+            self.fields["template"] = forms.ChoiceField(choices=choices)
+        else:
+            self.fields["template"] = forms.CharField()
+        self.fields["template"].initial = newsletter.template

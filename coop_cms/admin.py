@@ -2,7 +2,7 @@
 from django.contrib import admin
 from django.core.urlresolvers import reverse
 import models
-from forms import NavTypeForm, ArticleAdminForm
+from forms import NavTypeForm, ArticleAdminForm, NewsletterItemAdminForm
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
 from coop_cms.settings import get_article_class
@@ -56,3 +56,14 @@ admin.site.register(models.Link)
 admin.site.register(models.Document)
 admin.site.register(models.Image)
 admin.site.register(models.PieceOfHtml)
+
+
+class NewsletterItemAdmin(admin.ModelAdmin):
+    form = NewsletterItemAdminForm
+    list_display = ['content_object']
+    fieldsets = (
+        (_('Article'), {'fields': ('object_id', 'content_type')}),
+    )
+
+admin.site.register(models.NewsletterItem, NewsletterItemAdmin)
+admin.site.register(models.Newsletter)

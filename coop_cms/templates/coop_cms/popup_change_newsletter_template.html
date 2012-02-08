@@ -1,0 +1,4 @@
+{% extends "colorbox/popup_form_base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Change the newsletter template" %}{% endblock %}
+{% block form_url %}{% url coop_cms_change_newsletter_template newsletter.id %}{% endblock %}

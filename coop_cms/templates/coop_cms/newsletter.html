@@ -1,0 +1,82 @@
+{% load i18n coop_edition coop_bar_tags %}
+{% if_cms_edition %}
+<!DOCYTPE HTML>
+<html>
+{% else %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="{{LANG}}" xml:lang="{{LANG}}">
+{% endif %}
+<head>
+  <meta charset="utf-8">
+  <title>{{newsletter.subject}}</title>
+  {% if_cms_edition %}
+  {% cms_form_media %}
+  {% coop_bar_headers %}
+  <script>
+    $(function(){
+        //move the form submit to the coop_bar
+        $("form#cms_form input[type='submit']").hide();
+        $('.post-form').click(function(event) {
+            $("form#cms_form").submit();    
+            event.preventDefault();
+        });
+    })
+    </script>
+  {% endif %}
+  {% if by_email %}
+    <style>
+      a.view-in-browser {
+        font-size: small;
+        background: #eee;
+        width: 100%;
+        display: block;
+        color: #777;
+        text-align: center;
+        position: absolute;
+        top: 0;
+    }
+    </style>
+  {% endif %}
+  {% block style %}
+  <style>
+    body {
+        background: #eee;
+    }
+    #newsletter {
+        width: 800px;
+        background: #fff;
+        padding: 20px 20px 20px 20px;
+        border: solid thin #ccc;
+        margin: auto;
+    }
+    .newsletter-item {
+        min-height: 128px;
+        border: solid thin #ccc;
+    }
+    .newsletter-item img {
+        float: left;
+    }
+    .newsletter-item .item-content{
+        padding-left: 135px;
+    }
+  </style>
+  {% endblock %}
+</head>
+<body>
+    {% if by_email %}
+    <a class="view-in-browser" href="{% url coop_cms_view_newsletter newsletter.id %}">{% trans "View in your browser" %}</a>
+    {% endif %}
+    <div id="newsletter">
+    {% block newsletter %}
+        {% cms_edit newsletter %}
+            <div id="content">{{ newsletter.content }}</div>
+            {% include "coop_cms/_newsletter_articles.html" %}
+        {% end_cms_edit %}
+    {% endblock %}
+    </div>
+
+{% if_cms_edition %}
+    {% include "_messages.html" %}
+    {% coop_bar %}
+{% endif %}  
+</body>

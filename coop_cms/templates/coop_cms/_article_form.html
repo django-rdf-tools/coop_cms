@@ -1,7 +1,7 @@
 {% load i18n coop_edition %}
 
-{% article %}
+{% cms_edit article %}
     <h2 id="title">{{ article.title }}</h2>
     <div id="logo">{{ article.logo }}</div>
     <div id="content">{{ article.content }}</div>
-{% endarticle %}
+{% end_cms_edit %}

@@ -2,7 +2,7 @@
 
 from django.http import HttpResponse, Http404, HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import render_to_response, get_object_or_404
-from django.template import RequestContext, Context
+from django.template import RequestContext, Context, Template
 from django.template.loader import get_template
 from django.core.urlresolvers import reverse
 import json, os.path
@@ -17,14 +17,24 @@ from coop_cms import models
 from django.contrib.auth.decorators import login_required
 from coop_cms.settings import get_article_class, get_article_form
 from djaloha import utils as djaloha_utils
-from coop_cms.decorators import popup_redirect, popup_close, HttpResponseClosePopupAndMediaSlide
 from django.core.servers.basehttp import FileWrapper
 import mimetypes, unicodedata
+from django.core.mail import get_connection, EmailMultiAlternatives
+from coop_cms.html2text import html2text
+from django.conf import settings
+from django.contrib import messages
+from colorbox.decorators import popup_redirect
 
 def get_article_template(article):
     template = article.template
     if not template:
         template = 'coop_cms/article.html'
+    return template
+
+def get_newsletter_template(newsletter):
+    template = newsletter.template
+    if not template:
+        template = 'coop_cms/newsletter.html'
     return template
 
 def view_article(request, url):
@@ -35,7 +45,9 @@ def view_article(request, url):
         raise Http404
     
     context_dict = {
-        'editable': True, 'edit_mode': False, 'article': article, 'draft': article.publication==models.BaseArticle.DRAFT}
+        'editable': True, 'edit_mode': False, 'article': article,
+        'draft': article.publication==models.BaseArticle.DRAFT
+    }
     
     return render_to_response(
         get_article_template(article),
@@ -83,7 +95,7 @@ def edit_article(request, url):
         form = article_form_class(instance=article)
     
     context_dict = {
-        'coop_cms_article_form': form, 
+        'form': form, 
         'editable': True, 'edit_mode': True, 'title': article.title,
         'draft': article.publication==models.BaseArticle.DRAFT,
         'article': article, 'ARTICLE_PUBLISHED': models.BaseArticle.PUBLISHED
@@ -177,7 +189,7 @@ def upload_image(request):
             image = models.Image(name=descr)
             image.file.save(src.name, src)
             image.save()
-            return HttpResponseClosePopupAndMediaSlide()
+            return HttpResponse("close_popup_and_media_slide")
     else:
         form = forms.AddImageForm()
     
@@ -203,7 +215,7 @@ def upload_doc(request):
             
             request.session["coop_cms_media_doc"] = True
             
-            return HttpResponseClosePopupAndMediaSlide()
+            return HttpResponse("close_popup_and_media_slide")
     else:
         form = forms.AddDocForm()
     
@@ -540,3 +552,149 @@ def process_nav_edition(request):
         return HttpResponse(json.dumps(response), mimetype='application/json')
     raise Http404
 
+@login_required
+def edit_newsletter(request, newsletter_id):
+    newsletter = get_object_or_404(models.Newsletter, id=newsletter_id)
+    
+    if not request.user.has_perm('can_edit_newsletter', newsletter):
+        raise PermissionDenied
+    
+    if request.method == "POST":
+        form = forms.NewsletterForm(request.POST, instance=newsletter)
+        
+        forms_args = djaloha_utils.extract_forms_args(request.POST)
+        djaloha_forms = djaloha_utils.make_forms(forms_args, request.POST)
+        
+        if form.is_valid() and all([f.is_valid() for f in djaloha_forms]):
+            newsletter = form.save()
+            
+            if djaloha_forms:
+                [f.save() for f in djaloha_forms]
+                
+            success_message(request, _(u'The newsletter has been saved properly'))
+                
+            return HttpResponseRedirect(reverse('coop_cms_edit_newsletter', args=[newsletter.id]))
+    else:
+        form = forms.NewsletterForm(instance=newsletter)
+    
+    context_dict = {
+        'form': form, 'post_url': reverse('coop_cms_edit_newsletter', args=[newsletter.id]),
+        'editable': True, 'edit_mode': True, 'title': newsletter.subject,
+        'newsletter': newsletter,
+    }
+    
+    return render_to_response(
+        get_newsletter_template(newsletter),
+        context_dict,
+        context_instance=RequestContext(request)
+    )
+
+def view_newsletter(request, newsletter_id):
+    newsletter = get_object_or_404(models.Newsletter, id=newsletter_id)
+
+    context_dict = {
+        'title': newsletter.subject, 'newsletter': newsletter,
+    }
+
+    return render_to_response(
+        get_newsletter_template(newsletter),
+        context_dict,
+        context_instance=RequestContext(request)
+    )
+
+@login_required
+@popup_redirect
+def change_newsletter_template(request, newsletter_id):
+    newsletter = get_object_or_404(models.Newsletter, id=newsletter_id)
+    
+    if not request.user.has_perm('can_edit_newsletter', newsletter):
+        raise PermissionDenied
+    
+    if request.method == "POST":
+        form = forms.NewsletterTemplateForm(newsletter, request.user, request.POST)
+        if form.is_valid():
+            newsletter.template = form.cleaned_data['template']
+            newsletter.save()
+            return HttpResponseRedirect(newsletter.get_edit_url())
+    else:
+        form = forms.NewsletterTemplateForm(newsletter, request.user)
+    
+    return render_to_response(
+        'coop_cms/popup_change_newsletter_template.html',
+        {'form': form, 'newsletter': newsletter},
+        context_instance=RequestContext(request)
+    )
+
+def make_links_absolute(html_content):
+    """replace all local url with absolute url"""
+    import re
+    #regex = """<.*(?P<tag>href|src)\s*=\s*["'](?P<url>.+?)["'].*>"""
+    #regex = """<.*href|src\s*=\s*["'](?P<url>.+?)["'].*>"""
+    
+    def make_abs(match):
+        #Thank you : http://www.gawel.org/howtos/python-re-sub
+        start = match.group('start')
+        url = match.group('url')
+        if url.startswith('..'):
+            url = url[2:]
+        while url.startswith('/..'):
+            url = url[3:]
+        if url.startswith('/'):
+            url = '%s%s' % (settings.COOP_CMS_SITE_PREFIX, url)
+        end = match.group('end')
+        return start + url + end
+    
+    a_pattern = re.compile(r'(?P<start>.*?href=")(?P<url>\S+)(?P<end>".*?)')
+    html_content = a_pattern.sub(make_abs, html_content)
+    
+    img_pattern = re.compile(r'(?P<start>.*?src=")(?P<url>\S+)(?P<end>".*?)')
+    html_content = img_pattern.sub(make_abs, html_content)
+
+    return html_content
+
+@login_required
+@popup_redirect
+def test_newsletter(request, newsletter_id):
+    newsletter = get_object_or_404(models.Newsletter, id=newsletter_id)
+    
+    if not request.user.has_perm('can_edit_newsletter', newsletter):
+        raise PermissionDenied
+    
+    dests = settings.COOP_CMS_TEST_EMAILS
+    
+    if request.method == "POST":
+        try:
+            emails = []
+            connection = get_connection()
+            from_email = settings.COOP_CMS_FROM_EMAIL
+            emails = []
+            for addr in dests:
+                t = get_template(get_newsletter_template(newsletter))
+                context_dict = {
+                    'title': newsletter.subject, 'newsletter': newsletter, 'by_email': True,
+                    'MEDIA_URL': settings.MEDIA_URL, 'STATIC_URL': settings.STATIC_URL,
+                }
+                html_text = t.render(Context(context_dict))
+              
+                html_text = make_links_absolute(html_text)
+                
+                text = html2text(html_text)
+                email = EmailMultiAlternatives(newsletter.subject, text, from_email, [addr])
+                email.attach_alternative(html_text, "text/html")
+                emails.append(email)
+            
+            nb_sent = connection.send_messages(emails)
+
+            messages.add_message(request, messages.SUCCESS,
+                _(u"The test email has been sent to {0} addresses: {1}").format(nb_sent, u', '.join(dests)))
+            return HttpResponseRedirect(newsletter.get_edit_url())
+
+        except Exception, msg:
+            print "ERROR", msg
+            raise
+        
+    return render_to_response(
+        'coop_cms/popup_test_newsletter.html',
+        {'newsletter': newsletter, 'dests': dests},
+        context_instance=RequestContext(request)
+    )

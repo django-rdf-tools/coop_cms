@@ -12,7 +12,7 @@ from coop_cms.widgets import ImageEdit
 ################################################################################
 class PieceOfHtmlEditNode(DjalohaEditNode):
     def render(self, context):
-        if context.get('coop_cms_article_form', None):
+        if context.get('form', None):
             context.dicts[0]['djaloah_edit'] = True
         #context.dicts[0]['can_edit_template'] = True
         return super(PieceOfHtmlEditNode, self).render(context)
@@ -26,7 +26,7 @@ def coop_piece_of_html(parser, token):
 class ArticleTitleNode(template.Node):
     
     def render(self, context):
-        is_edition_mode = context.get('coop_cms_article_form', None)!=None
+        is_edition_mode = context.get('form', None)!=None
         article = context.get('article')
         return u"{0}".format(
             article.title,
@@ -40,23 +40,23 @@ def article_title(parser, token):
     
 ################################################################################
 
-class ArticleFormMediaNode(template.Node):
+class CmsFormMediaNode(template.Node):
     
     def render(self, context):
-        coop_cms_article_form = context.get('coop_cms_article_form', None)
-        if coop_cms_article_form:
+        form = context.get('form', None)
+        if form:
             t = template.Template("{{form.media}}")
-            return t.render(template.Context({'form': coop_cms_article_form}))
+            return t.render(template.Context({'form': form}))
         else:
             return ""
 
 @register.tag
-def article_form_media(parser, token):
-    return ArticleFormMediaNode()
+def cms_form_media(parser, token):
+    return CmsFormMediaNode()
 
 ################################################################################
 
-class IfArticleEditionNode(template.Node):
+class IfCmsEditionNode(template.Node):
     
     def __init__(self, nodelist_true, nodelist_false):
         self.nodelist_true = nodelist_true
@@ -69,14 +69,14 @@ class IfArticleEditionNode(template.Node):
             yield node    
 
     def render(self, context):
-        coop_cms_article_form = context.get('coop_cms_article_form', None)
-        if coop_cms_article_form:
+        form = context.get('form', None)
+        if form:
             return self.nodelist_true.render(context)
         else:
             return self.nodelist_false.render(context)
 
 @register.tag
-def if_article_edition(parser, token):
+def if_cms_edition(parser, token):
     nodelist_true = parser.parse(('else', 'endif'))
     token = parser.next_token()
     if token.contents == 'else':
@@ -84,11 +84,11 @@ def if_article_edition(parser, token):
         parser.delete_first_token()
     else:
         nodelist_false = template.NodeList()
-    return IfArticleEditionNode(nodelist_true, nodelist_false)
+    return IfCmsEditionNode(nodelist_true, nodelist_false)
 
 ################################################################################
-article_form_template = """
-    <form id="article_form" enctype="multipart/form-data"  method="POST" action="{{post_url}}">{% csrf_token %}
+CMS_FORM_TEMPLATE = """
+    <form id="cms_form" enctype="multipart/form-data"  method="POST" action="{{post_url}}">{% csrf_token %}
     {% include "coop_cms/_form_error.html" with errs=form.non_field_errors %}
     {{inner}} <input type="submit"> </form>
 """
@@ -104,15 +104,18 @@ class SafeWrapper:
         if field=='logo':
             src = getattr(self._wrapped, 'logo_thumbnail')(False, self._logo_size)
             if src:
-                value = u'<img class="article-logo" src="{0}">'.format(src.url)
+                value = u'<img class="logo" src="{0}">'.format(src.url)
             else:
-                value = u'' #TODO : default icon
+                value = u''
+        elif callable(value):
+            return value()
         return mark_safe(value)
 
 class FormWrapper:
     
-    def __init__(self, form, logo_size=None):
+    def __init__(self, form, the_object, logo_size=None):
         self._form = form
+        self._obj = the_object
         if logo_size:
             self._form.set_logo_size(logo_size)
     
@@ -122,43 +125,52 @@ class FormWrapper:
                     {%% with form.%s.errors as errs %%}{%% include "coop_cms/_form_error.html" %%}{%% endwith %%}{{form.%s}}
                 """ % (field, field))
             return t.render(template.Context({'form': self._form}))
+        else:
+            return getattr(self._obj, field)
 
-class ArticleNode(template.Node):
+class CmsEditNode(template.Node):
     
-    def __init__(self, nodelist_article, logo_size=None):
-        self.nodelist_article = nodelist_article
+    def __init__(self, nodelist_content, var_name, logo_size=None):
+        self.var_name = var_name
+        self.nodelist_content = nodelist_content
         self._logo_size = logo_size
         
     def __iter__(self):
-        for node in self.nodelist_article:
+        for node in self.nodelist_content:
             yield node
 
     def render(self, context):
-        coop_cms_article_form = context.get('coop_cms_article_form', None)
+        form = context.get('form', None)
         request = context.get('request')
-        article = context.get('article')
+        the_object = context.get(self.var_name)
+        
+        #the context used for rendering the templatetag content
         inner_context = {}
         for x in context.dicts:
             inner_context.update(x)
-        outer_context = {'post_url': article.get_edit_url()}
+
+        #the context used for rendering the whole page
+        self.post_url = the_object.get_edit_url()
+        outer_context = {'post_url': self.post_url}
         
-        if coop_cms_article_form:
-            t = template.Template(article_form_template)
-            inner_context['article'] = FormWrapper(coop_cms_article_form, logo_size=self._logo_size)
+        if form:
+            t = template.Template(CMS_FORM_TEMPLATE)
+            inner_context[self.var_name] = FormWrapper(form, the_object, logo_size=self._logo_size)
             outer_context.update(csrf(request))
         else:
             t = template.Template("{{inner|safe}}")
-            inner_context['article'] = SafeWrapper(article, logo_size=self._logo_size)
-        outer_context['inner'] = self.nodelist_article.render(template.Context(inner_context))
+            inner_context[self.var_name] = SafeWrapper(the_object, logo_size=self._logo_size)
+        outer_context['inner'] = self.nodelist_content.render(template.Context(inner_context))
         return t.render(template.Context(outer_context))
 
 @register.tag
-def article(parser, token):
+def cms_edit(parser, token):
     args = token.split_contents()[1:]
     data = {}
-    for arg in args:
+    var_name = args[0]
+    for arg in args[1:]:
         k, v = arg.split('=')
         data[k] = v
-    nodelist_article = parser.parse(('endarticle',))
+    nodelist = parser.parse(('end_cms_edit',))
     token = parser.next_token()
-    return ArticleNode(nodelist_article, **data)
+    return CmsEditNode(nodelist, var_name, **data)

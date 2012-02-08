@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "coop_cms/base.html" %}
 {% load i18n djaloha_utils coop_edition %}
 
 {% block meta_title %}
@@ -6,26 +6,27 @@
 {% endblock %}
 
 {% block jquery_declaration %}
-    {% if_article_edition %}
-        {% article_form_media %}
+    {% if_cms_edition %}
+        {% cms_form_media %}
     {% else %}
         <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}js/jquery-1.7.1.min.js"></script>
         {% if request.user.is_authenticated %}
             <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}js/jquery.colorbox-min.js"></script>
             <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}js/jquery.form.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/colorbox.coop.js"></script>
             <link rel="stylesheet" href="{{ STATIC_URL }}css/colorbox.css" type="text/css" />
         {% endif %}
     {% endif %}
 {% endblock %}
 
 {% block extra_head %}
-{% if_article_edition %}
+{% if_cms_edition %}
 <script>
 $(function(){
     //move the form submit to the coop_bar
-    $("form#article_form input[type='submit']").hide();
+    $("form#cms_form input[type='submit']").hide();
     $('#coopbar_save').click(function(event) {
-        $("form#article_form").submit();    
+        $("form#cms_form").submit();    
         event.preventDefault();
     });
 })
@@ -39,7 +40,7 @@ $(function(){
     {% block article %}
         {% include "coop_cms/_article_form.html" %}
         
-        {% if_article_edition %}
+        {% if_cms_edition %}
         {% include "coop_cms/_article_publication.html" %}
         {% endif %}
     

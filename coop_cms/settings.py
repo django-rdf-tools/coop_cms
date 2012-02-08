@@ -1,14 +1,19 @@
 # -*- coding: utf-8 -*-
 
 from django.contrib.contenttypes.models import ContentType
-import config # not unused, needed by livesettings !
-from livesettings import config_value
 from django.conf import settings
 from django.utils.importlib import import_module
 
 def get_navigable_content_types():
     ct_choices = []
-    content_apps = config_value(u'coop_cms', 'CONTENT_APPS')
+    try:
+        content_apps = settings.COOP_CMS_CONTENT_APPS
+    except AttributeError:
+        content_apps=[]
+        not_to_be_mapped = ('south', 'django_extensions', 'd2rq') 
+        for m in settings.INSTALLED_APPS:
+            if(not m.startswith('django.') and m not in not_to_be_mapped):
+                content_apps.append((m,m))
     apps_labels = [app.rsplit('.')[-1] for app in content_apps]
     navigable_content_types = ContentType.objects.filter(app_label__in=apps_labels).order_by('app_label')
     for ct in navigable_content_types:
@@ -51,6 +56,12 @@ def get_article_form():
         article_form = ArticleForm
     
     return article_form
+
+def get_newsletter_templates(newsletter, user):
+    try:
+        return settings.COOP_CMS_NEWSLETTER_TEMPLATES
+    except AttributeError:
+        return None
 
 def get_article_templates(article, user):
     if hasattr(settings, 'COOP_CMS_ARTICLE_TEMPLATES'):

@@ -459,3 +459,35 @@ def remove_from_navigation(sender, instance, **kwargs):
         except (NavNode.DoesNotExist, ContentType.DoesNotExist):
             pass
 pre_delete.connect(remove_from_navigation)
+
+class NewsletterItem(models.Model):
+    content_type = models.ForeignKey(ContentType, verbose_name=_("content_type"))
+    object_id = models.PositiveIntegerField(verbose_name=_("object id"))
+    content_object = generic.GenericForeignKey('content_type', 'object_id')
+    
+    class Meta:
+        unique_together = (("content_type", "object_id"),)
+    
+    def __unicode__(self):
+        return u'{0}: {1}'.format(self.content_type, self.content_object)
+
+class Newsletter(models.Model):
+    subject = models.CharField(max_length=200, verbose_name=_(u'subject'), blank=True, default="")
+    content = HTMLField(content_cleaner, verbose_name=_(u"content"), default="<br>", blank=True)
+    items = models.ManyToManyField(NewsletterItem, blank=True)
+    template = models.CharField(_(u'template'), max_length=200, default='', blank=True)
+
+    def get_items(self):
+        return [item.content_object for item in self.items.all()]
+        
+    def can_edit_newsletter(self, user):
+        return user.has_perm('coop_cms.change_newsletter')
+    
+    def get_absolute_url(self):
+        return reverse('coop_cms_view_newsletter', args=[self.id])
+        
+    def get_edit_url(self):
+        return reverse('coop_cms_edit_newsletter', args=[self.id])
+        
+    def __unicode__(self):
+        return self.subject
