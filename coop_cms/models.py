@@ -491,5 +491,27 @@ class Newsletter(models.Model):
     def get_edit_url(self):
         return reverse('coop_cms_edit_newsletter', args=[self.id])
         
+    def get_template_name(self):
+        template = self.template
+        if not template:
+            self = 'coop_cms/newsletter.html'
+        return template
+        
     def __unicode__(self):
         return self.subject
+
+class NewsletterSending(models.Model):
+    
+    newsletter = models.ForeignKey(Newsletter) 
+    
+    scheduling_dt = models.DateTimeField(_(u"scheduling date"), blank=True, default=None, null=True)
+    sending_dt = models.DateTimeField(_(u"sending date"), blank=True, default=None, null=True)
+
+    def __unicode__(self):
+        return self.newsletter.subject
+
+    class Meta:
+        verbose_name = _(u'newsletter sending')
+        verbose_name_plural = _(u'newsletter sendings')
+        
+    

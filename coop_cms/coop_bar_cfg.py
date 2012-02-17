@@ -142,12 +142,19 @@ def test_newsletter(request, context):
     return make_link(url, _(u'Send test'), 'fugue/mail-at-sign.png',
         classes=['alert_on_click', 'colorbox-form', 'icon'])
 
+@can_edit_newsletter
+def schedule_newsletter(request, context):
+    newsletter = context.get('newsletter')
+    url = reverse('coop_cms_schedule_newsletter_sending', args=[newsletter.id])
+    return make_link(url, _(u'Schedule sending'), 'fugue/alarm-clock--arrow.png',
+        classes=['alert_on_click', 'colorbox-form', 'icon'])
 
 def load_commands(coop_bar):
     
     coop_bar.register([
         [django_admin, django_admin_add_article, django_admin_edit_article],
-        [save_newsletter, change_newsletter_settings, change_newsletter_template, test_newsletter],
+        [save_newsletter, change_newsletter_settings, change_newsletter_template,
+            test_newsletter, schedule_newsletter],
         [cms_media_library, cms_upload_image, cms_upload_doc],
         [cms_edit],
         [cms_change_template],

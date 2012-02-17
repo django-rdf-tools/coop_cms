@@ -174,3 +174,19 @@ def cms_edit(parser, token):
     nodelist = parser.parse(('end_cms_edit',))
     token = parser.next_token()
     return CmsEditNode(nodelist, var_name, **data)
+
+################################################################################
+
+class CmsNoSpace(template.Node):
+    def __init__(self, nodelist):
+        self.nodelist = nodelist
+
+    def render(self, context):
+        html = self.nodelist.render(context).strip()
+        return ' '.join(html.split())
+
+@register.tag
+def cms_nospace(parser, token):
+    nodelist = parser.parse(('end_cms_nospace',))
+    parser.delete_first_token()
+    return CmsNoSpace(nodelist)

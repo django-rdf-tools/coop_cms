@@ -1,5 +1,5 @@
 from django import forms
-from coop_cms.models import NavType, NavNode, Newsletter
+from coop_cms.models import NavType, NavNode, Newsletter, NewsletterSending
 from django.contrib.contenttypes.models import ContentType
 from settings import get_navigable_content_types
 from django.core.exceptions import ValidationError
@@ -12,6 +12,7 @@ from coop_cms.settings import get_article_class, get_article_templates, get_news
 from coop_cms.widgets import ImageEdit
 from django.core.urlresolvers import reverse
 from coop_cms.utils import dehtml
+from datetime import datetime
 
 class NavTypeForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -23,7 +24,7 @@ class NavTypeForm(forms.ModelForm):
         if rule == NavType.LABEL_USE_GET_LABEL:
             ct = self.cleaned_data['content_type']
             if not 'get_label' in dir(ct.model_class()):
-                raise ValidationError(_("Invalid rule for this content type: The object class doesn't have a get_label method"))
+                raise ValidationError(_(u"Invalid rule for this content type: The object class doesn't have a get_label method"))
         return rule
 
     class Meta:
@@ -64,7 +65,7 @@ class ArticleForm(floppyforms.ModelForm):
         if title[-4:].lower() == '<br>':
             title = title[:-4]
         if not title:
-            raise ValidationError(_("Title can not be empty"))
+            raise ValidationError(_(u"Title can not be empty"))
 
         #if re.search(u'<(.*)>', title):
         #    raise ValidationError(_(u'HTML content is not allowed in the title'))
@@ -201,7 +202,7 @@ class NewsletterForm(floppyforms.ModelForm):
         model = Newsletter
         fields = ('content',)
         widgets = {
-            'content': AlohaInput(),
+            'content': AlohaInput(text_color_plugin=False),
         }
         
     class Media:
@@ -209,6 +210,23 @@ class NewsletterForm(floppyforms.ModelForm):
             'all': ('css/colorbox.css',),
         }
         js = ('js/jquery.form.js', 'js/jquery.pageslide.js', 'js/jquery.colorbox-min.js', 'js/colorbox.coop.js')
+
+
+class NewsletterSchedulingForm(floppyforms.ModelForm):
+    class Meta:
+        model = NewsletterSending
+        fields = ('scheduling_dt',)
+        
+    def clean_scheduling_dt(self):
+        sch_dt = self.cleaned_data['scheduling_dt']
+        
+        if not sch_dt:
+            raise ValidationError(_(u"This field is required"))
+        
+        if sch_dt < datetime.now():
+            raise ValidationError(_(u"The scheduling date must be in future"))
+            
+        return sch_dt
 
 class NewsletterTemplateForm(forms.Form):
     def __init__(self, newsletter, user, *args, **kwargs):

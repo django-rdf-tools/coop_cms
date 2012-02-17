@@ -56,7 +56,7 @@ admin.site.register(models.Link)
 admin.site.register(models.Document)
 admin.site.register(models.Image)
 admin.site.register(models.PieceOfHtml)
-
+admin.site.register(models.NewsletterSending)
 
 class NewsletterItemAdmin(admin.ModelAdmin):
     form = NewsletterItemAdminForm

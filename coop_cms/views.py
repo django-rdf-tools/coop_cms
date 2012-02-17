@@ -5,7 +5,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext, Context, Template
 from django.template.loader import get_template
 from django.core.urlresolvers import reverse
-import json, os.path
+import sys, json, os.path
 from django.utils.translation import ugettext as _
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError, PermissionDenied
@@ -19,22 +19,17 @@ from coop_cms.settings import get_article_class, get_article_form
 from djaloha import utils as djaloha_utils
 from django.core.servers.basehttp import FileWrapper
 import mimetypes, unicodedata
-from django.core.mail import get_connection, EmailMultiAlternatives
-from coop_cms.html2text import html2text
 from django.conf import settings
 from django.contrib import messages
 from colorbox.decorators import popup_redirect
+from coop_cms.utils import send_newsletter
+from django.utils.log import getLogger
+from datetime import datetime
 
 def get_article_template(article):
     template = article.template
     if not template:
         template = 'coop_cms/article.html'
-    return template
-
-def get_newsletter_template(newsletter):
-    template = newsletter.template
-    if not template:
-        template = 'coop_cms/newsletter.html'
     return template
 
 def view_article(request, url):
@@ -584,7 +579,7 @@ def edit_newsletter(request, newsletter_id):
     }
     
     return render_to_response(
-        get_newsletter_template(newsletter),
+        newsletter.get_template_name(),
         context_dict,
         context_instance=RequestContext(request)
     )
@@ -597,7 +592,7 @@ def view_newsletter(request, newsletter_id):
     }
 
     return render_to_response(
-        get_newsletter_template(newsletter),
+        newsletter.get_template_name(),
         context_dict,
         context_instance=RequestContext(request)
     )
@@ -625,33 +620,6 @@ def change_newsletter_template(request, newsletter_id):
         context_instance=RequestContext(request)
     )
 
-def make_links_absolute(html_content):
-    """replace all local url with absolute url"""
-    import re
-    #regex = """<.*(?P<tag>href|src)\s*=\s*["'](?P<url>.+?)["'].*>"""
-    #regex = """<.*href|src\s*=\s*["'](?P<url>.+?)["'].*>"""
-    
-    def make_abs(match):
-        #Thank you : http://www.gawel.org/howtos/python-re-sub
-        start = match.group('start')
-        url = match.group('url')
-        if url.startswith('..'):
-            url = url[2:]
-        while url.startswith('/..'):
-            url = url[3:]
-        if url.startswith('/'):
-            url = '%s%s' % (settings.COOP_CMS_SITE_PREFIX, url)
-        end = match.group('end')
-        return start + url + end
-    
-    a_pattern = re.compile(r'(?P<start>.*?href=")(?P<url>\S+)(?P<end>".*?)')
-    html_content = a_pattern.sub(make_abs, html_content)
-    
-    img_pattern = re.compile(r'(?P<start>.*?src=")(?P<url>\S+)(?P<end>".*?)')
-    html_content = img_pattern.sub(make_abs, html_content)
-
-    return html_content
-
 @login_required
 @popup_redirect
 def test_newsletter(request, newsletter_id):
@@ -664,37 +632,48 @@ def test_newsletter(request, newsletter_id):
     
     if request.method == "POST":
         try:
-            emails = []
-            connection = get_connection()
-            from_email = settings.COOP_CMS_FROM_EMAIL
-            emails = []
-            for addr in dests:
-                t = get_template(get_newsletter_template(newsletter))
-                context_dict = {
-                    'title': newsletter.subject, 'newsletter': newsletter, 'by_email': True,
-                    'MEDIA_URL': settings.MEDIA_URL, 'STATIC_URL': settings.STATIC_URL,
-                }
-                html_text = t.render(Context(context_dict))
-              
-                html_text = make_links_absolute(html_text)
-                
-                text = html2text(html_text)
-                email = EmailMultiAlternatives(newsletter.subject, text, from_email, [addr])
-                email.attach_alternative(html_text, "text/html")
-                emails.append(email)
+            nb_sent = send_newsletter(newsletter, dests)
             
-            nb_sent = connection.send_messages(emails)
-
             messages.add_message(request, messages.SUCCESS,
                 _(u"The test email has been sent to {0} addresses: {1}").format(nb_sent, u', '.join(dests)))
             return HttpResponseRedirect(newsletter.get_edit_url())
 
         except Exception, msg:
-            print "ERROR", msg
-            raise
+            messages.add_message(request, messages.ERROR, _(u"An error occured! Please contact your support."))
+            
+            logger = getLogger('django.request')
+            logger.error('Internal Server Error: %s' % request.path,
+                exc_info=sys.exc_info,
+                extra={
+                    'status_code': 500,
+                    'request':request
+                }
+            )
+            
+            return HttpResponseRedirect(newsletter.get_edit_url())
         
     return render_to_response(
         'coop_cms/popup_test_newsletter.html',
         {'newsletter': newsletter, 'dests': dests},
+        context_instance=RequestContext(request)
+    )
+    
+@login_required
+@popup_redirect
+def schedule_newsletter_sending(request, newsletter_id):
+    newsletter = get_object_or_404(models.Newsletter, id=newsletter_id)
+    instance = models.NewsletterSending(newsletter=newsletter)
+        
+    if request.method == "POST":
+        form = forms.NewsletterSchedulingForm(request.POST, instance=instance)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(newsletter.get_edit_url())
+    else:
+        form = forms.NewsletterSchedulingForm(instance=instance, initial={'scheduling_dt': datetime.now()})
+        
+    return render_to_response(
+        'coop_cms/popup_schedule_newsletter_sending.html',
+        {'newsletter': newsletter, 'form': form},
         context_instance=RequestContext(request)
     )
