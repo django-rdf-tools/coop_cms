@@ -1,9 +1,8 @@
 {% load i18n %}
+{% if edit_mode %}
 <script type="text/javascript">
 $(document).ready(function(){
-	{% if edit_mode %}
-    $("#coop-bar a.slide").pageSlide({width:'350px', direction:'right'});
-	{% endif %}
+	$("#coop-bar a.slide").pageSlide({width:'350px', direction:'right'});
 	$("a.colorbox-form").colorboxify({
 		close_popup_and_media_slide: function() {
 			$.colorbox.close();
@@ -11,7 +10,6 @@ $(document).ready(function(){
 		}
 	})
 	
-	{% if edit_mode %}
 	var toggle_save = function() {
 	    if (!$(".edited").is(":visible")) {
 			$(".edited").show();
@@ -33,6 +31,6 @@ $(document).ready(function(){
 	$("a.update-logo img").change(toggle_save);
 	$(".article select").change(toggle_save);
 	$(".article input").change(toggle_save);
-	{% endif %}
 });
 </script>
+{% endif %}
