@@ -9,9 +9,20 @@
 <head>
   <meta charset="utf-8">
   <title>{{newsletter.subject}}</title>
+  {% if editable %}
+    {% if_cms_edition %}
+      {% cms_form_media %}
+    {% else %}
+      <link rel="stylesheet" href="{{STATIC_URL}}css/colorbox.css" type="text/css" />
+      <script type="text/javascript" src="{{STATIC_URL}}js/jquery-1.7.1.min.js"></script>
+      <script type="text/javascript" src="{{STATIC_URL}}js/jquery.form.js"></script>
+      <script type="text/javascript" src="{{STATIC_URL}}js/jquery.pageslide.js"></script>
+      <script type="text/javascript" src="{{STATIC_URL}}js/jquery.colorbox-min.js"></script>
+      <script type="text/javascript" src="{{STATIC_URL}}js/colorbox.coop.js"></script>
+    {% endif %}
+    {% coop_bar_headers %}
+  {% endif %}
   {% if_cms_edition %}
-  {% cms_form_media %}
-  {% coop_bar_headers %}
   <script>
     $(function(){
         //move the form submit to the coop_bar
@@ -102,8 +113,8 @@
     {% endblock %}
     {% endif %}
 
-{% if_cms_edition %}
-    {% include "coop_cms/_messages.html" %}
-    {% coop_bar %}
-{% endif %}  
+    {% if editable %}
+      {% include "coop_cms/_messages.html" %}
+      {% coop_bar %}
+    {% endif %}
 </body>

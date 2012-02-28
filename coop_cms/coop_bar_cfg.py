@@ -50,25 +50,25 @@ def django_admin_edit_article(request, context):
 
 @can_edit
 def cms_media_library(request, context):
-    if context['edit_mode']:
+    if context.get('edit_mode'):
         return make_link(reverse('coop_cms_media_images'), _(u'Media library'), 'fugue/images-stack.png',
             'coopbar_medialibrary', ['icon', 'slide'])
 
 @can_edit
 def cms_upload_image(request, context):
-    if context['edit_mode']:
+    if context.get('edit_mode'):
         return make_link(reverse('coop_cms_upload_image'), _(u'Add image'), 'fugue/image--plus.png',
             classes=['coopbar_addfile', 'colorbox-form', 'icon'])
 
 @can_edit
 def cms_upload_doc(request, context):
-    if context['edit_mode']:
+    if context.get('edit_mode'):
         return make_link(reverse('coop_cms_upload_doc'), _(u'Add document'), 'fugue/document--plus.png',
             classes=['coopbar_addfile', 'colorbox-form', 'icon'])
 
 @can_edit_article    
 def cms_change_template(request, context):
-    if context['edit_mode']:
+    if context.get('edit_mode'):
         article = context['article']
         url = reverse('coop_cms_change_template', args=[article.id])
         return make_link(url, _(u'Template'), 'fugue/application-blog.png',
@@ -76,21 +76,21 @@ def cms_change_template(request, context):
 
 @can_edit_article
 def cms_save(request, context):
-    if context['edit_mode']:
+    if context.get('edit_mode'):
         #No link, will be managed by catching the js click event
         return make_link('', _(u'Save'), 'fugue/disk-black.png', id="coopbar_save",
             classes=['edited', 'icon'])
 
 @can_edit_article
 def cms_cancel(request, context):
-    if context['edit_mode']:
+    if context.get('edit_mode'):
         article = context['article']
         return make_link(article.get_cancel_url(), _(u'Cancel'), 'fugue/cross.png',
             classes=['alert_on_click', 'icon'])
 
 @can_edit_article
 def cms_edit(request, context):
-    if not context['edit_mode']:
+    if not context.get('edit_mode'):
         article = context['article']
         return make_link(article.get_edit_url(), _(u'Edit'), 'fugue/document--pencil.png',
             classes=['icon'])
@@ -116,24 +116,40 @@ def log_out(request, context):
             classes=['alert_on_click', 'icon'])
 
 @can_edit_newsletter
+def edit_newsletter(request, context):
+    if not context.get('edit_mode'):
+        newsletter = context.get('newsletter')
+        return make_link(newsletter.get_edit_url(), _(u'Edit'), 'fugue/document--pencil.png', classes=['icon'])
+
+@can_edit_newsletter
+def cancel_edit_newsletter(request, context):
+    if context.get('edit_mode'):
+        newsletter = context.get('newsletter')
+        return make_link(newsletter.get_absolute_url(), _(u'Cancel'), 'fugue/cross.png', classes=['icon'])
+
+@can_edit_newsletter
 def save_newsletter(request, context):
     newsletter = context.get('newsletter')
-    return make_link(context['post_url'], _(u'Save'), 'fugue/disk-black.png',
-        classes=['icon', 'post-form'])
+    post_url = context.get('post_url')
+    if context.get('edit_mode') and post_url:
+        return make_link(post_url, _(u'Save'), 'fugue/disk-black.png',
+            classes=['icon', 'post-form'])
 
 @can_edit_newsletter
 def change_newsletter_settings(request, context):
-    newsletter = context.get('newsletter')
-    view_name = 'admin:coop_cms_newsletter_change'
-    return make_link(reverse(view_name, args=[newsletter.id]), _(u'Newsletter settings'), 'fugue/gear.png',
-        classes=['icon', 'alert_on_click'])
+    if context.get('edit_mode'):
+        newsletter = context.get('newsletter')
+        view_name = 'admin:coop_cms_newsletter_change'
+        return make_link(reverse(view_name, args=[newsletter.id]), _(u'Newsletter settings'), 'fugue/gear.png',
+            classes=['icon', 'alert_on_click'])
 
 @can_edit_newsletter
 def change_newsletter_template(request, context):
-    newsletter = context.get('newsletter')
-    url = reverse('coop_cms_change_newsletter_template', args=[newsletter.id])
-    return make_link(url, _(u'Newsletter template'), 'fugue/application-blog.png',
-        classes=['alert_on_click', 'colorbox-form', 'icon'])
+    if context.get('edit_mode'):
+        newsletter = context.get('newsletter')
+        url = reverse('coop_cms_change_newsletter_template', args=[newsletter.id])
+        return make_link(url, _(u'Newsletter template'), 'fugue/application-blog.png',
+            classes=['alert_on_click', 'colorbox-form', 'icon'])
 
 @can_edit_newsletter
 def test_newsletter(request, context):
@@ -144,16 +160,18 @@ def test_newsletter(request, context):
 
 @can_edit_newsletter
 def schedule_newsletter(request, context):
-    newsletter = context.get('newsletter')
-    url = reverse('coop_cms_schedule_newsletter_sending', args=[newsletter.id])
-    return make_link(url, _(u'Schedule sending'), 'fugue/alarm-clock--arrow.png',
-        classes=['alert_on_click', 'colorbox-form', 'icon'])
+    if not context.get('edit_mode'):
+        newsletter = context.get('newsletter')
+        url = reverse('coop_cms_schedule_newsletter_sending', args=[newsletter.id])
+        return make_link(url, _(u'Schedule sending'), 'fugue/alarm-clock--arrow.png',
+            classes=['alert_on_click', 'colorbox-form', 'icon'])
 
 def load_commands(coop_bar):
     
     coop_bar.register([
         [django_admin, django_admin_add_article, django_admin_edit_article],
-        [save_newsletter, change_newsletter_settings, change_newsletter_template,
+        [edit_newsletter, cancel_edit_newsletter, save_newsletter,
+            change_newsletter_settings, change_newsletter_template,
             test_newsletter, schedule_newsletter],
         [cms_media_library, cms_upload_image, cms_upload_doc],
         [cms_edit],
