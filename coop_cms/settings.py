@@ -13,7 +13,7 @@ def get_navigable_content_types():
         not_to_be_mapped = ('south', 'django_extensions', 'd2rq') 
         for m in settings.INSTALLED_APPS:
             if(not m.startswith('django.') and m not in not_to_be_mapped):
-                content_apps.append((m,m))
+                content_apps.append(m)
     apps_labels = [app.rsplit('.')[-1] for app in content_apps]
     navigable_content_types = ContentType.objects.filter(app_label__in=apps_labels).order_by('app_label')
     for ct in navigable_content_types:
