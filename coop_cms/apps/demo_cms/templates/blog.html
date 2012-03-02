@@ -14,7 +14,7 @@
 
 {% block document %}
     {% block article %}
-    {% article logo_size=256x128 %}
+    {% cms_edit article logo_size=256x128 %}
         {% block rightcol %}
         <div class="rightcol">
             {% coop_piece_of_html "blog" %}
@@ -32,6 +32,6 @@
         <div class="footer">
             {% coop_piece_of_html "footer" %}
         </div>
-    {% endarticle %}
+    {% end_cms_edit %}
     {% endblock %}
 {% endblock %}

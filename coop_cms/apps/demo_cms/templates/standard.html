@@ -4,7 +4,7 @@
 
 {% block document %}
     {% block article %}
-    {% article %}
+    {% cms_edit article %}
         {% block rightcol %}
         <div class="rightcol">
             {% coop_piece_of_html "hello" %}
@@ -22,6 +22,6 @@
         <div class="footer">
             {% coop_piece_of_html "footer" %}
         </div>
-    {% endarticle %}
+    {% end_cms_edit %}
     {% endblock %}
 {% endblock %}
