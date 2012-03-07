@@ -316,7 +316,7 @@ class BaseArticle(TimeStampedModel):
                 pass
     
     navigation_parent = property(_get_navigation_parent, _set_navigation_parent,
-        doc=_("set the parent in navigation. WARNING: delete other nodes pointing to this object"))
+        doc=_("set the parent in navigation."))
     
     def save(self, *args, **kwargs):
         ret = super(BaseArticle, self).save(*args, **kwargs)
