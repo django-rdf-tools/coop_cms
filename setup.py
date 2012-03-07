@@ -39,6 +39,7 @@ setup(
                         'coop-colorbox==0.1.1',
                         'coop-bar==0.3.3',
                         'djaloha==0.3.2',
+                        'django-pagination',
                         ],
     long_description = open('README.rst').read(),
     url = 'https://github.com/quinode/coop_cms/',
