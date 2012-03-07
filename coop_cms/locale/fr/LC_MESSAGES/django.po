@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coop_cms\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-07 10:30+0000\n"
-"PO-Revision-Date: 2012-03-07 11:34+0100\n"
+"POT-Creation-Date: 2012-03-07 10:57+0000\n"
+"PO-Revision-Date: 2012-03-07 11:59+0100\n"
 "Last-Translator: Dominique Guardiola <dguardiola@quinode.fr>\n"
 "Language-Team: Apidev, Quinode <contact@quinode.fr>\n"
 "Language: \n"
@@ -212,12 +212,12 @@ msgid "ordering"
 msgstr "ordre"
 
 #: models.py:96
-#: models.py:466
+#: models.py:477
 msgid "content_type"
 msgstr "type de contenu"
 
 #: models.py:97
-#: models.py:467
+#: models.py:478
 msgid "object id"
 msgstr "identifiant de l'objet"
 
@@ -268,8 +268,8 @@ msgid "Page title"
 msgstr "Titre de la page"
 
 #: models.py:253
-#: models.py:446
-#: models.py:478
+#: models.py:454
+#: models.py:491
 msgid "content"
 msgstr "contenu"
 
@@ -282,7 +282,7 @@ msgid "publication"
 msgstr "publication"
 
 #: models.py:255
-#: models.py:480
+#: models.py:493
 msgid "template"
 msgstr "modèle"
 
@@ -311,31 +311,71 @@ msgid "links"
 msgstr "liens"
 
 #: models.py:398
-#: models.py:424
+#: models.py:428
 msgid "file"
 msgstr "fichier"
 
-#: models.py:445
+#: models.py:407
+msgid "image"
+msgstr "image"
+
+#: models.py:408
+msgid "images"
+msgstr "images"
+
+#: models.py:449
+msgid "document"
+msgstr "document"
+
+#: models.py:450
+msgid "documents"
+msgstr "documents"
+
+#: models.py:453
 msgid "identifier"
 msgstr "identifier"
 
-#: models.py:477
+#: models.py:460
+msgid "piece of HTML"
+msgstr "bloc HTML"
+
+#: models.py:461
+msgid "pieces of HTML"
+msgstr "blocs HTML"
+
+#: models.py:483
+msgid "newsletter item"
+msgstr "élément de lettre d'information"
+
+#: models.py:484
+msgid "newsletter items"
+msgstr "éléments de lettre d'information"
+
+#: models.py:490
 msgid "subject"
 msgstr "sujet"
 
-#: models.py:507
+#: models.py:517
+msgid "newsletter"
+msgstr "lettre d'information"
+
+#: models.py:518
+msgid "newsletters"
+msgstr "lettres d'information"
+
+#: models.py:524
 msgid "scheduling date"
 msgstr "date de programmation"
 
-#: models.py:508
+#: models.py:525
 msgid "sending date"
 msgstr "date d'envoi"
 
-#: models.py:514
+#: models.py:531
 msgid "newsletter sending"
 msgstr "Envoi de lettre d'information"
 
-#: models.py:515
+#: models.py:532
 msgid "newsletter sendings"
 msgstr "Envois de lettre d'informations"
 
