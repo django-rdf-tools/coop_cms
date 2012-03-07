@@ -1,22 +1,17 @@
 from coop_cms.coop_bar_cfg import *
 
 def load_commands(coop_bar):
-    #coop_bar.register_command(django_admin)
-    #coop_bar.register_command(django_admin_add_article)
-    #coop_bar.register_command(django_admin_edit_article)
-    #coop_bar.register_separator()
-    coop_bar.register_command(cms_media_library)
-    coop_bar.register_command(cms_upload_image)
-    coop_bar.register_command(cms_upload_doc)
-    coop_bar.register_separator()
-    coop_bar.register_command(cms_edit)
-    coop_bar.register_separator()
-    coop_bar.register_command(cms_change_template)
-    coop_bar.register_separator()
-    coop_bar.register_command(cms_save)
-    coop_bar.register_command(cms_publish)
-    coop_bar.register_command(cms_cancel)
-    coop_bar.register_separator()
-    coop_bar.register_command(log_out)
+    
+    coop_bar.register([
+        #[django_admin, django_admin_add_article, django_admin_edit_article],
+        [edit_newsletter, cancel_edit_newsletter, save_newsletter,
+            change_newsletter_settings, change_newsletter_template,
+            test_newsletter, schedule_newsletter],
+        [cms_media_library, cms_upload_image, cms_upload_doc],
+        [cms_edit],
+        [cms_change_template],
+        [cms_save, cms_publish, cms_cancel, cms_view],
+        [log_out]
+    ])
     
     coop_bar.register_header(cms_extra_js)

@@ -85,7 +85,7 @@ def edit_article(request, url):
                 
             success_message(request, _(u'The article has been saved properly'))
                 
-            return HttpResponseRedirect(article.get_edit_url())
+            return HttpResponseRedirect(article.get_absolute_url())
     else:
         form = article_form_class(instance=article)
     
