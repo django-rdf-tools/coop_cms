@@ -7,467 +7,457 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coop_cms\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-07 10:30+0000\n"
+"POT-Creation-Date: 2012-03-07 11:49+0100\n"
 "PO-Revision-Date: 2012-03-07 11:34+0100\n"
 "Last-Translator: Dominique Guardiola <dguardiola@quinode.fr>\n"
 "Language-Team: Apidev, Quinode <contact@quinode.fr>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
 "Plural-Forms: nplurals=2; plural=n>1;\n"
 "X-Poedit-Language: French\n"
 "X-Poedit-Country: FRANCE\n"
 
-#: admin.py:42
-#: templates/admin/coop_cms/navtree/change_list.html:327
+#: .\admin.py:42 .\templates\admin\coop_cms\navtree\change_list.html.py:327
 msgid "Navigation"
 msgstr "Arborescence"
 
-#: admin.py:43
+#: .\admin.py:43
 msgid "General"
 msgstr "Général"
 
-#: admin.py:44
+#: .\admin.py:44
 msgid "Advanced"
 msgstr "Avancé"
 
-#: admin.py:45
+#: .\admin.py:45
 msgid "Publication"
 msgstr "Publication"
 
-#: admin.py:46
-#: models.py:258
+#: .\admin.py:46 .\models.py:258
 msgid "Summary"
 msgstr "Résumé"
 
-#: admin.py:47
+#: .\admin.py:47
 msgid "Debug"
 msgstr ""
 
-#: admin.py:65
+#: .\admin.py:65
 msgid "Article"
 msgstr "Article"
 
-#: coop_bar_cfg.py:33
+#: .\coop_bar_cfg.py:33
 msgid "Administration"
 msgstr "Administration"
 
-#: coop_bar_cfg.py:40
+#: .\coop_bar_cfg.py:40
 msgid "Add article"
 msgstr "Ajouter un article"
 
-#: coop_bar_cfg.py:48
+#: .\coop_bar_cfg.py:48
 msgid "Article settings"
 msgstr "Réglages article"
 
-#: coop_bar_cfg.py:54
+#: .\coop_bar_cfg.py:54
 msgid "Media library"
 msgstr "Médiathèque"
 
-#: coop_bar_cfg.py:60
+#: .\coop_bar_cfg.py:60
 msgid "Add image"
 msgstr "Ajouter une image"
 
-#: coop_bar_cfg.py:66
+#: .\coop_bar_cfg.py:66
 msgid "Add document"
 msgstr "Ajouter un document"
 
-#: coop_bar_cfg.py:74
+#: .\coop_bar_cfg.py:74
 msgid "Template"
 msgstr "Modèle d'article"
 
-#: coop_bar_cfg.py:81
-#: coop_bar_cfg.py:135
+#: .\coop_bar_cfg.py:81 .\coop_bar_cfg.py:142
 msgid "Save"
 msgstr "Enregistrer"
 
-#: coop_bar_cfg.py:88
-#: coop_bar_cfg.py:128
+#: .\coop_bar_cfg.py:88
+msgid "View"
+msgstr ""
+
+#: .\coop_bar_cfg.py:95 .\coop_bar_cfg.py:135
 msgid "Cancel"
 msgstr "Annuler"
 
-#: coop_bar_cfg.py:95
-#: coop_bar_cfg.py:122
+#: .\coop_bar_cfg.py:102 .\coop_bar_cfg.py:129
 msgid "Edit"
 msgstr "Editer"
 
-#: coop_bar_cfg.py:102
-#: templates/coop_cms/popup_publish_article.html:5
+#: .\coop_bar_cfg.py:109 .\templates\coop_cms\popup_publish_article.html.py:5
 msgid "Publish"
 msgstr "Publier"
 
-#: coop_bar_cfg.py:115
+#: .\coop_bar_cfg.py:122
 msgid "Log out"
 msgstr "Déconnexion"
 
-#: coop_bar_cfg.py:143
+#: .\coop_bar_cfg.py:150
 msgid "Newsletter settings"
 msgstr "Réglages lettre"
 
-#: coop_bar_cfg.py:151
+#: .\coop_bar_cfg.py:158
 msgid "Newsletter template"
 msgstr "Modèle Lettre"
 
-#: coop_bar_cfg.py:158
+#: .\coop_bar_cfg.py:165
 msgid "Send test"
 msgstr "Test envoi"
 
-#: coop_bar_cfg.py:166
+#: .\coop_bar_cfg.py:173
 msgid "Schedule sending"
 msgstr "Programmer"
 
-#: forms.py:27
-msgid "Invalid rule for this content type: The object class doesn't have a get_label method"
-msgstr "Règle invalide pour ce content type: La classe de l'objet n'a pas de méthode get_label"
+#: .\forms.py:27
+msgid ""
+"Invalid rule for this content type: The object class doesn't have a "
+"get_label method"
+msgstr ""
+"Règle invalide pour ce content type: La classe de l'objet n'a pas de méthode "
+"get_label"
 
-#: forms.py:68
+#: .\forms.py:68
 msgid "Title can not be empty"
 msgstr "Le titre ne peut pas être vide"
 
-#: forms.py:78
+#: .\forms.py:78
 msgid "<not in navigation>"
 msgstr "< pas dans l'arborescence >"
 
-#: forms.py:78
+#: .\forms.py:78
 msgid "<root node>"
 msgstr "< racine >"
 
-#: forms.py:93
+#: .\forms.py:93
 msgid "Select an article"
 msgstr "Choisir un article"
 
-#: forms.py:151
+#: .\forms.py:151
 msgid "Image"
 msgstr "Image"
 
-#: forms.py:153
-#: forms.py:160
+#: .\forms.py:153 .\forms.py:160
 msgid "Optional description"
 msgstr "Description optionelle"
 
-#: forms.py:154
-#: forms.py:161
+#: .\forms.py:154 .\forms.py:161
 msgid "Description"
 msgstr "Description"
 
-#: forms.py:158
+#: .\forms.py:158
 msgid "File"
 msgstr "Fichier"
 
-#: forms.py:177
+#: .\forms.py:177
 msgid "Logo"
 msgstr "Logo"
 
-#: forms.py:224
+#: .\forms.py:224
 msgid "This field is required"
 msgstr "Ce champ est requis"
 
-#: forms.py:227
+#: .\forms.py:227
 msgid "The scheduling date must be in future"
 msgstr "La date d'envoi doit être dans le futur"
 
-#: models.py:66
+#: .\models.py:66
 msgid "Use object unicode"
 msgstr "Utiliser l'unicode de l'objet"
 
-#: models.py:67
+#: .\models.py:67
 msgid "Use search field"
 msgstr "Utiliser le champ search"
 
-#: models.py:68
+#: .\models.py:68
 msgid "Use get_label"
 msgstr "Utiliser la méthode get_label"
 
-#: models.py:71
+#: .\models.py:71
 msgid "django model"
 msgstr "modèle django"
 
-#: models.py:72
+#: .\models.py:72
 msgid "search field"
 msgstr "le champ de recherche"
 
-#: models.py:73
+#: .\models.py:73
 msgid "How to generate the label"
 msgstr "Comment générer le label"
 
-#: models.py:80
+#: .\models.py:80
 msgid "navigable type"
 msgstr "type navigable"
 
-#: models.py:81
+#: .\models.py:81
 msgid "navigable types"
 msgstr "types navigables"
 
-#: models.py:90
+#: .\models.py:90
 msgid "label"
 msgstr "libellé"
 
-#: models.py:92
+#: .\models.py:92
 msgid "parent"
 msgstr "parent"
 
-#: models.py:93
+#: .\models.py:93
 msgid "ordering"
 msgstr "ordre"
 
-#: models.py:96
-#: models.py:466
+#: .\models.py:96 .\models.py:466
 msgid "content_type"
 msgstr "type de contenu"
 
-#: models.py:97
-#: models.py:467
+#: .\models.py:97 .\models.py:467
 msgid "object id"
 msgstr "identifiant de l'objet"
 
-#: models.py:99
+#: .\models.py:99
 msgid "in navigation"
 msgstr "visible dans la navigation"
 
-#: models.py:113
+#: .\models.py:113
 msgid "navigation node"
 msgstr "noeud de navigation"
 
-#: models.py:114
+#: .\models.py:114
 msgid "navigation nodes"
 msgstr "noeuds de navigation"
 
-#: models.py:200
+#: .\models.py:200
 msgid "A node can not be its own parent"
 msgstr "Un noeud ne peut pas être son propre parent"
 
-#: models.py:206
+#: .\models.py:206
 msgid "A node can not be child of its own child"
 msgstr "Un noeud ne peut pas être son propre enfant"
 
-#: models.py:214
-#: templates/admin/coop_cms/navtree/change_list.html:307
+#: .\models.py:214 .\templates\admin\coop_cms\navtree\change_list.html.py:307
 msgid "Navigation tree"
 msgstr "Arborescence"
 
-#: models.py:227
-#: models.py:389
+#: .\models.py:227 .\models.py:389
 msgid "name"
 msgstr "nom"
 
-#: models.py:239
+#: .\models.py:239
 msgid "Draft"
 msgstr "Brouillon"
 
-#: models.py:240
+#: .\models.py:240
 msgid "Published"
 msgstr "Publié"
 
-#: models.py:251
+#: .\models.py:251
 msgid "title"
 msgstr "titre"
 
-#: models.py:251
+#: .\models.py:251
 msgid "Page title"
 msgstr "Titre de la page"
 
-#: models.py:253
-#: models.py:446
-#: models.py:478
+#: .\models.py:253 .\models.py:446 .\models.py:478
 msgid "content"
 msgstr "contenu"
 
-#: models.py:253
+#: .\models.py:253
 msgid "Page content"
 msgstr "Contenu de la page"
 
-#: models.py:254
+#: .\models.py:254
 msgid "publication"
 msgstr "publication"
 
-#: models.py:255
-#: models.py:480
+#: .\models.py:255 .\models.py:480
 msgid "template"
 msgstr "modèle"
 
-#: models.py:259
+#: .\models.py:259
 msgid "Section"
 msgstr "Catégorie"
 
-#: models.py:283
+#: .\models.py:283
 msgid "article"
 msgstr "article"
 
-#: models.py:284
+#: .\models.py:284
 msgid "articles"
 msgstr "articles"
 
-#: models.py:319
-msgid "set the parent in navigation. WARNING: delete other nodes pointing to this object"
-msgstr "définit le noeud parant. Attention : efface les noeuds pointant vers cet objet"
+#: .\models.py:319
+msgid "set the parent in navigation."
+msgstr "ajouter le noeud à la navigation."
 
-#: models.py:376
+#: .\models.py:376
 msgid "link"
 msgstr "lien"
 
-#: models.py:377
+#: .\models.py:377
 msgid "links"
 msgstr "liens"
 
-#: models.py:398
-#: models.py:424
+#: .\models.py:398 .\models.py:424
 msgid "file"
 msgstr "fichier"
 
-#: models.py:445
+#: .\models.py:445
 msgid "identifier"
 msgstr "identifier"
 
-#: models.py:477
+#: .\models.py:477
 msgid "subject"
 msgstr "sujet"
 
-#: models.py:507
+#: .\models.py:507
 msgid "scheduling date"
 msgstr "date de programmation"
 
-#: models.py:508
+#: .\models.py:508
 msgid "sending date"
 msgstr "date d'envoi"
 
-#: models.py:514
+#: .\models.py:514
 msgid "newsletter sending"
 msgstr "Envoi de lettre d'information"
 
-#: models.py:515
+#: .\models.py:515
 msgid "newsletter sendings"
 msgstr "Envois de lettre d'informations"
 
-#: views.py:86
+#: .\views.py:86
 msgid "The article has been saved properly"
 msgstr "L'article a été enregistré avec succès"
 
-#: views.py:307
+#: .\views.py:307
 msgid "Node content loaded."
 msgstr "Contenu du noeud chargé."
 
-#: views.py:320
+#: .\views.py:320
 msgid "The node '{0}' has been renamed into '{1}'."
 msgstr "Le noeud '{0}' a été renommé en '{1}'."
 
-#: views.py:333
+#: .\views.py:333
 msgid "The node has been removed."
 msgstr "Le noeud a été supprimé"
 
-#: views.py:335
+#: .\views.py:335
 msgid "{0} nodes has been removed."
 msgstr "{0} noeuds ont été supprimés"
 
-#: views.py:429
+#: .\views.py:429
 msgid "The node '{0}' has been moved."
 msgstr "Le noeud '{0}' a été déplacé"
 
-#: views.py:446
+#: .\views.py:446
 msgid "Please choose an existing {0}"
 msgstr "Veuillez choisir un {0} existant"
 
-#: views.py:450
+#: .\views.py:450
 msgid "{0} {1} not found"
 msgstr "{0} {1} est introuvable"
 
-#: views.py:454
+#: .\views.py:454
 msgid "The {0} is already in navigation"
 msgstr "Le {0} est déjà dans l'arborescence"
 
-#: views.py:461
+#: .\views.py:461
 msgid "'{0}' has added to the navigation tree."
 msgstr "'{0}' ajouté à l'arborescence."
 
-#: views.py:502
+#: .\views.py:502
 msgid "The node is now in navigation."
 msgstr "le noeud est à présent visible dans l'arborescence."
 
-#: views.py:503
-#: templates/coop_cms/navtree_content/default.html:5
+#: .\views.py:503 .\templates\coop_cms\navtree_content\default.html.py:5
 msgid "Remove from navigation"
 msgstr "Supprimer de l arborescence"
 
-#: views.py:506
+#: .\views.py:506
 msgid "The node has been removed of the navigation."
 msgstr "Le noeud a été supprimé de l arborescence"
 
-#: views.py:507
-#: templates/coop_cms/navtree_content/default.html:7
+#: .\views.py:507 .\templates\coop_cms\navtree_content\default.html.py:7
 msgid "Add to navigation"
 msgstr "Rendre le noeud visible dans l arborescence"
 
-#: views.py:535
+#: .\views.py:535
 msgid "Unsupported message {0}"
 msgstr "Message {0} inconnu"
 
-#: views.py:537
+#: .\views.py:537
 msgid "You are not allowed to add a node"
 msgstr "Vous n'êtes pas autorisé à ajouter un noeud"
 
-#: views.py:542
-#: views.py:544
+#: .\views.py:542 .\views.py:544
 msgid "An error occured"
 msgstr "Une erreur est survenue"
 
-#: views.py:569
+#: .\views.py:569
 msgid "The newsletter has been saved properly"
 msgstr "La lettre d'information a été enregistré avec succès"
 
-#: views.py:639
+#: .\views.py:639
 msgid "The test email has been sent to {0} addresses: {1}"
 msgstr "L'email de test a été envoyé à {0} adresses: {1}"
 
-#: views.py:643
+#: .\views.py:643
 msgid "An error occured! Please contact your support."
 msgstr "Une erreur est intervenue, contactez le support technique."
 
-#: apps/demo_cms/templates/base.html:16
+#: .\apps\demo_cms\templates\base.html.py:16
 msgid "Homepage"
 msgstr "Accueil"
 
-#: apps/demo_cms/templates/blog.html:30
-#: apps/demo_cms/templates/standard.html:20
+#: .\apps\demo_cms\templates\blog.html.py:30
+#: .\apps\demo_cms\templates\standard.html.py:20
 msgid "Author"
 msgstr "Auteur"
 
-#: templates/admin/coop_cms/navtree/change_list.html:251
+#: .\templates\admin\coop_cms\navtree\change_list.html.py:251
 msgid "Are you sure to delete the selected node?"
 msgstr "Etes-vous sur de vouloir supprimer le noeud sélectionné ?"
 
-#: templates/admin/coop_cms/navtree/change_list.html:293
+#: .\templates\admin\coop_cms\navtree\change_list.html.py:293
 msgid "Home"
 msgstr "Accueil"
 
-#: templates/admin/coop_cms/navtree/change_list.html:310
+#: .\templates\admin\coop_cms\navtree\change_list.html.py:310
 msgid "The site requires javascript to be enabled!"
 msgstr "Le site nécessite l'activation de javascript"
 
-#: templates/admin/coop_cms/navtree/change_list.html:315
+#: .\templates\admin\coop_cms\navtree\change_list.html.py:315
 msgid "Add a new node"
 msgstr "Ajouter un nouveau noeud"
 
-#: templates/admin/coop_cms/navtree/change_list.html:325
+#: .\templates\admin\coop_cms\navtree\change_list.html.py:325
 msgid "Rename"
 msgstr "Renommer"
 
-#: templates/admin/coop_cms/navtree/change_list.html:326
+#: .\templates\admin\coop_cms\navtree\change_list.html.py:326
 msgid "Remove"
 msgstr "Supprimer"
 
-#: templates/coop_cms/_coop_bar_js.html:17
+#: .\templates\coop_cms\_coop_bar_js.html.py:18
 msgid "Your modifications are not saved and will be lost. Continue?"
-msgstr "Vos modifications n'ont pas été enregistrées et seront perdues. Continuer?"
+msgstr ""
+"Vos modifications n'ont pas été enregistrées et seront perdues. Continuer?"
 
-#: templates/coop_cms/_messages.html:27
+#: .\templates\coop_cms\_messages.html.py:27
 msgid "close"
 msgstr "fermer"
 
-#: templates/coop_cms/_newsletter_articles.html:9
+#: .\templates\coop_cms\_newsletter_articles.html.py:9
 msgid "Read more"
 msgstr "Suite"
 
-#: templates/coop_cms/article_list_item.html:8
+#: .\templates\coop_cms\article_list_item.html.py:8
 #, python-format
 msgid ""
 "%(when)s\n"
@@ -476,92 +466,99 @@ msgstr ""
 "%(when)s\n"
 "            "
 
-#: templates/coop_cms/newsletter.html:92
+#: .\templates\coop_cms\newsletter.html.py:92
 msgid "If you can't view this email, "
 msgstr "SI vous ne pouvez lire cet e-mail"
 
-#: templates/coop_cms/newsletter.html:94
+#: .\templates\coop_cms\newsletter.html.py:94
 msgid "read the online version"
 msgstr "lire la version en ligne"
 
-#: templates/coop_cms/popup_change_newsletter_template.html:3
+#: .\templates\coop_cms\popup_change_newsletter_template.html.py:3
 msgid "Change the newsletter template"
 msgstr "Changer de modèle de lettre d'information"
 
-#: templates/coop_cms/popup_change_template.html:3
+#: .\templates\coop_cms\popup_change_template.html.py:3
 msgid "Change the article template"
 msgstr "Changer de modèle de page"
 
-#: templates/coop_cms/popup_publish_article.html:3
+#: .\templates\coop_cms\popup_publish_article.html.py:3
 msgid "Do you want to publish this article?"
 msgstr "Voulez-vous publier cet article ?"
 
-#: templates/coop_cms/popup_schedule_newsletter_sending.html:3
+#: .\templates\coop_cms\popup_schedule_newsletter_sending.html.py:3
 msgid "Schedule newsletter sending"
 msgstr "Programmer l'envoi de la lettre"
 
-#: templates/coop_cms/popup_test_newsletter.html:3
+#: .\templates\coop_cms\popup_test_newsletter.html.py:3
 msgid "Test newsletter"
 msgstr "Lettre d'information de test"
 
-#: templates/coop_cms/popup_update_logo.html:3
+#: .\templates\coop_cms\popup_update_logo.html.py:3
 msgid "Change article logo"
 msgstr "Changer le logo de l'article"
 
-#: templates/coop_cms/popup_upload_doc.html:3
+#: .\templates\coop_cms\popup_upload_doc.html.py:3
 msgid "Upload document"
 msgstr "Ajouter un document"
 
-#: templates/coop_cms/popup_upload_doc.html:5
-#: templates/coop_cms/popup_upload_image.html:5
+#: .\templates\coop_cms\popup_upload_doc.html.py:5
+#: .\templates\coop_cms\popup_upload_image.html.py:5
 msgid "Add"
 msgstr "Ajouter"
 
-#: templates/coop_cms/popup_upload_image.html:3
+#: .\templates\coop_cms\popup_upload_image.html.py:3
 msgid "Upload image"
 msgstr "Ajouter une image"
 
-#: templates/coop_cms/slide_base.html:94
-#: templates/coop_cms/slide_images_content.html:3
+#: .\templates\coop_cms\slide_base.html.py:94
+#: .\templates\coop_cms\slide_images_content.html.py:3
 msgid "Images"
 msgstr "Images"
 
-#: templates/coop_cms/slide_base.html:95
-#: templates/coop_cms/slide_docs_content.html:2
+#: .\templates\coop_cms\slide_base.html.py:95
+#: .\templates\coop_cms\slide_docs_content.html.py:2
 msgid "Documents"
 msgstr "Documents"
 
-#: templates/coop_cms/navtree_content/article.html:5
+#: .\templates\coop_cms\navtree_content\article.html.py:5
 msgid "Edit on site"
 msgstr "Editer sur le site"
 
-#: templates/coop_cms/navtree_content/default.html:13
+#: .\templates\coop_cms\navtree_content\default.html.py:13
 msgid "Edit in admin"
 msgstr "Editer dans l'admin"
 
-#: templates/coop_cms/navtree_content/default.html:14
+#: .\templates\coop_cms\navtree_content\default.html.py:14
 msgid "View on site"
 msgstr "Voir sur le site"
 
-#: templatetags/coop_edition.py:33
+#: .\templatetags\coop_edition.py:33
 msgid " [EDITION]"
 msgstr " [EDITION]"
 
-#: templatetags/coop_edition.py:34
+#: .\templatetags\coop_edition.py:34
 msgid " [DRAFT]"
 msgstr " [BROUILLON]"
 
-#: templatetags/coop_navigation.py:85
+#: .\templatetags\coop_navigation.py:85
 msgid "navigation_breadcrumb requires object as argument"
 msgstr "navigation_breadcrumb requiert un objet en argument"
 
-#: templatetags/coop_navigation.py:108
+#: .\templatetags\coop_navigation.py:108
 msgid "navigation_children requires object as argument"
 msgstr "navigation_children requiert un objet en argument"
 
-#: templatetags/coop_navigation.py:131
+#: .\templatetags\coop_navigation.py:131
 msgid "navigation_siblings requires object as argument"
 msgstr "navigation_siblings requiert un objet en argument"
+
+#~ msgid ""
+#~ "set the parent in navigation. WARNING: delete other nodes pointing to "
+#~ "this object"
+#~ msgstr ""
+#~ "définit le noeud parant. Attention : efface les noeuds pointant vers cet "
+#~ "objet"
 
 #~ msgid "Applications selection"
 #~ msgstr "Sélection des applications"
