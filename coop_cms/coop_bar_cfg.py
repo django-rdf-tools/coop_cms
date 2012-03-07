@@ -79,14 +79,21 @@ def cms_save(request, context):
     if context.get('edit_mode'):
         #No link, will be managed by catching the js click event
         return make_link('', _(u'Save'), 'fugue/disk-black.png', id="coopbar_save",
-            classes=['edited', 'icon'])
+            classes=['show-dirty', 'icon'])
+
+@can_edit_article
+def cms_view(request, context):
+    if context.get('edit_mode'):
+        article = context['article']
+        return make_link(article.get_cancel_url(), _(u'View'), 'fugue/eye--arrow.png',
+            classes=['alert_on_click', 'icon', 'show-clean'])
 
 @can_edit_article
 def cms_cancel(request, context):
     if context.get('edit_mode'):
         article = context['article']
         return make_link(article.get_cancel_url(), _(u'Cancel'), 'fugue/cross.png',
-            classes=['alert_on_click', 'icon'])
+            classes=['alert_on_click', 'icon', 'show-dirty'])
 
 @can_edit_article
 def cms_edit(request, context):
@@ -176,7 +183,7 @@ def load_commands(coop_bar):
         [cms_media_library, cms_upload_image, cms_upload_doc],
         [cms_edit],
         [cms_change_template],
-        [cms_save, cms_publish, cms_cancel],
+        [cms_save, cms_publish, cms_cancel, cms_view],
         [log_out]
     ])
     
