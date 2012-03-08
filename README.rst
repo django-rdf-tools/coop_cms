@@ -30,6 +30,9 @@ Quick start
 
 Install it with ``pip install coop-cms``
 
+Non-installed requirements::
+git://github.com/gabrielgrant/django-html-field.git
+
 In settings.py, add 'coop_cms' (with an underscore) to the INSTALLED_APPS 
 Under Django 1.3, the static folder should be found automatically, as the templates folder
 At *the very end* of your urls.py file, add ``(r'^',include('coop_cms.urls'))`` to your urlpatterns, because coop-cms will handle any page slug, except the ones you will have defined before.
