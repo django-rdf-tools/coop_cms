@@ -402,6 +402,10 @@ class Image(Media):
         
     def get_absolute_url(self):
         return self.file.url
+        
+    class Meta:
+        verbose_name = _(u'image')
+        verbose_name_plural = _(u'images')    
 
 class Document(Media):
     def get_doc_folder(self, filename):
@@ -440,6 +444,10 @@ class Document(Media):
             return settings.STATIC_URL+u'img/{0}.png'.format(ext)
         else:
             return settings.STATIC_URL+u'img/default-icon.png'
+            
+    class Meta:
+        verbose_name = _(u'document')
+        verbose_name_plural = _(u'documents')
 
 class PieceOfHtml(models.Model):
     div_id = models.CharField(verbose_name=_(u"identifier"), max_length=100, db_index=True)    
@@ -447,7 +455,10 @@ class PieceOfHtml(models.Model):
 
     def __unicode__(self):
         return self.div_id
-
+    
+    class Meta:
+        verbose_name = _(u'piece of HTML')
+        verbose_name_plural = _(u'pieces of HTML')
 
 #delete node when content object is deleted
 from django.db.models.signals import pre_delete
@@ -469,6 +480,8 @@ class NewsletterItem(models.Model):
     
     class Meta:
         unique_together = (("content_type", "object_id"),)
+        verbose_name = _(u'newsletter item')
+        verbose_name_plural = _(u'newsletter items')
     
     def __unicode__(self):
         return u'{0}: {1}'.format(self.content_type, self.content_object)
@@ -499,6 +512,10 @@ class Newsletter(models.Model):
         
     def __unicode__(self):
         return self.subject
+        
+    class Meta:
+        verbose_name = _(u'newsletter')
+        verbose_name_plural = _(u'newsletters')    
 
 class NewsletterSending(models.Model):
     
