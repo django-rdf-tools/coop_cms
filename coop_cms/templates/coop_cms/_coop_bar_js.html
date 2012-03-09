@@ -1,12 +1,15 @@
 {% load i18n %}
 <script type="text/javascript">
+
 $(document).ready(function(){
+{% if editable %}
 	$("a.colorbox-form").colorboxify({
 		close_popup_and_media_slide: function() {
 			$.colorbox.close();
 			$("#coopbar_medialibrary").click();
 		}
 	})
+{% endif %}
 {% if edit_mode %}
 	$("#coop-bar a.slide").pageSlide({width:'350px', direction:'right'});
 	

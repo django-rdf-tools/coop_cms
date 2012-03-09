@@ -39,8 +39,10 @@ def view_article(request, url):
     if not request.user.has_perm('can_view_article', article):
         raise Http404
     
+    editable = request.user.has_perm('can_edit_article', article)
+    
     context_dict = {
-        'editable': True, 'edit_mode': False, 'article': article,
+        'editable': editable, 'edit_mode': False, 'article': article,
         'draft': article.publication==models.BaseArticle.DRAFT
     }
     
