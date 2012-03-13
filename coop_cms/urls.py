@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 from django.conf.urls.defaults import patterns, include, url
+from django.conf import settings
 
 urlpatterns = patterns('coop_cms.views',
     url(r'^cms/tree/$', 'process_nav_edition', name='navigation_tree'),
@@ -15,10 +16,20 @@ urlpatterns = patterns('coop_cms.views',
     url(r'^newsletter/change-template/(?P<newsletter_id>\d+)/$', 'change_newsletter_template', name="coop_cms_change_newsletter_template"),
     url(r'^newsletter/test/(?P<newsletter_id>\d+)/$', 'test_newsletter', name="coop_cms_test_newsletter"),
     url(r'^newsletter/schedule/(?P<newsletter_id>\d+)/$', 'schedule_newsletter_sending', name="coop_cms_schedule_newsletter_sending"),
-    
+)
+
+if 'coop_cms.apps.rss_sync' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        (r'^rss-sync/', include('coop_cms.apps.rss_sync.urls')),
+    )
+
+urlpatterns += patterns('coop_cms.views',
     #keep these at the end
     url(r'^(?P<url>.*)/cms_publish/$', 'publish_article', name='coop_cms_publish_article'),
     url(r'^(?P<url>.*)/cms_edit/$', 'edit_article', name='coop_cms_edit_article'),
     url(r'^(?P<url>.*)/cms_cancel/$', 'cancel_edit_article', name='coop_cms_cancel_edit_article'),
     url(r'^(?P<url>.*)/$', 'view_article', name='coop_cms_view_article'),
 )
+
+
+    
