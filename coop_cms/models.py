@@ -251,7 +251,7 @@ class BaseArticle(TimeStampedModel):
     title = HTMLField(title_cleaner, verbose_name=_(u'title'), default=_('Page title'))
     #content = HTMLField(content_cleaner, verbose_name=_(u'content'), default=_('Page content'))
     content = models.TextField(_(u'content'), default=_('Page content'))
-    publication = models.IntegerField(_(u'publication'), choices=PUBLICATION_STATUS, default=DRAFT)
+    publication = models.IntegerField(_(u'publication'), choices=PUBLICATION_STATUS, default=PUBLISHED)
     template = models.CharField(_(u'template'), max_length=200, default='', blank=True)
     logo = models.ImageField(upload_to=get_logo_folder, blank=True, null=True, default='')
     temp_logo = models.ImageField(upload_to=get_logo_folder, blank=True, null=True, default='')
