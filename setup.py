@@ -26,7 +26,8 @@ setup(
                 'coop_cms.management',
                 'coop_cms.management.commands',
                 'coop_cms.templatetags',
-                'coop_cms.migrations'
+                'coop_cms.migrations',
+                'coop_cms.apps.basic_cms.migrations',
                 ],
     include_package_data=True,
     author='Luc Jean',
