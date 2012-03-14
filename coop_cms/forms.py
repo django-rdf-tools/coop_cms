@@ -237,3 +237,21 @@ class NewsletterTemplateForm(forms.Form):
         else:
             self.fields["template"] = forms.CharField()
         self.fields["template"].initial = newsletter.template
+
+class NewsletterAdminForm(forms.ModelForm):
+    
+    def __init__(self, *args, **kwargs):
+        super(NewsletterAdminForm, self).__init__(*args, **kwargs)
+        self.newsletter = kwargs.get('instance', None)
+        choices = get_newsletter_templates(self.newsletter, self.current_user)
+        if choices:
+            self.fields["template"] = forms.ChoiceField(choices=choices)
+        else:
+            self.fields["template"] = forms.CharField()
+    
+    class Meta:
+        model = Newsletter
+        fields = ('subject', 'content', 'template', 'items')
+        #widgets = {
+        #    'title': forms.TextInput(attrs={'size': 100})
+        #}

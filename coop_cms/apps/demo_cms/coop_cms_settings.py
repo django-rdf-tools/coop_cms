@@ -13,3 +13,6 @@ COOP_CMS_ARTICLE_TEMPLATES = 'coop_cms.apps.demo_cms.get_article_templates'
 #    ('homepage.html', 'Homepage'),
 #    ('blog.html', 'Blog'),
 #)
+COOP_CMS_NEWSLETTER_TEMPLATES = (
+    ('basic_newsletter.html', 'Basic'),
+)

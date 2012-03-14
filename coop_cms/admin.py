@@ -2,7 +2,7 @@
 from django.contrib import admin
 from django.core.urlresolvers import reverse
 import models
-from forms import NavTypeForm, ArticleAdminForm, NewsletterItemAdminForm
+from forms import NavTypeForm, ArticleAdminForm, NewsletterItemAdminForm, NewsletterAdminForm
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
 from coop_cms.settings import get_article_class
@@ -66,4 +66,14 @@ class NewsletterItemAdmin(admin.ModelAdmin):
     )
 
 admin.site.register(models.NewsletterItem, NewsletterItemAdmin)
-admin.site.register(models.Newsletter)
+
+
+class NewsletterAdmin(admin.ModelAdmin):
+    form = NewsletterAdminForm
+        
+    def get_form(self, request, obj=None, **kwargs):
+        form = super(NewsletterAdmin, self).get_form(request, obj, **kwargs)
+        form.current_user = request.user
+        return form
+
+admin.site.register(models.Newsletter, NewsletterAdmin)
