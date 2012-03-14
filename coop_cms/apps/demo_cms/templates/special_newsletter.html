@@ -1,0 +1,22 @@
+{% extends "coop_cms/newsletter.html" %}
+{% load i18n coop_edition %}
+{% block style %}
+{{block.super}}
+<style>
+body {
+    background: #447;
+}
+#newsletter {
+    background: #eee;
+    width: 700px;
+}
+</style>
+{% endblock %}
+
+{% block newsletter %}
+    {% cms_edit newsletter %}
+        <div id="content">{{ newsletter.content }}</div>
+        {% include "coop_cms/_newsletter_sections_index.html" %}
+        {% include "coop_cms/_newsletter_sections.html" %}
+    {% end_cms_edit %}
+{% endblock %}

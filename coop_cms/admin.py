@@ -35,13 +35,13 @@ admin.site.register(models.NavTree, NavTreeAdmin)
 
 class ArticleAdmin(admin.ModelAdmin):
     form = ArticleAdminForm
-    list_display = ['slug', 'title', 'publication', 'in_newsletter', 'created', 'modified']
-    list_editable = ['publication', 'in_newsletter']
+    list_display = ['slug', 'title', 'publication', 'in_newsletter', 'section', 'modified']
+    list_editable = ['publication', 'in_newsletter', 'section']
     readonly_fields = ['slug', 'created', 'modified']
     fieldsets = (
         (_('Navigation'), {'fields': ('navigation_parent',)}),
         (_('General'), {'fields': ('slug', 'title', 'content',)}),
-        (_('Advanced'), {'fields': ('template', 'section', 'logo')}),
+        (_('Advanced'), {'fields': ('template', 'section', 'logo', 'in_newsletter')}),
         (_('Publication'), {'fields': ('publication', 'created', 'modified')}),
         (_('Summary'), {'fields': ('summary',)}),
         (_('Debug'), {'fields': ('temp_logo',)}),
@@ -57,6 +57,11 @@ admin.site.register(models.Document)
 admin.site.register(models.Image)
 admin.site.register(models.PieceOfHtml)
 admin.site.register(models.NewsletterSending)
+
+class ArticleSectionAdmin(admin.ModelAdmin):
+    list_display = ['name', 'ordering']
+    list_editable = ['ordering']
+admin.site.register(models.ArticleSection, ArticleSectionAdmin)
 
 #class NewsletterItemAdmin(admin.ModelAdmin):
 #    form = NewsletterItemAdminForm

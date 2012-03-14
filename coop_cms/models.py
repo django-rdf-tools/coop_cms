@@ -226,6 +226,7 @@ title_cleaner = html_cleaner.HTMLCleaner(allow_tags=['br','span','em','i','stron
     
 class ArticleSection(models.Model):
     name = models.CharField(_(u'name'), max_length=100)
+    ordering = models.IntegerField(_(u'ordering'), default=0)
     
     def __unicode__(self):
         return self.name
@@ -527,6 +528,17 @@ class Newsletter(models.Model):
 
     def get_items(self):
         return [item.content_object for item in self.items.all()]
+        
+    def get_items_by_section(self):
+        items = self.get_items()
+        def sort_by_section(item):
+            section = getattr(item, 'section', None)
+            if section:
+                return section.ordering
+            return 0
+        items.sort(key=sort_by_section)
+        return items
+        
         
     def can_edit_newsletter(self, user):
         return user.has_perm('coop_cms.change_newsletter')
