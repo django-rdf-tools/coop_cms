@@ -107,3 +107,26 @@ def get_article_logo_size(article):
     except AttributeError:
         size = "48x48"
     return size
+
+def get_newsletter_item_classes():
+    if hasattr(get_newsletter_item_classes, '_cache_class'):
+        return getattr(get_newsletter_item_classes, '_cache_class')
+    else:
+        item_classes = []
+        try:
+            full_classes_names = getattr(settings, 'COOP_CMS_NEWSLETTER_ITEM_CLASSES')
+        except AttributeError:
+            item_classes = (get_article_class(),)
+        else:
+            item_classes = []
+            for full_class_name in full_classes_names:
+                module_name, class_name = full_class_name.rsplit('.', 1)
+                module = import_module(module_name)
+                item_classes.append(getattr(module, class_name))
+            item_classes = tuple(item_classes)
+
+        if not item_classes:
+            raise Exception('No newsletter item classes configured')
+        
+        setattr(get_newsletter_item_classes, '_cache_class', item_classes)
+        return item_classes

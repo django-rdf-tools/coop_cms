@@ -13,6 +13,10 @@ from coop_cms.widgets import ImageEdit
 from django.core.urlresolvers import reverse
 from coop_cms.utils import dehtml
 from datetime import datetime
+try:
+    from chosen.widgets import ChosenSelectMultiple
+except ImportError:
+    pass
 
 class NavTypeForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -194,8 +198,7 @@ class PublishArticleForm(forms.ModelForm):
         kwargs['initial'] = initials
         super(PublishArticleForm, self).__init__(*args, **kwargs)
         
-            
-        
+
 class NewsletterForm(floppyforms.ModelForm):
     
     class Meta:
@@ -252,6 +255,16 @@ class NewsletterAdminForm(forms.ModelForm):
     class Meta:
         model = Newsletter
         fields = ('subject', 'content', 'template', 'items')
-        #widgets = {
-        #    'title': forms.TextInput(attrs={'size': 100})
-        #}
+        widgets = {}
+        try:
+            widgets.update({
+                'items': ChosenSelectMultiple(),
+            })
+        except NameError:
+            pass
+        
+    class Media:
+        css = {
+            'all': ('css/admin-tricks.css',),
+        }
+        js = ()

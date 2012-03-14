@@ -15,9 +15,10 @@ from django.utils.html import escape
 from django.core.exceptions import ValidationError
 from html_field.db.models import HTMLField
 from html_field import html_cleaner
-from coop_cms.settings import get_article_class, get_article_logo_size
+from coop_cms.settings import get_article_class, get_article_logo_size, get_newsletter_item_classes
 from django.contrib.staticfiles import finders
 from django.core.files import File
+from django.db.models.signals import pre_delete, post_save
 
 def get_object_label(content_type, object):
     """
@@ -461,8 +462,6 @@ class PieceOfHtml(models.Model):
         verbose_name_plural = _(u'pieces of HTML')
 
 #delete node when content object is deleted
-from django.db.models.signals import pre_delete
-
 def remove_from_navigation(sender, instance, **kwargs):
     if hasattr(instance, 'id'):
         try:
@@ -485,6 +484,24 @@ class NewsletterItem(models.Model):
     
     def __unicode__(self):
         return u'{0}: {1}'.format(self.content_type, self.content_object)
+
+#delete item when content object is deleted
+def delete_newsletter_item(sender, instance, **kwargs):
+    if hasattr(instance, 'id'):
+        try:
+            ct = ContentType.objects.get_for_model(instance)
+            item = NewsletterItem.objects.get(content_type=ct, object_id=instance.id)
+            item.delete()
+        except (NewsletterItem.DoesNotExist, ContentType.DoesNotExist):
+            pass
+pre_delete.connect(delete_newsletter_item)
+
+#create automatically a newsletter item for every objects configured as newsletter_item
+def create_newsletter_item(sender, instance, created, raw, **kwargs):
+    if created and sender in get_newsletter_item_classes():
+        ct = ContentType.objects.get_for_model(instance)
+        NewsletterItem.objects.create(content_type=ct, object_id=instance.id)
+post_save.connect(create_newsletter_item)
 
 class Newsletter(models.Model):
     subject = models.CharField(max_length=200, verbose_name=_(u'subject'), blank=True, default="")
