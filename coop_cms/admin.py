@@ -58,14 +58,14 @@ admin.site.register(models.Image)
 admin.site.register(models.PieceOfHtml)
 admin.site.register(models.NewsletterSending)
 
-class NewsletterItemAdmin(admin.ModelAdmin):
-    form = NewsletterItemAdminForm
-    list_display = ['content_object']
-    fieldsets = (
-        (_('Article'), {'fields': ('object_id', 'content_type')}),
-    )
-
-admin.site.register(models.NewsletterItem, NewsletterItemAdmin)
+#class NewsletterItemAdmin(admin.ModelAdmin):
+#    form = NewsletterItemAdminForm
+#    list_display = ['content_object']
+#    fieldsets = (
+#        (_('Article'), {'fields': ('object_id', 'content_type')}),
+#    )
+#
+#admin.site.register(models.NewsletterItem, NewsletterItemAdmin)
 
 
 class NewsletterAdmin(admin.ModelAdmin):

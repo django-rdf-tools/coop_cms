@@ -1108,19 +1108,55 @@ class NewsletterTest(TestCase):
             self.editor.save()
         
         self.client.login(username='toto', password='toto')
+        
+    def test_create_article_for_newsletter(self):
+        Article = get_article_class()
+        ct = ContentType.objects.get_for_model(Article)
+        
+        art = Article.objects.create(in_newsletter=True)
+        self.assertEqual(1, NewsletterItem.objects.count())
+        item = NewsletterItem.objects.get(content_type=ct, object_id=art.id)
+        self.assertEqual(item.content_object, art)
+        
+        art.delete()
+        self.assertEqual(0, NewsletterItem.objects.count())
+
+    def test_create_article_not_for_newsletter(self):
+        Article = get_article_class()
+        ct = ContentType.objects.get_for_model(Article)
+        
+        art = Article.objects.create(in_newsletter=False)
+        self.assertEqual(0, NewsletterItem.objects.count())
+        
+        art.delete()
+        self.assertEqual(0, NewsletterItem.objects.count())
+
+    def test_create_article_commands(self):
+        Article = get_article_class()
+        ct = ContentType.objects.get_for_model(Article)
+        art1 = Article.objects.create(in_newsletter=True)
+        art2 = Article.objects.create(in_newsletter=True)
+        art3 = Article.objects.create(in_newsletter=False)
+        self.assertEqual(2, NewsletterItem.objects.count())
+        NewsletterItem.objects.all().delete()
+        self.assertEqual(0, NewsletterItem.objects.count())
+        management.call_command('create_newsletter_items', verbosity=0, interactive=False)
+        self.assertEqual(2, NewsletterItem.objects.count())
+        item1 = NewsletterItem.objects.get(content_type=ct, object_id=art1.id)
+        item2 = NewsletterItem.objects.get(content_type=ct, object_id=art2.id)
 
     def test_view_newsletter(self):
         Article = get_article_class()
         ct = ContentType.objects.get_for_model(Article)
         
-        art1 = mommy.make_one(Article, title="Art 1")
-        art2 = mommy.make_one(Article, title="Art 2")
-        art3 = mommy.make_one(Article, title="Art 3")
+        art1 = mommy.make_one(Article, title="Art 1", in_newsletter=True)
+        art2 = mommy.make_one(Article, title="Art 2", in_newsletter=True)
+        art3 = mommy.make_one(Article, title="Art 3", in_newsletter=True)
         
         newsletter = mommy.make_one(Newsletter, content="a little intro for this newsletter",
             template="test/newsletter_blue.html")
-        newsletter.items.add(NewsletterItem.objects.create(content_type=ct, object_id=art1.id))
-        newsletter.items.add(NewsletterItem.objects.create(content_type=ct, object_id=art2.id))
+        newsletter.items.add(NewsletterItem.objects.get(content_type=ct, object_id=art1.id))
+        newsletter.items.add(NewsletterItem.objects.get(content_type=ct, object_id=art2.id))
         newsletter.save()
         
         url = reverse('coop_cms_view_newsletter', args=[newsletter.id])
@@ -1137,14 +1173,14 @@ class NewsletterTest(TestCase):
         Article = get_article_class()
         ct = ContentType.objects.get_for_model(Article)
         
-        art1 = mommy.make_one(Article, title="Art 1")
-        art2 = mommy.make_one(Article, title="Art 2")
-        art3 = mommy.make_one(Article, title="Art 3")
+        art1 = mommy.make_one(Article, title="Art 1", in_newsletter=True)
+        art2 = mommy.make_one(Article, title="Art 2", in_newsletter=True)
+        art3 = mommy.make_one(Article, title="Art 3", in_newsletter=True)
         
         newsletter = mommy.make_one(Newsletter, content="a little intro for this newsletter",
             template="test/newsletter_blue.html")
-        newsletter.items.add(NewsletterItem.objects.create(content_type=ct, object_id=art1.id))
-        newsletter.items.add(NewsletterItem.objects.create(content_type=ct, object_id=art2.id))
+        newsletter.items.add(NewsletterItem.objects.get(content_type=ct, object_id=art1.id))
+        newsletter.items.add(NewsletterItem.objects.get(content_type=ct, object_id=art2.id))
         newsletter.save()
         
         self._log_as_editor()
@@ -1205,12 +1241,12 @@ class NewsletterTest(TestCase):
         Article = get_article_class()
         ct = ContentType.objects.get_for_model(Article)
         
-        art1 = mommy.make_one(Article, title="Art 1")
+        art1 = mommy.make_one(Article, title="Art 1", in_newsletter=True)
         poh = mommy.make_one(PieceOfHtml, div_id="newsletter_header", content="HELLO!!!")
         
         newsletter = mommy.make_one(Newsletter, content="a little intro for this newsletter",
             template="test/newsletter_blue.html")
-        newsletter.items.add(NewsletterItem.objects.create(content_type=ct, object_id=art1.id))
+        newsletter.items.add(NewsletterItem.objects.get(content_type=ct, object_id=art1.id))
         newsletter.save()
         
         self._log_as_editor()

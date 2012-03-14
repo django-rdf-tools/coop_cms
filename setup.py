@@ -28,6 +28,7 @@ setup(
                 'coop_cms.templatetags',
                 'coop_cms.migrations',
                 'coop_cms.apps.basic_cms.migrations',
+                'coop_cms.apps.demo_cms.migrations',
                 'coop_cms.apps.rss_sync.migrations',
                 'coop_cms.apps.rss_sync.management',
                 'coop_cms.apps.rss_sync.management.commands',

@@ -258,6 +258,7 @@ class BaseArticle(TimeStampedModel):
     temp_logo = models.ImageField(upload_to=get_logo_folder, blank=True, null=True, default='')
     summary = models.TextField(_(u'Summary'), blank=True, default='')
     section = models.ForeignKey(ArticleSection, verbose_name=_(u'Section'), blank=True, null=True, default=None, related_name="%(app_label)s_%(class)s_rel")
+    in_newsletter = models.BooleanField(_(u'in_newsletter'), default=True)
 
     def logo_thumbnail(self, temp=False, logo_size=None):
         logo = self.temp_logo if (temp and self.temp_logo) else self.logo
@@ -486,7 +487,7 @@ class NewsletterItem(models.Model):
         return u'{0}: {1}'.format(self.content_type, self.content_object)
 
 #delete item when content object is deleted
-def delete_newsletter_item(sender, instance, **kwargs):
+def on_delete_newsletterable_item(sender, instance, **kwargs):
     if hasattr(instance, 'id'):
         try:
             ct = ContentType.objects.get_for_model(instance)
@@ -494,14 +495,29 @@ def delete_newsletter_item(sender, instance, **kwargs):
             item.delete()
         except (NewsletterItem.DoesNotExist, ContentType.DoesNotExist):
             pass
-pre_delete.connect(delete_newsletter_item)
+pre_delete.connect(on_delete_newsletterable_item)
+
+def create_newsletter_item(instance):
+    ct = ContentType.objects.get_for_model(instance)
+    if getattr(instance, 'in_newsletter', True):
+        #Create a newsletter item automatically
+        #An optional 'in_newsletter' field can skip the automatic creation if set to False
+        return NewsletterItem.objects.get_or_create(content_type=ct, object_id=instance.id)
+    elif hasattr(instance, 'in_newsletter'):
+        #If 'in_newsletter' field existe and is False
+        #We delete the Item if exists
+        try:
+            item = NewsletterItem.objects.get(content_type=ct, object_id=instance.id)
+            item.delete()
+            return None, True
+        except NewsletterItem.DoesNotExist:
+            return None, False
 
 #create automatically a newsletter item for every objects configured as newsletter_item
-def create_newsletter_item(sender, instance, created, raw, **kwargs):
-    if created and sender in get_newsletter_item_classes():
-        ct = ContentType.objects.get_for_model(instance)
-        NewsletterItem.objects.create(content_type=ct, object_id=instance.id)
-post_save.connect(create_newsletter_item)
+def on_create_newsletterable_instance(sender, instance, created, raw, **kwargs):
+    if sender in get_newsletter_item_classes():
+        create_newsletter_item(instance)
+post_save.connect(on_create_newsletterable_instance)
 
 class Newsletter(models.Model):
     subject = models.CharField(max_length=200, verbose_name=_(u'subject'), blank=True, default="")
