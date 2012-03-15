@@ -42,7 +42,7 @@ def can_add_article(func):
 
 def django_admin(request, context):
     if request.user.is_staff:
-        return make_link(reverse("admin:index"), _(u'Administration'), 'fugue/lock.png',
+        return make_link(reverse("admin:index"), _(u'Administration'), 'fugue/tables.png',
             classes=['icon', 'alert_on_click'])
 
 #def django_admin_add_article(request, context):
@@ -57,7 +57,7 @@ def django_admin_edit_article(request, context):
         article_class = get_article_class()
         article = context['article']
         view_name = 'admin:%s_%s_change' % (article_class._meta.app_label,  article_class._meta.module_name)
-        return make_link(reverse(view_name, args=[article.id]), _(u'Article admin'), 'fugue/lock.png',
+        return make_link(reverse(view_name, args=[article.id]), _(u'Article admin'), 'fugue/table.png',
             classes=['icon', 'alert_on_click'])
 
 @can_edit
