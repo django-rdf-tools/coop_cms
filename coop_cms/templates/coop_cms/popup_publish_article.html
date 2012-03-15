@@ -20,14 +20,14 @@
 {% block form_fields %}
 <div class="intro">
     {% if draft %}
-        {% blocktrans %}
+{% blocktrans %}
         The article is a draft. By clicking "Publish", you will make it visible to anybody.
-        {% endblocktrans %}
+{% endblocktrans %}
     {% else %}
-        {% blocktrans %}
+{% blocktrans %}
         The article is published. If you click "Draft", it will not be visible anymore.
         Only staff members will be able to see it.
-        {% endblocktrans %}
+{% endblocktrans %}
     {% endif %}
 </div>
 {{ block.super }}
