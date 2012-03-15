@@ -102,25 +102,17 @@ class NewsletterItemAdminForm(forms.ModelForm):
     def clean_content_type(self):
         return ContentType.objects.get_for_model(get_article_class())
         
-
-class ArticleAdminForm(forms.ModelForm):
-    
-    navigation_parent = forms.ChoiceField(
-        choices=get_node_choices(), required=False, help_text=get_navigation_parent_help_text()
-    )
+class ArticleFormWithNavigation(forms.ModelForm):
+    navigation_parent = forms.ChoiceField()
     
     def __init__(self, *args, **kwargs):
-        super(ArticleAdminForm, self).__init__(*args, **kwargs)
+        super(ArticleFormWithNavigation, self).__init__(*args, **kwargs)
         self.article = kwargs.get('instance', None)
         self.fields['navigation_parent'] = forms.ChoiceField(
-           choices=get_node_choices(), required=False, help_text=get_navigation_parent_help_text()
+            choices=get_node_choices(), required=False, help_text=get_navigation_parent_help_text()
         )
-        if self.article:
-            self.initial['navigation_parent'] = self.article.navigation_parent
-        templates = get_article_templates(self.article, self.current_user)
-        if templates:
-            self.fields['template'].widget = forms.Select(choices=templates)
     
+
     def clean_navigation_parent(self):
         parent_id = self.cleaned_data['navigation_parent']
         parent_id = int(parent_id) if parent_id != 'None' else None
@@ -135,7 +127,7 @@ class ArticleAdminForm(forms.ModelForm):
         return parent_id
     
     def save(self, commit=True):
-        article = super(ArticleAdminForm, self).save(commit=False)
+        article = super(ArticleFormWithNavigation, self).save(commit=False)
         parent_id = self.cleaned_data['navigation_parent']
         if article.id:
             article.navigation_parent = parent_id
@@ -144,6 +136,15 @@ class ArticleAdminForm(forms.ModelForm):
         if commit:
             article.save()
         return article
+
+        
+class ArticleAdminForm(ArticleFormWithNavigation):
+    
+    def __init__(self, *args, **kwargs):
+        super(ArticleAdminForm, self).__init__(*args, **kwargs)
+        templates = get_article_templates(self.article, self.current_user)
+        if templates:
+            self.fields['template'].widget = forms.Select(choices=templates)
     
     class Meta:
         model = get_article_class()
@@ -180,13 +181,14 @@ class ArticleTemplateForm(forms.Form):
 class ArticleLogoForm(forms.Form):
     image = forms.ImageField(required=True, label = _('Logo'),)
 
-class PublishArticleForm(forms.ModelForm):
+class ArticleSettingsForm(forms.ModelForm):
     class Meta:
         model = get_article_class()
-        fields = ('summary', 'section')
+        fields = ('template', 'section', 'in_newsletter', 'summary')
     
-    def __init__(self, *args, **kwargs):
+    def __init__(self, user, *args, **kwargs):
         article = kwargs['instance']
+        
         try:
             initials = kwargs['initial']
         except:
@@ -196,7 +198,49 @@ class PublishArticleForm(forms.ModelForm):
             summary = dehtml(article.content)[:250]
         initials.update({'summary': summary})
         kwargs['initial'] = initials
-        super(PublishArticleForm, self).__init__(*args, **kwargs)
+        super(ArticleSettingsForm, self).__init__(*args, **kwargs)
+        
+        choices = get_article_templates(article, user)
+        if choices:
+            self.fields["template"] = forms.ChoiceField(choices=choices)
+        else:
+            self.fields["template"] = forms.CharField()
+
+class NewArticleForm(ArticleFormWithNavigation):
+    class Meta:
+        model = get_article_class()
+        fields = ('title', 'template', 'publication')
+    
+    def __init__(self, user, *args, **kwargs):
+        super(NewArticleForm, self).__init__(*args, **kwargs)
+        choices = get_article_templates(None, user)
+        if choices:
+            self.fields["template"] = forms.ChoiceField(choices=choices)
+        else:
+            self.fields["template"] = forms.CharField()
+        self.fields["title"].widget = forms.TextInput(attrs={'size': 30})
+
+
+class PublishArticleForm(forms.ModelForm):
+    class Meta:
+        model = get_article_class()
+        fields = ('publication',)# 'summary', 'section')
+        widgets = {
+            'publication': forms.HiddenInput(),
+        }
+    
+    #def __init__(self, *args, **kwargs):
+    #    article = kwargs['instance']
+    #    try:
+    #        initials = kwargs['initial']
+    #    except:
+    #        initials = {}
+    #    summary = article.summary
+    #    if not summary:
+    #        summary = dehtml(article.content)[:250]
+    #    initials.update({'summary': summary})
+    #    kwargs['initial'] = initials
+    #    super(PublishArticleForm, self).__init__(*args, **kwargs)
         
 
 class NewsletterForm(floppyforms.ModelForm):
@@ -232,6 +276,7 @@ class NewsletterSchedulingForm(floppyforms.ModelForm):
         return sch_dt
 
 class NewsletterTemplateForm(forms.Form):
+    
     def __init__(self, newsletter, user, *args, **kwargs):
         super(NewsletterTemplateForm, self).__init__(*args, **kwargs)
         choices = get_newsletter_templates(newsletter, user)

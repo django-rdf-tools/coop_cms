@@ -1,5 +1,36 @@
 {% extends "colorbox/popup_form_base.html" %}
 {% load i18n %}
-{% block title %}{% trans "Do you want to publish this article?" %}{% endblock %}
+{% block title %}{{title}}{% endblock %}
+
+{% block extra_head %}
+{{block.super}}
+<style>
+    .intro {
+        padding: 20px 20px;
+        font-size: 1.1em;
+        max-width: 420px;
+        border: solid thin #ccc;
+        background: #eee;
+    }
+</style>
+{% endblock %}
+
 {% block form_url %}{{article.get_publish_url }}{% endblock %}
-{% block form_ok %}{% trans "Publish" %}{% endblock %}
+
+{% block form_fields %}
+<div class="intro">
+    {% if draft %}
+        {% blocktrans %}
+        The article is a draft. By clicking "Publish", you will make it visible to anybody.
+        {% endblocktrans %}
+    {% else %}
+        {% blocktrans %}
+        The article is published. If you click "Draft", it will not be visible anymore.
+        Only staff members will be able to see it.
+        {% endblocktrans %}
+    {% endif %}
+</div>
+{{ block.super }}
+{% endblock %}
+
+{% block form_ok %}{% if draft %}{% trans "Publish" %}{% else %}{% trans "Draft" %}{% endif %}{% endblock %}

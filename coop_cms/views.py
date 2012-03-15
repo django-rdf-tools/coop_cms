@@ -117,24 +117,35 @@ def cancel_edit_article(request, url):
 @popup_redirect
 def publish_article(request, url):
     """change the publication status of an article"""
-    article = get_object_or_404(get_article_class(), slug=url, publication=models.BaseArticle.DRAFT)
+    article = get_object_or_404(get_article_class(), slug=url)
     
     if not request.user.has_perm('can_publish_article', article):
         raise PermissionDenied
     
+    draft = (article.publication == models.BaseArticle.DRAFT)
+    if draft:
+        article.publication = models.BaseArticle.PUBLISHED
+    else:
+        article.publication = models.BaseArticle.DRAFT
+
     if request.method == "POST":
         form = forms.PublishArticleForm(request.POST, instance=article)
         if form.is_valid():
             article = form.save()
-            article.publication = models.BaseArticle.PUBLISHED
-            article.save()
             return HttpResponseRedirect(article.get_absolute_url())
     else:
         form = forms.PublishArticleForm(instance=article)
     
+    context_dict = {
+        'form': form,
+        'article': article,
+        'draft': draft,
+        'title': _(u"Do you want to publish this article?") if draft else _(u"Make it draft?"),
+    }
+    
     return render_to_response(
         'coop_cms/popup_publish_article.html',
-        locals(),
+        context_dict,
         context_instance=RequestContext(request)
     )   
 
@@ -238,6 +249,51 @@ def change_template(request, article_id):
     
     return render_to_response(
         'coop_cms/popup_change_template.html',
+        locals(),
+        context_instance=RequestContext(request)
+    )
+    
+@login_required
+@popup_redirect
+def article_settings(request, article_id):
+    article = get_object_or_404(get_article_class(), id=article_id)
+    if request.method == "POST":
+        form = forms.ArticleSettingsForm(request.user, request.POST, request.FILES, instance=article)
+        if form.is_valid():
+            #article.template = form.cleaned_data['template']
+            article = form.save()
+            return HttpResponseRedirect(article.get_absolute_url())
+    else:
+        form = forms.ArticleSettingsForm(request.user, instance=article)
+    
+    return render_to_response(
+        'coop_cms/popup_article_settings.html',
+        locals(),
+        context_instance=RequestContext(request)
+    )
+
+@login_required
+@popup_redirect
+def new_article(request):
+    
+    Article = get_article_class()
+    ct = ContentType.objects.get_for_model(Article)
+    perm = '{0}.add_{1}'.format(ct.app_label, ct.model)
+    
+    if not request.user.has_perm(perm):
+        raise PermissionDenied
+    
+    if request.method == "POST":
+        form = forms.NewArticleForm(request.user, request.POST, request.FILES)
+        if form.is_valid():
+            #article.template = form.cleaned_data['template']
+            article = form.save()
+            return HttpResponseRedirect(article.get_edit_url())
+    else:
+        form = forms.NewArticleForm(request.user)
+    
+    return render_to_response(
+        'coop_cms/popup_new_article.html',
         locals(),
         context_instance=RequestContext(request)
     )

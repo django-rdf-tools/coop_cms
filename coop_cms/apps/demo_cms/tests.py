@@ -15,10 +15,13 @@ class ArticleTest(basic_cms_tests.ArticleTest):
 class AuthorPermissionTest(TestCase):
 
     def setUp(self):
+        if hasattr(get_article_class, '_cache_class'):
+            delattr(get_article_class, '_cache_class')
         settings.COOP_CMS_ARTICLE_CLASS = 'coop_cms.apps.demo_cms.models.PrivateArticle'
         self.user = User.objects.create_user('toto', 'toto@toto.fr', 'toto')
         
     def tearDown(self):
+        delattr(get_article_class, '_cache_class')
         settings.COOP_CMS_ARTICLE_CLASS = 'coop_cms.apps.demo_cms.models.Article'
         
     def test_view_private_article(self):
@@ -48,7 +51,8 @@ class AuthorPermissionTest(TestCase):
         self.assertEqual('B', article.content)
         
     def test_cant_edit_private_article(self):
-        article = mommy.make_one(get_article_class())
+        klass = get_article_class()
+        article = mommy.make_one(klass, publication=klass.DRAFT)
         self.assertTrue(self.client.login(username=self.user.username, password='toto'))
         response = self.client.post(article.get_edit_url(), data={'title': 'A', 'content': 'B', 'author': None}, follow=True)
         self.assertEqual(403, response.status_code)
@@ -58,30 +62,31 @@ class AuthorPermissionTest(TestCase):
         
     def test_publish_private_article(self):
         klass = get_article_class()
-        article = mommy.make_one(klass, author=self.user)
+        article = mommy.make_one(klass, author=self.user, publication=klass.DRAFT)
         self.assertTrue(self.client.login(username=self.user.username, password='toto'))
-        response = self.client.post(article.get_publish_url(), data={}, follow=True)
+        response = self.client.post(article.get_publish_url(), data={'publication':klass.PUBLISHED}, follow=True)
         self.assertEqual(200, response.status_code)
         article = klass.objects.get(id=article.id)#refresh
         self.assertEqual(article.publication, klass.PUBLISHED)
         
     def test_cant_publish_private_article(self):
         klass = get_article_class()
-        article = mommy.make_one(klass)
+        article = mommy.make_one(klass, publication=klass.DRAFT)
         self.assertTrue(self.client.login(username=self.user.username, password='toto'))
-        response = self.client.post(article.get_publish_url(), data={}, follow=True)
+        response = self.client.post(article.get_publish_url(), data={'publication':klass.PUBLISHED}, follow=True)
         self.assertEqual(403, response.status_code)
         article = klass.objects.get(id=article.id)#refresh
         self.assertEqual(article.publication, klass.DRAFT)
         
     def test_can_change_author_article(self):
         klass = get_article_class()
-        article = mommy.make_one(klass, author=self.user)
+        article = mommy.make_one(klass, author=self.user, publication=klass.PUBLISHED)
+        
         titi = User.objects.create_user('titi', 'titi@toto.fr', 'toto')
         
         self.assertTrue(self.client.login(username=self.user.username, password='toto'))
-        response = self.client.post(article.get_edit_url(), data={'title': 'A', 'content': 'B', 'author': titi.id}, follow=True)
-        self.assertEqual(404, response.status_code)
+        response = self.client.post(article.get_edit_url(), data={'title': 'A', 'content': 'B', 'author': titi.id}, follow=False)
+        self.assertEqual(302, response.status_code)
         
         article = klass.objects.get(id=article.id)#refresh
         self.assertEqual(article.author, titi)

@@ -6,6 +6,7 @@ from django.template import Context
 from coop_cms.settings import get_article_class
 from django.conf import settings
 from coop_bar.utils import make_link
+from django.contrib.contenttypes.models import ContentType
 
 def can_do(perm, object_names):
     def inner_decorator(func):
@@ -23,29 +24,40 @@ def can_do(perm, object_names):
         return wrapper
     return inner_decorator
 
+
 can_edit_article = can_do('can_edit', ['article'])
 can_publish_article = can_do('can_publish', ['article'])
 can_edit_newsletter = can_do('can_edit', ['newsletter'])
 can_edit = can_do('can_edit', ['article', 'newsletter'])
+
+def can_add_article(func):
+    def wrapper(request, context):
+        Article = get_article_class()
+        ct = ContentType.objects.get_for_model(Article)
+        perm = '{0}.add_{1}'.format(ct.app_label, ct.model)
+        if request.user.has_perm(perm):
+            return func(request, context)
+        return None
+    return wrapper
 
 def django_admin(request, context):
     if request.user.is_staff:
         return make_link(reverse("admin:index"), _(u'Administration'), 'fugue/lock.png',
             classes=['icon', 'alert_on_click'])
 
-def django_admin_add_article(request, context):
-    if request.user.is_staff:
-        article_class = get_article_class()
-        view_name = 'admin:%s_%s_add' % (article_class._meta.app_label,  article_class._meta.module_name)
-        return make_link(reverse(view_name), _(u'Add article'), 'fugue/document--plus.png',
-            classes=['icon', 'alert_on_click'])
+#def django_admin_add_article(request, context):
+#    if request.user.is_staff:
+#        article_class = get_article_class()
+#        view_name = 'admin:%s_%s_add' % (article_class._meta.app_label,  article_class._meta.module_name)
+#        return make_link(reverse(view_name), _(u'Add article'), 'fugue/document--plus.png',
+#            classes=['icon', 'alert_on_click'])
         
 def django_admin_edit_article(request, context):
     if request.user.is_staff and 'article' in context:
         article_class = get_article_class()
         article = context['article']
         view_name = 'admin:%s_%s_change' % (article_class._meta.app_label,  article_class._meta.module_name)
-        return make_link(reverse(view_name, args=[article.id]), _(u'Article settings'), 'fugue/gear.png',
+        return make_link(reverse(view_name, args=[article.id]), _(u'Article admin'), 'fugue/lock.png',
             classes=['icon', 'alert_on_click'])
 
 @can_edit
@@ -63,15 +75,21 @@ def cms_upload_image(request, context):
 @can_edit
 def cms_upload_doc(request, context):
     if context.get('edit_mode'):
-        return make_link(reverse('coop_cms_upload_doc'), _(u'Add document'), 'fugue/document--plus.png',
+        return make_link(reverse('coop_cms_upload_doc'), _(u'Add document'), 'fugue/document-import.png',
             classes=['coopbar_addfile', 'colorbox-form', 'icon'])
 
+@can_add_article
+def cms_new_article(request, context):
+        url = reverse('coop_cms_new_article')
+        return make_link(url, _(u'Add article'), 'fugue/document--plus.png',
+            classes=['alert_on_click', 'colorbox-form', 'icon'])
+
 @can_edit_article    
-def cms_change_template(request, context):
+def cms_article_settings(request, context):
     if context.get('edit_mode'):
         article = context['article']
-        url = reverse('coop_cms_change_template', args=[article.id])
-        return make_link(url, _(u'Template'), 'fugue/application-blog.png',
+        url = reverse('coop_cms_article_settings', args=[article.id])
+        return make_link(url, _(u'Article settings'), 'fugue/gear.png',
             classes=['alert_on_click', 'colorbox-form', 'icon'])
 
 @can_edit_article
@@ -104,10 +122,16 @@ def cms_edit(request, context):
 
 @can_publish_article
 def cms_publish(request, context):
-    if context['draft']:
-        article = context['article']
-        return make_link(article.get_publish_url(), _(u'Publish'), 'fugue/newspaper--arrow.png',
-            classes=['publish', 'colorbox-form', 'icon'])
+    article = context.get('article')
+    if article:
+        if context['draft']:
+            
+            return make_link(article.get_publish_url(), _(u'Draft'), 'fugue/lock.png',
+                classes=['colorbox-form', 'icon'])
+        else:
+            return make_link(article.get_publish_url(), _(u'Published'), 'fugue/globe.png',
+                classes=['colorbox-form', 'icon'])
+        
 
 def cms_extra_js(request, context):
     try:
@@ -176,14 +200,14 @@ def schedule_newsletter(request, context):
 def load_commands(coop_bar):
     
     coop_bar.register([
-        [django_admin, django_admin_add_article, django_admin_edit_article],
+        [django_admin, django_admin_edit_article],
         [edit_newsletter, cancel_edit_newsletter, save_newsletter,
             change_newsletter_settings, change_newsletter_template,
             test_newsletter, schedule_newsletter],
+        [cms_edit, cms_view, cms_save, cms_cancel],
+        [cms_new_article, cms_article_settings],
+        [cms_publish],
         [cms_media_library, cms_upload_image, cms_upload_doc],
-        [cms_edit],
-        [cms_change_template],
-        [cms_save, cms_publish, cms_cancel, cms_view],
         [log_out]
     ])
     
