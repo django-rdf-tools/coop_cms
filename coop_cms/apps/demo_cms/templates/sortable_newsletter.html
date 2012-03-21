@@ -1,0 +1,65 @@
+{% extends "coop_cms/newsletter.html" %}
+{% load i18n coop_edition %}
+{% block style %}
+{{block.super}}
+<style>
+body {
+    background: #447;
+}
+#newsletter {
+    background: #eee;
+    width: 700px;
+}
+.newsletter-section-index {
+    padding-left: 0;
+}
+
+.newsletter-section-index li {
+    list-style: none;
+	padding: 5px 5px;
+	background: #333;
+	font-weight: bold;
+}
+
+.newsletter-section-index li a, .newsletter-section-index li a:hover{
+	text-decoration: none;
+	color: #fff;
+}
+
+.newsletter-section-index li a:hover {
+	color: #fc7;
+}
+
+</style>
+{% if_cms_edition %}<script>
+	$(function() {
+		$(".newsletter-section-index").sortable({
+            update: function(event, ui) {
+				var items = [];
+				$(".newsletter-section-index li").each(function() {
+					var full_id = $(this).attr('id');
+					items.push(full_id.substring(3));
+				});
+				$("#id_sortable").val(items.join(';'));
+				$('.newsletter-section').sortElements(function(a, b){
+					var a_id = $(a).attr('id').substring(2);
+					var b_id = $(b).attr('id').substring(2);
+					return items.indexOf(a_id) > items.indexOf(b_id) ? 1 : -1;
+				});
+			}
+        });
+		$( ".newsletter-section-index" ).disableSelection();
+	});
+</script>{% endif %}
+{% endblock %}
+
+{% block newsletter %}
+    {% cms_edit newsletter %}
+        <div id="content">{{ newsletter.content }}</div>
+		{{ newsletter.sortable }}
+        
+		{% include "coop_cms/_newsletter_sections_index.html" %}
+
+        {% include "coop_cms/_newsletter_sections.html" %}
+    {% end_cms_edit %}
+{% endblock %}

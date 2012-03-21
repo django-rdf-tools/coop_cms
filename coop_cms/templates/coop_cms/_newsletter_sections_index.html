@@ -3,7 +3,7 @@
 {% regroup items by section as sections %}
 <ul class="newsletter-section-index">
 {% for section in sections %}
-    <li>
+    <li id="si-{{section.grouper.id}}">
         <a href="#section-{{section.grouper.id}}">{{ section.grouper.name }}</a>
     </li>
 {% endfor %}

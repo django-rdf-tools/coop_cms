@@ -15,7 +15,7 @@ from coop_cms import forms
 from django.contrib.messages.api import success as success_message
 from coop_cms import models
 from django.contrib.auth.decorators import login_required
-from coop_cms.settings import get_article_class, get_article_form
+from coop_cms.settings import get_article_class, get_article_form, get_newsletter_form
 from djaloha import utils as djaloha_utils
 from django.core.servers.basehttp import FileWrapper
 import mimetypes, unicodedata
@@ -608,12 +608,13 @@ def process_nav_edition(request):
 @login_required
 def edit_newsletter(request, newsletter_id):
     newsletter = get_object_or_404(models.Newsletter, id=newsletter_id)
+    newsletter_form_class = get_newsletter_form()
     
     if not request.user.has_perm('can_edit_newsletter', newsletter):
         raise PermissionDenied
     
     if request.method == "POST":
-        form = forms.NewsletterForm(request.POST, instance=newsletter)
+        form = newsletter_form_class(request.POST, instance=newsletter)
         
         forms_args = djaloha_utils.extract_forms_args(request.POST)
         djaloha_forms = djaloha_utils.make_forms(forms_args, request.POST)
@@ -628,7 +629,7 @@ def edit_newsletter(request, newsletter_id):
                 
             return HttpResponseRedirect(reverse('coop_cms_edit_newsletter', args=[newsletter.id]))
     else:
-        form = forms.NewsletterForm(instance=newsletter)
+        form = newsletter_form_class(instance=newsletter)
     
     context_dict = {
         'form': form, 'post_url': reverse('coop_cms_edit_newsletter', args=[newsletter.id]),

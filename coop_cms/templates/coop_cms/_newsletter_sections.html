@@ -3,7 +3,7 @@
 {% with newsletter.get_items_by_section as items %}
 {% regroup items by section as sections %}
 {% for section in sections %}
-    <div class="newsletter-section">
+    <div class="newsletter-section" id="s-{{section.grouper.id}}">
         <h3><a name="section-{{section.grouper.id}}">{{ section.grouper.name }}</a></h3>
         {% for item in section.list %}
         <div class="newsletter-item">

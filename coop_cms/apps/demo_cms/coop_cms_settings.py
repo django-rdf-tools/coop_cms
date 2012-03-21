@@ -20,4 +20,6 @@ COOP_CMS_TEST_EMAILS = ('"Your name" <your@email.com>',)
 COOP_CMS_NEWSLETTER_TEMPLATES = (
     ('basic_newsletter.html', 'Basic'),
     ('special_newsletter.html', 'With sections'),
+    ('sortable_newsletter.html', 'Sortable sections'),
 )
+COOP_CMS_NEWSLETTER_FORM = 'coop_cms.apps.demo_cms.forms.SortableNewsletterForm'

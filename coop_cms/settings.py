@@ -63,6 +63,18 @@ def get_newsletter_templates(newsletter, user):
     except AttributeError:
         return None
 
+def get_newsletter_form():
+    try:
+        full_class_name = getattr(settings, 'COOP_CMS_NEWSLETTER_FORM')
+    except AttributeError:
+        from coop_cms.forms import NewsletterForm
+        newsletter_form = NewsletterForm
+    else:
+        module_name, class_name = full_class_name.rsplit('.', 1)
+        module = import_module(module_name)
+        newsletter_form = getattr(module, class_name)
+    return newsletter_form
+
 def get_article_templates(article, user):
     if hasattr(settings, 'COOP_CMS_ARTICLE_TEMPLATES'):
         coop_cms_article_templates = getattr(settings, 'COOP_CMS_ARTICLE_TEMPLATES')
