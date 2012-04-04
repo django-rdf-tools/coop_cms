@@ -440,13 +440,21 @@ class Document(Media):
         else:
             return self.file.url
     
-    def get_ico_url(self):
+    def get_ico_url(self, icotype):
         root, ext = os.path.splitext(self.file.name)
-        ext = ext[1:] #remove leading dot
-        if ext in ('pdf', 'doc', 'xls', 'txt'):
-            return settings.STATIC_URL+u'img/{0}.png'.format(ext)
+        ext = ext[1:]  # remove leading dot
+        if ext in ('pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt', 'png', 'jpg', 'gif', \
+                    'ppt', 'pps', 'mp3', 'ogg', 'html', 'rtf', 'zip', 'avi', \
+                    'mov', 'mp4', ):
+            return settings.STATIC_URL + u'img/filetypes/' + icotype + '/{0}.png'.format(ext)
         else:
-            return settings.STATIC_URL+u'img/default-icon.png'
+            return settings.STATIC_URL + u'img/filetypes/' + icotype + '/default.png'
+
+    def get_block_url(self):
+        return self.get_ico_url('bloc')
+
+    def get_fileicon_url(self):
+        return self.get_ico_url('icon')
             
     class Meta:
         verbose_name = _(u'document')

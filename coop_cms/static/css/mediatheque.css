@@ -1,0 +1,105 @@
+/* @override http://localhost:8000/static/css/mediatheque.css */
+
+#pageslide-content {
+	height: 100%;
+}
+
+.library {
+	margin: auto;
+	height: 100%;
+	border-right: solid thin #777;
+	font: 12px Tahoma, Arial,"Trebuchet MS", Trebuchet;
+	-webkit-box-shadow: #666 0px 2px 8px;
+	-moz-box-shadow: #666 0px 2px 8px;
+	box-shadow: #555 0px 2px 8px;
+	background: #FFFFFF;
+	background: -webkit-gradient(linear, 0 0, 0 bottom, from(#BBB), to(#FFFFFF));
+	background: -webkit-linear-gradient(#BBB, #FFFFFF);
+	background: -moz-linear-gradient(#BBB, #FFF);
+	background: -ms-linear-gradient(#BBB, #FFF);
+	background: -o-linear-gradient(#BBB, #FFF);
+	background: linear-gradient(#BBB, #FFF);
+}
+
+.media-selector {
+	height: 40px;
+	background: #FFFFFF;
+	background: -webkit-gradient(linear, 0 0, 0 bottom, from(#FFFFFF), to(#ABABAB));
+	background: -webkit-linear-gradient(#FFFFFF, #ABABAB);
+	background: -moz-linear-gradient(#FFFFFF, #ABABAB);
+	background: -ms-linear-gradient(#FFFFFF, #ABABAB);
+	background: -o-linear-gradient(#FFFFFF, #ABABAB);
+	background: linear-gradient(#FFFFFF, #ABABAB);
+	font-weight: bold;
+	font-size: 14px;
+	line-height: 40px;
+}
+
+.media-selector a {
+	height: 40px;
+	display: inline-block;
+	padding-left: 10px;
+	padding-right: 10px;
+	color: #949494;
+}
+
+a.active {
+	text-decoration: none;
+	background-color: rgba(255,255,255,0.45);
+	color: #2a62d5;
+}
+
+.close-slider a {
+	float: right;
+	background: transparent url("/static/img/cross.png") no-repeat 6px 7px;
+	width: 28px;
+	margin-right: 6px;
+	margin-top: 5px;
+	border: 1px inset #cecfd0;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+	height: 28px;
+}
+
+.library h3 {
+	color: #000;
+}
+
+.library .pagination .page, .library .pagination .prev, .library .pagination .next {
+	padding: 0 1px 0 1px;
+}
+
+.library-images {
+	padding: 10px;
+}
+
+.library-images img.djaloha-thumbnail {
+	border: 6px solid white;
+	-webkit-box-shadow: #666 0px 2px 8px;
+	-moz-box-shadow: #666 0px 2px 8px;
+	box-shadow: #555 0px 2px 8px;
+	margin: 12px;
+	cursor: move;
+}
+
+.library-docs {
+	padding: 10px;
+	margin-top: 5px;
+}
+
+.djaloha-document {
+	position: relative;
+	width: 330px;
+	display: block;
+	margin-top: 5px;
+	cursor: move;
+	height: 70px;
+}
+
+.cms_doc_title {
+	z-index: 6;
+	position: absolute;
+	left: 80px;
+	top: 10px;
+}

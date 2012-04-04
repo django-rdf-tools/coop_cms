@@ -1,84 +1,40 @@
 {% load i18n %}
 <html>
   <head>
-    <style>
-      .library{
-        background: #eee;
-        margin: auto;
-        text-align: center;
-        height: 100%;
-        font-size: small;
-        font-family: 'calibri';
-        border-right: solid thin #777;
-      }
-      .close-slider a{
-        float: right;
-        background: url("{{STATIC_URL}}css/images/controls.png") no-repeat scroll -25px 0 transparent;
-        height: 25px;
-        width: 25px;
-        margin-right: 1px;
-        margin-top: 1px;
-      }
-      
-      .library h3 {
-        color: #000;
-      }
-      .library img {
-        margin: 5px 5px 5px 5px;
-      }
-      .library .pagination .page, .library .pagination .prev, .library .pagination .next {
-        padding: 0 1px 0 1px;
-      }
-      a.disabled {
-        color: #000;
-        text-decoration: none;
-      }
-      .media-selector {
-        background: #ccc;
-        font-size: 1.1em;
-        height: 25px;
-        padding-top: 2px;
-      }
-      .media-selector, .media-selector a, .media-selector a:hover{
-        color: #949494;
-      }
-    </style>
+
+    <link rel="stylesheet" type="text/css" href="/static/css/mediatheque.css">
     <script>
     $(function() {
       $('.pagination a').live('click', function() {
+        e.preventDefault();
         $.ajax({
           url: "{{ media_url }}"+$(this).attr('href'),
           success: function(data) {
             $("#media_slide_content").html(data["html"]);
           }
         });
-        return false;
       });
-      
-      var enable_selector = function(media_type) {
-        if (media_type === 'image') {
-          $(".media-selector a.doc-sel").removeClass('disabled').unbind('click');
-          $(".media-selector a.img-sel").bind('click', function() {return false}).addClass('disabled');
-        } else if (media_type === 'document') {
-          $(".media-selector a.img-sel").removeClass('disabled').unbind('click');
-          $(".media-selector a.doc-sel").bind('click', function() {return false}).addClass('disabled');
-        }  
+
+      var active_link = function(media_type) {
+        $(".media-selector a." + media_type + "-sel").addClass('active');
       }
       
-      $('.media-selector a').live('click', function() {
+      $('.media-selector a').click( function(e) {
+        e.preventDefault();
+        e.stopPropagation();
         $.ajax({
           url: $(this).attr('href'),
           dataType: 'json',
           success: function(data) {
             $("#media_slide_content").html(data["html"]);
-            enable_selector(data['media_type']);
-          }
-        });
-        return false;
+            }
+          });
+        if (!$(this).hasClass('active')){ $(".media-selector a").toggleClass('active'); }
+
       });
-      //$(".slide-user-info").click(function() {alert('close'); });
-      //$(".media-selector a.img-sel").bind('click', function() {return false});
-      {% if not is_ajax %}enable_selector('{{media_type}}');{% endif %}
+
+      {% if not is_ajax %}active_link('{{media_type}}');{% endif %}
+
     });
     </script>
   </head>
@@ -91,8 +47,8 @@
         <div class="media-selector">
           {% url coop_cms_media_images as images_url %}
           {% url coop_cms_media_documents as docs_url %}
-          <a class="img-sel disabled" href="{{images_url}}?page=1">{% trans "Images" %}</a>
-          <a class="doc-sel disabled" href="{{docs_url}}?page=1">{% trans "Documents" %}</a>
+          <a class="image-sel" href="{{images_url}}?page=1">{% trans "Images" %}</a>
+          <a class="document-sel" href="{{docs_url}}?page=1">{% trans "Documents" %}</a>
         </div>
         <div id="media_slide_content">
         {% include media_slide_template %}

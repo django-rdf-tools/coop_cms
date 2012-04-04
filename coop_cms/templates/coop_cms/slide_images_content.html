@@ -1,6 +1,5 @@
 {% load i18n pagination_tags %}
 {% spaceless %}
-  <h3>{% trans "Images" %}</h3>
   <div class="library-items library-images">
   {% autopaginate images 20 %}  
   {% for img in images %}

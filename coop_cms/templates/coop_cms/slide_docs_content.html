@@ -1,9 +1,17 @@
 {% load i18n pagination_tags %}
-<h3>{% trans "Documents" %}</h3>
 <div class="library-items library-docs">
   {% autopaginate documents 20 %}  
   {% for doc in documents %}
-      <a class="djaloha-document{% if doc.is_private %} private-doc{% endif %}"><img src="{{ doc.get_ico_url }}" title="{{doc.name}}" rel="{{doc.get_download_url}}"></a>
+  <div class="djaloha-document{% if doc.is_private %} private-doc{% endif %}" rel="{{doc.get_download_url}}">
+        <img src="{{ doc.get_block_url }}" class="cms_doc_bloc" rel="{{doc.get_fileicon_url}}"/>
+        <a class="cms_doc_title">{{doc.name}}</a>
+  </div>
+ <!--
+    <a class="djaloha-document{% if doc.is_private %} private-doc{% endif %}">
+
+        <img src="{{ doc.get_ico_url }}" title="{{doc.name}}" rel="{{doc.get_download_url}}">
+
+    </a>-->
   {% endfor %}
   {% paginate %}  
 </div>
