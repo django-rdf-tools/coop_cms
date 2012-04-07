@@ -100,6 +100,6 @@ a.active {
 .cms_doc_title {
 	z-index: 6;
 	position: absolute;
-	left: 80px;
 	top: 10px;
+	left: 80px;
 }
