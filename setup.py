@@ -11,14 +11,16 @@ except ImportError:
 VERSION = __import__('coop_cms').__version__
 
 import os
+
+
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
-    name='coop-cms',
+    name = 'coop-cms',
     version = VERSION,
-    description='Small CMS built around a tree navigation open to any django models',
-    packages=[  'coop_cms',
+    description = 'Small CMS built around a tree navigation open to any django models',
+    packages = ['coop_cms',
                 'coop_cms.apps',
                 'coop_cms.apps.basic_cms',
                 'coop_cms.apps.demo_cms',
@@ -33,13 +35,12 @@ setup(
                 'coop_cms.apps.rss_sync.management',
                 'coop_cms.apps.rss_sync.management.commands',
                 ],
-    include_package_data=True,
-    author='Luc Jean',
-    author_email='ljean@apidev.fr',
-    license='BSD',
-    zip_safe=False,
-    install_requires = ['Django==1.3.1',
-                        'django-floppyforms==0.4.7',
+    include_package_data = True,
+    author = 'Luc Jean',
+    author_email = 'ljean@apidev.fr',
+    license = 'BSD',
+    zip_safe = False,
+    install_requires = ['django-floppyforms==0.4.7',
                         'sorl-thumbnail==11.09',
                         'coop-colorbox==0.1.3',
                         'coop-bar==0.3.6',
