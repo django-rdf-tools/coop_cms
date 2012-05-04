@@ -1,0 +1,21 @@
+{% extends "coop_cms/base.html" %}
+{% load i18n static coop_navigation %}
+
+{% block meta_title %}
+    {% trans "Site Map" %}
+{% endblock %}
+
+
+
+{% block extra_head %}
+    <link rel="stylesheet" type="text/css" media="screen, print" href="{{ STATIC_URL }}slickmap/slickmap.css" />
+{% endblock %}
+
+{% block document %}
+  {% block navigation %}
+  <nav>
+    <ul id="primaryNav" class="col4">{% navigation_as_nested_ul %}</ul>
+  </nav>
+  {% endblock %}
+    
+{% endblock %}

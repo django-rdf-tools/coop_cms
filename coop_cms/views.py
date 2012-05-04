@@ -26,11 +26,21 @@ from coop_cms.utils import send_newsletter
 from django.utils.log import getLogger
 from datetime import datetime
 
+
 def get_article_template(article):
     template = article.template
     if not template:
         template = 'coop_cms/article.html'
     return template
+
+
+def tree_map(request):
+    return render_to_response(
+        'coop_cms/tree_map.html',
+        #{'tree': models.NavTree.objects.get(id=tree_id)},  # what is the default tree for the site 
+        RequestContext(request)
+    )   
+
 
 def view_article(request, url):
     """view the article"""
