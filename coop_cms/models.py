@@ -81,15 +81,15 @@ class NavType(models.Model):
         verbose_name = _(u'navigable type')
         verbose_name_plural = _(u'navigable types')
 
-    
+
 class NavNode(models.Model):
     """
     A navigation node
     Part of the tree as child of his parent
     Point on a content_object 
     """
-    label = models.CharField(max_length=200, verbose_name=_("label"))
     
+    label = models.CharField(max_length=200, verbose_name=_("label"))
     parent = models.ForeignKey("NavNode", blank=True, null=True, default=0, verbose_name=_("parent"))
     ordering = models.PositiveIntegerField(_("ordering"), default=0)
     
