@@ -41,6 +41,51 @@ def tree_map(request):
         RequestContext(request)
     )   
 
+def homepage(request):
+    try:
+        article = get_article_class().objects.get(is_homepage=True)
+        return HttpResponseRedirect(article.get_absolute_url())
+    except get_article_class().DoesNotExist:
+        return HttpResponseRedirect(reverse('coop_cms_view_all_articles'))
+    
+@login_required
+def view_all_articles(request):
+    return render_to_response(
+        'coop_cms/view_all_articles.html',
+        {'articles': get_article_class().objects.all().order_by('title')},
+        RequestContext(request)
+    )
+
+@login_required
+@popup_redirect
+def set_homepage(request, article_id):
+    """use the article as homepage"""
+    try:
+        article = get_object_or_404(get_article_class(), id=article_id)
+        
+        if not request.user.has_perm('can_publish_article', article):
+            raise PermissionDenied
+        
+        if request.method == "POST":
+            article.is_homepage = True
+            article.save()
+            return HttpResponseRedirect(reverse('coop_cms_homepage'))
+        
+        context_dict = {
+            'article': article,
+            'title': _(u"Do you want to use this article as homepage?"),
+        }
+        
+        return render_to_response(
+            'coop_cms/popup_set_homepage.html',
+            context_dict,
+            context_instance=RequestContext(request)
+        )
+    except Exception, msg:
+        print "## ERR", msg
+        raise
+        
+
 
 def view_article(request, url):
     """view the article"""

@@ -273,6 +273,7 @@ class BaseArticle(TimeStampedModel):
     summary = models.TextField(_(u'Summary'), blank=True, default='')
     section = models.ForeignKey(ArticleSection, verbose_name=_(u'Section'), blank=True, null=True, default=None, related_name="%(app_label)s_%(class)s_rel")
     in_newsletter = models.BooleanField(_(u'In newsletter'), default=True, help_text='Can be inserted in a newsletter')
+    is_homepage = models.BooleanField(_(u'Is homepage'), default=False, help_text='define if this page is teh homepage. Only one homepage per site')
 
     def logo_thumbnail(self, temp=False, logo_size=None):
         logo = self.temp_logo if (temp and self.temp_logo) else self.logo
@@ -332,6 +333,10 @@ class BaseArticle(TimeStampedModel):
         parent_id = getattr(self, '_navigation_parent', None)
         if parent_id != None:
             self.navigation_parent = parent_id
+        if self.is_homepage:
+            for a in get_article_class().objects.filter(is_homepage=True).exclude(id=self.id):
+                a.is_homepage = False
+                a.save()
         return ret
     
     def get_label(self):

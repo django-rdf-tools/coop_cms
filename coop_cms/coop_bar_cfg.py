@@ -94,8 +94,16 @@ def cms_upload_doc(request, context):
 
 @can_add_article
 def cms_new_article(request, context):
-        url = reverse('coop_cms_new_article')
-        return make_link(url, _(u'Add article'), 'fugue/document--plus.png',
+    url = reverse('coop_cms_new_article')
+    return make_link(url, _(u'Add article'), 'fugue/document--plus.png',
+        classes=['alert_on_click', 'colorbox-form', 'icon'])
+
+@can_add_article
+def cms_set_homepage(request, context):
+    article = context.get('article', None)
+    if context.get('edit_mode') and article and (not article.is_homepage):
+        url = reverse('coop_cms_set_homepage', args=[article.id])
+        return make_link(url, _(u'Set homepage'), 'fugue/home--pencil.png',
             classes=['alert_on_click', 'colorbox-form', 'icon'])
 
 @can_edit_article    
@@ -219,7 +227,7 @@ def load_commands(coop_bar):
             change_newsletter_settings, change_newsletter_template,
             test_newsletter, schedule_newsletter],
         [cms_edit, cms_view, cms_save, cms_cancel],
-        [cms_new_article, cms_article_settings],
+        [cms_new_article, cms_article_settings, cms_set_homepage],
         [cms_publish],
         [cms_media_library, cms_upload_image, cms_upload_doc],
         [log_out]

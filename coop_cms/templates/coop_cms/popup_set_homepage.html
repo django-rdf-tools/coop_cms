@@ -1,0 +1,4 @@
+{% extends "colorbox/popup_form_base.html" %}
+{% load i18n %}
+{% block title %}{{ title }}{% endblock %}
+{% block form_url %}{% url coop_cms_set_homepage article.id %}{% endblock %}

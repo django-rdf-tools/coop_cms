@@ -1685,3 +1685,33 @@ class NavigationTreeTest(TestCase):
         
         for n in nodes_in:
             self.assertTrue(html.find(unicode(n))>=0)
+            
+class HomepageTest(TestCase):
+    
+    def test_only_one_homepage(self):
+        a1 = get_article_class().objects.create(title="python", content='python')
+        a2 = get_article_class().objects.create(title="django", content='django', is_homepage=True)
+        a3 = get_article_class().objects.create(title="home", content='homepage')
+        
+        self.assertEqual(1, get_article_class().objects.filter(is_homepage=True).count())
+        self.assertEqual(a2.title, get_article_class().objects.filter(is_homepage=True)[0].title)
+        
+        a3.is_homepage = True
+        a3.save()
+        
+        self.assertEqual(1, get_article_class().objects.filter(is_homepage=True).count())
+        self.assertEqual(a3.title, get_article_class().objects.filter(is_homepage=True)[0].title)
+        
+    def test_only_one_homepage_again(self):
+        a1 = get_article_class().objects.create(title="python", content='python')
+        a2 = get_article_class().objects.create(title="django", content='django')
+        a3 = get_article_class().objects.create(title="home", content='homepage')
+        
+        self.assertEqual(0, get_article_class().objects.filter(is_homepage=True).count())
+        
+        a3.is_homepage = True
+        a3.save()
+        
+        self.assertEqual(1, get_article_class().objects.filter(is_homepage=True).count())
+        self.assertEqual(a3.title, get_article_class().objects.filter(is_homepage=True)[0].title)
+        
