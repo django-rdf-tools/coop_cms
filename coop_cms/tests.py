@@ -632,91 +632,89 @@ class NavigationTest(TestCase):
         node = nodes[0]
         self.assertEqual(addrs[0], node.content_object.url)
 
-class NavigationParentTest(TestCase):
-    
-    def setUp(self):
-        ct = ContentType.objects.get_for_model(get_article_class())
-        NavType.objects.create(content_type=ct, search_field='title', label_rule=NavType.LABEL_USE_SEARCH_FIELD)
-        self.tree = NavTree.objects.create()
-    
-    def test_set_himself_as_parent_raise_error(self):
-        art = get_article_class().objects.create(title='toto', content='oups')
-        node = NavNode.objects.create(tree=self.tree, label=art.title, content_object=art, ordering=1, parent=None)
-        self.assertRaises(ValidationError, art._set_navigation_parent, node.id)
-        
-    def test_set_child_as_parent_raise_error(self):
-        art1 = get_article_class().objects.create(title='toto', content='oups')
-        node1 = NavNode.objects.create(tree=self.tree, label=art1.title, content_object=art1, ordering=1, parent=None)
-        
-        art2 = get_article_class().objects.create(title='titi', content='oups')
-        node2 = NavNode.objects.create(tree=self.tree, label=art2.title, content_object=art2, ordering=1, parent=node1)
-        
-        self.assertRaises(ValidationError, art1._set_navigation_parent, node2.id)
-    
-    def test_add_to_navigation_as_root(self):
-        art1 = get_article_class().objects.create(title='toto', content='oups')
-        art1.navigation_parent = 0
-        ct = ContentType.objects.get_for_model(get_article_class())
-        node = NavNode.objects.get(content_type=ct, object_id=art1.id)
-        
-    def test_add_to_navigation_as_child(self):
-        art1 = get_article_class().objects.create(title='toto', content='oups')
-        node1 = NavNode.objects.create(tree=self.tree, label=art1.title, content_object=art1, ordering=1, parent=None)
-        art2 = get_article_class().objects.create(title='titi', content='oups')
-        art2.navigation_parent = node1.id
-        ct = ContentType.objects.get_for_model(get_article_class())
-        node = NavNode.objects.get(content_type=ct, object_id=art2.id)
-        self.assertEqual(node.parent.id, node1.id)
-        
-    def test_move_in_navigation_to_root(self):
-        art1 = get_article_class().objects.create(title='toto', content='oups')
-        node1 = NavNode.objects.create(tree=self.tree, label=art1.title, content_object=art1, ordering=1, parent=None)
-        art2 = get_article_class().objects.create(title='titi', content='oups')
-        node2 = NavNode.objects.create(tree=self.tree, label=art2.title, content_object=art2, ordering=1, parent=node1)
-        art2.navigation_parent = 0
-        ct = ContentType.objects.get_for_model(get_article_class())
-        node = NavNode.objects.get(content_type=ct, object_id=art2.id)
-        self.assertEqual(node.parent, None)
-        
-    def test_move_in_navigation_to_child(self):
-        art1 = get_article_class().objects.create(title='toto', content='oups')
-        node1 = NavNode.objects.create(tree=self.tree, label=art1.title, content_object=art1, ordering=1, parent=None)
-        art2 = get_article_class().objects.create(title='titi', content='oups')
-        node2 = NavNode.objects.create(tree=self.tree, label=art2.title, content_object=art2, ordering=1, parent=None)
-        art2.navigation_parent = node1.id
-        ct = ContentType.objects.get_for_model(get_article_class())
-        node = NavNode.objects.get(content_type=ct, object_id=art2.id)
-        self.assertEqual(node.parent.id, node1.id)
-        
-    def test_remove_from_navigation(self):
-        art1 = get_article_class().objects.create(title='toto', content='oups')
-        node1 = NavNode.objects.create(tree=self.tree, label=art1.title, content_object=art1, ordering=1, parent=None)
-        art1.navigation_parent = None
-        ct = ContentType.objects.get_for_model(get_article_class())
-        self.assertRaises(NavNode.DoesNotExist, NavNode.objects.get, content_type=ct, object_id=art1.id)
-        
-    def test_remove_from_navigation_twice(self):
-        art1 = get_article_class().objects.create(title='toto', content='oups')
-        node1 = NavNode.objects.create(tree=self.tree, label=art1.title, content_object=art1, ordering=1, parent=None)
-        art1.navigation_parent = None
-        ct = ContentType.objects.get_for_model(get_article_class())
-        self.assertRaises(NavNode.DoesNotExist, NavNode.objects.get, content_type=ct, object_id=art1.id)
-        art1.navigation_parent = None
-        ct = ContentType.objects.get_for_model(get_article_class())
-        self.assertRaises(NavNode.DoesNotExist, NavNode.objects.get, content_type=ct, object_id=art1.id)
-        
-    def test_get_navigation_parent(self):
-        art1 = get_article_class().objects.create(title='toto', content='oups')
-        node1 = NavNode.objects.create(tree=self.tree, label=art1.title, content_object=art1, ordering=1, parent=None)
-        art2 = get_article_class().objects.create(title='titi', content='oups')
-        node2 = NavNode.objects.create(tree=self.tree, label=art2.title, content_object=art2, ordering=1, parent=node1)
-        art3 = get_article_class().objects.create(title='tutu', content='oups')
-        self.assertEqual(art1.navigation_parent, 0)
-        self.assertEqual(art2.navigation_parent, art1.id)
-        self.assertEqual(art3.navigation_parent, None)
-            
-        
-            
+#class NavigationParentTest(TestCase):
+#    
+#    def setUp(self):
+#        ct = ContentType.objects.get_for_model(get_article_class())
+#        NavType.objects.create(content_type=ct, search_field='title', label_rule=NavType.LABEL_USE_SEARCH_FIELD)
+#        self.tree = NavTree.objects.create()
+#    
+#    def test_set_himself_as_parent_raise_error(self):
+#        art = get_article_class().objects.create(title='toto', content='oups')
+#        node = NavNode.objects.create(tree=self.tree, label=art.title, content_object=art, ordering=1, parent=None)
+#        self.assertRaises(ValidationError, art._set_navigation_parent, node.id)
+#        
+#    def test_set_child_as_parent_raise_error(self):
+#        art1 = get_article_class().objects.create(title='toto', content='oups')
+#        node1 = NavNode.objects.create(tree=self.tree, label=art1.title, content_object=art1, ordering=1, parent=None)
+#        
+#        art2 = get_article_class().objects.create(title='titi', content='oups')
+#        node2 = NavNode.objects.create(tree=self.tree, label=art2.title, content_object=art2, ordering=1, parent=node1)
+#        
+#        self.assertRaises(ValidationError, art1._set_navigation_parent, node2.id)
+#    
+#    def test_add_to_navigation_as_root(self):
+#        art1 = get_article_class().objects.create(title='toto', content='oups')
+#        art1.navigation_parent = 0
+#        ct = ContentType.objects.get_for_model(get_article_class())
+#        node = NavNode.objects.get(content_type=ct, object_id=art1.id)
+#        
+#    def test_add_to_navigation_as_child(self):
+#        art1 = get_article_class().objects.create(title='toto', content='oups')
+#        node1 = NavNode.objects.create(tree=self.tree, label=art1.title, content_object=art1, ordering=1, parent=None)
+#        art2 = get_article_class().objects.create(title='titi', content='oups')
+#        art2.navigation_parent = node1.id
+#        ct = ContentType.objects.get_for_model(get_article_class())
+#        node = NavNode.objects.get(content_type=ct, object_id=art2.id)
+#        self.assertEqual(node.parent.id, node1.id)
+#        
+#    def test_move_in_navigation_to_root(self):
+#        art1 = get_article_class().objects.create(title='toto', content='oups')
+#        node1 = NavNode.objects.create(tree=self.tree, label=art1.title, content_object=art1, ordering=1, parent=None)
+#        art2 = get_article_class().objects.create(title='titi', content='oups')
+#        node2 = NavNode.objects.create(tree=self.tree, label=art2.title, content_object=art2, ordering=1, parent=node1)
+#        art2.navigation_parent = 0
+#        ct = ContentType.objects.get_for_model(get_article_class())
+#        node = NavNode.objects.get(content_type=ct, object_id=art2.id)
+#        self.assertEqual(node.parent, None)
+#        
+#    def test_move_in_navigation_to_child(self):
+#        art1 = get_article_class().objects.create(title='toto', content='oups')
+#        node1 = NavNode.objects.create(tree=self.tree, label=art1.title, content_object=art1, ordering=1, parent=None)
+#        art2 = get_article_class().objects.create(title='titi', content='oups')
+#        node2 = NavNode.objects.create(tree=self.tree, label=art2.title, content_object=art2, ordering=1, parent=None)
+#        art2.navigation_parent = node1.id
+#        ct = ContentType.objects.get_for_model(get_article_class())
+#        node = NavNode.objects.get(content_type=ct, object_id=art2.id)
+#        self.assertEqual(node.parent.id, node1.id)
+#        
+#    def test_remove_from_navigation(self):
+#        art1 = get_article_class().objects.create(title='toto', content='oups')
+#        node1 = NavNode.objects.create(tree=self.tree, label=art1.title, content_object=art1, ordering=1, parent=None)
+#        art1.navigation_parent = None
+#        ct = ContentType.objects.get_for_model(get_article_class())
+#        self.assertRaises(NavNode.DoesNotExist, NavNode.objects.get, content_type=ct, object_id=art1.id)
+#        
+#    def test_remove_from_navigation_twice(self):
+#        art1 = get_article_class().objects.create(title='toto', content='oups')
+#        node1 = NavNode.objects.create(tree=self.tree, label=art1.title, content_object=art1, ordering=1, parent=None)
+#        art1.navigation_parent = None
+#        ct = ContentType.objects.get_for_model(get_article_class())
+#        self.assertRaises(NavNode.DoesNotExist, NavNode.objects.get, content_type=ct, object_id=art1.id)
+#        art1.navigation_parent = None
+#        ct = ContentType.objects.get_for_model(get_article_class())
+#        self.assertRaises(NavNode.DoesNotExist, NavNode.objects.get, content_type=ct, object_id=art1.id)
+#        
+#    def test_get_navigation_parent(self):
+#        art1 = get_article_class().objects.create(title='toto', content='oups')
+#        node1 = NavNode.objects.create(tree=self.tree, label=art1.title, content_object=art1, ordering=1, parent=None)
+#        art2 = get_article_class().objects.create(title='titi', content='oups')
+#        node2 = NavNode.objects.create(tree=self.tree, label=art2.title, content_object=art2, ordering=1, parent=node1)
+#        art3 = get_article_class().objects.create(title='tutu', content='oups')
+#        self.assertEqual(art1.navigation_parent, 0)
+#        self.assertEqual(art2.navigation_parent, art1.id)
+#        self.assertEqual(art3.navigation_parent, None)
+
 class TemplateTagsTest(TestCase):
     
     def setUp(self):
@@ -1663,3 +1661,27 @@ class NavigationTreeTest(TestCase):
             
         for n in nodes_out:
             self.assertFalse(html.find(unicode(n))>=0)
+            
+            
+    def test_view_several_navigation(self):
+        tpl = Template('{% load coop_navigation %}{% navigation_as_nested_ul tree=tree1 %}{% navigation_as_nested_ul tree=tree2 %}{% navigation_as_nested_ul %}')
+        
+        link1 = Link.objects.create(url='http://www.google.fr')
+        link2 = Link.objects.create(url='http://www.apidev.fr')
+        art1 = get_article_class().objects.create(title='Article Number One', content='oups')
+        art2 = get_article_class().objects.create(title='Article Number Two', content='hello')
+        art3 = get_article_class().objects.create(title='Article Number Three', content='bye-bye')
+        
+        node1 = NavNode.objects.create(tree=self.default_tree, label=link1.url, content_object=link1, ordering=1, parent=None)
+        node2 = NavNode.objects.create(tree=self.default_tree, label=art1.title, content_object=art1, ordering=2, parent=None)
+        node3 = NavNode.objects.create(tree=self.default_tree, label=art2.title, content_object=art2, ordering=1, parent=node2)
+        node4 = NavNode.objects.create(tree=self.tree1, label=art3.title, content_object=art3, ordering=1, parent=None)
+        node5 = NavNode.objects.create(tree=self.tree1, label=art1.title, content_object=art1, ordering=2, parent=None)
+        node6 = NavNode.objects.create(tree=self.tree2, label=link2.url, content_object=link2, ordering=2, parent=node5)
+        
+        nodes_in = [art1, art3, link2, art2, link1]
+        
+        html = tpl.render(Context({}))
+        
+        for n in nodes_in:
+            self.assertTrue(html.find(unicode(n))>=0)

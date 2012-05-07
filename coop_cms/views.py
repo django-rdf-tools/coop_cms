@@ -522,7 +522,12 @@ def add_navnode(request, tree):
         raise ValidationError(_(u"The {0} is already in navigation").format(model_class._meta.verbose_name))
     
     #Create the node
-    node = models.create_navigation_node(tree, ct, object, request.POST.get('parent_id', 0))
+    parent_id = request.POST.get('parent_id', 0)
+    if parent_id:
+        parent = models.NavNode.objects.get(tree=tree, id=parent_id)
+    else:
+        parent = None
+    node = models.create_navigation_node(ct, object, tree, parent)
     
     response['label'] = node.label
     response['id'] = 'node_{0}'.format(node.id)

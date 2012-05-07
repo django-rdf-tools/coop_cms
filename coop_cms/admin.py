@@ -21,6 +21,7 @@ admin.site.register(models.NavType, NavTypeAdmin)
 class NavTreeAdmin(admin.ModelAdmin):
     list_display = ['__unicode__', 'name', 'navtypes_list']
     list_editable = ['name']
+    list_filters = ['id']
 
     def nodes_li(self, tree):
         root_nodes = tree.get_root_nodes()
@@ -50,7 +51,7 @@ class ArticleAdmin(admin.ModelAdmin):
     list_editable = ['publication', 'in_newsletter', 'section']
     readonly_fields = ['slug', 'created', 'modified']
     fieldsets = (
-        (_('Navigation'), {'fields': ('navigation_parent',)}),
+        #(_('Navigation'), {'fields': ('navigation_parent',)}),
         (_('General'), {'fields': ('slug', 'title', 'content',)}),
         (_('Advanced'), {'fields': ('template', 'section', 'logo', 'in_newsletter')}),
         (_('Publication'), {'fields': ('publication', 'created', 'modified')}),

@@ -36,23 +36,20 @@ def get_object_label(content_type, object):
         label = unicode(object)
     return escape(label)
     
-def set_node_ordering(node, parent_id):
-    if parent_id:
-        node.parent = NavNode.objects.get(id=parent_id)
-        sibling_nodes = NavNode.objects.filter(parent=node.parent)
+def set_node_ordering(node, tree, parent):
+    if parent:
+        node.parent = parent
+        sibling_nodes = NavNode.objects.filter(tree=tree, parent=node.parent)
     else:
         node.parent = None
-        sibling_nodes = NavNode.objects.filter(parent__isnull=True)
+        sibling_nodes = NavNode.objects.filter(tree=tree, parent__isnull=True)
     max_ordering = sibling_nodes.aggregate(max_ordering=Max('ordering'))['max_ordering'] or 0
     node.ordering = max_ordering + 1
     
-def create_navigation_node(tree, content_type, object, parent_id):
-    if tree == None:
-        tree, _is_new = NavTree.objects.get_or_create(name='default')
-        
+def create_navigation_node(content_type, object, tree, parent):
     node = NavNode(tree=tree, label=get_object_label(content_type, object))
     #add it as last child of the selected node
-    set_node_ordering(node, parent_id)
+    set_node_ordering(node, tree, parent)
     #associate with a content object
     node.content_type = content_type
     node.object_id = object.id
@@ -316,23 +313,16 @@ class BaseArticle(TimeStampedModel):
     
     def _set_navigation_parent(self, value):
         ct = ContentType.objects.get_for_model(get_article_class())
-        already_in_navigation = self.id and NavNode.objects.filter(content_type=ct, object_id=self.id)
-        if value != None and not already_in_navigation:
-            create_navigation_node(None, ct, self, value)
-        else:
-            try:
-                node = NavNode.objects.get(content_type=ct, object_id=self.id)
-                if value == None:
-                    node.delete()
-                else:
-                    node.parent = NavNode.objects.get(id=value) if value else None
-                    if node.parent:
-                        #raise ValidationError if new parent is not valid
-                        node.check_new_navigation_parent(node.parent.id)
-                    set_node_ordering(node, node.parent.id if node.parent else 0)
-                    node.save()
-            except NavNode.DoesNotExist:
-                pass
+        if value != None:
+            if value < 0:
+                tree_id = -value
+                tree = NavTree.objects.get(id=tree_id)
+                parent = None
+            else:
+                parent = NavNode.objects.get(id=value)
+                tree = parent.tree
+                
+            create_navigation_node(ct, self, tree, parent)
     
     navigation_parent = property(_get_navigation_parent, _set_navigation_parent,
         doc=_("set the parent in navigation."))

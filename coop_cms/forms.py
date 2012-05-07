@@ -1,5 +1,5 @@
 from django import forms
-from coop_cms.models import NavType, NavNode, Newsletter, NewsletterSending
+from coop_cms.models import NavType, NavTree, NavNode, Newsletter, NewsletterSending
 from django.contrib.contenttypes.models import ContentType
 from settings import get_navigable_content_types
 from django.core.exceptions import ValidationError
@@ -79,10 +79,17 @@ class ArticleForm(floppyforms.ModelForm):
     
 def get_node_choices():
     prefix = "--"
-    choices = [(None, _(u'<not in navigation>')), (0, _(u'<root node>'))]
-    for root_node in NavNode.objects.filter(parent__isnull=True).order_by('ordering'):
-        for (progeny, level) in root_node.get_progeny():
-            choices.append((progeny.id, prefix*level+progeny.label))
+    #choices = [(None, _(u'<not in navigation>')), (0, _(u'<root node>'))]
+    #for root_node in NavNode.objects.filter(parent__isnull=True).order_by('ordering'):
+    #    for (progeny, level) in root_node.get_progeny():
+    #        choices.append((progeny.id, prefix*level+progeny.label))
+    #return choices
+    choices = [(None, _(u'<not in navigation>'))]
+    for tree in NavTree.objects.all():
+        choices.append((-tree.id, tree.name))
+        for root_node in NavNode.objects.filter(tree=tree, parent__isnull=True).order_by('ordering'):
+            for (progeny, level) in root_node.get_progeny():
+                choices.append((progeny.id, prefix*(level+1)+progeny.label))
     return choices
 
 def get_navigation_parent_help_text():
@@ -111,19 +118,18 @@ class ArticleFormWithNavigation(forms.ModelForm):
         self.fields['navigation_parent'] = forms.ChoiceField(
             choices=get_node_choices(), required=False, help_text=get_navigation_parent_help_text()
         )
-    
 
     def clean_navigation_parent(self):
         parent_id = self.cleaned_data['navigation_parent']
         parent_id = int(parent_id) if parent_id != 'None' else None
-        if self.article:
-            ct = ContentType.objects.get_for_model(get_article_class())
-            try:
-                node = NavNode.objects.get(object_id=self.article.id, content_type=ct)
-                #raise ValidationError if own parent or child of its own child
-                node.check_new_navigation_parent(parent_id)
-            except NavNode.DoesNotExist:
-                pass
+        #if self.article:
+        #    ct = ContentType.objects.get_for_model(get_article_class())
+        #    try:
+        #        node = NavNode.objects.get(object_id=self.article.id, content_type=ct)
+        #        #raise ValidationError if own parent or child of its own child
+        #        node.check_new_navigation_parent(parent_id)
+        #    except NavNode.DoesNotExist:
+        #        pass
         return parent_id
     
     def save(self, commit=True):
@@ -138,10 +144,11 @@ class ArticleFormWithNavigation(forms.ModelForm):
         return article
 
         
-class ArticleAdminForm(ArticleFormWithNavigation):
+class ArticleAdminForm(forms.ModelForm):
     
     def __init__(self, *args, **kwargs):
         super(ArticleAdminForm, self).__init__(*args, **kwargs)
+        self.article = kwargs.get('instance', None)
         templates = get_article_templates(self.article, self.current_user)
         if templates:
             self.fields['template'].widget = forms.Select(choices=templates)
