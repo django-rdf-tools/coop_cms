@@ -5,7 +5,7 @@ from django.contrib.auth.models import User, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.template import Template, Context
-from coop_cms.models import Link, NavNode, NavType, Document, Newsletter, NewsletterItem, PieceOfHtml, NewsletterSending
+from coop_cms.models import Link, NavTree, NavNode, NavType, Document, Newsletter, NewsletterItem, PieceOfHtml, NewsletterSending
 import json
 from django.core.exceptions import ValidationError
 from coop_cms.settings import get_article_class
@@ -26,7 +26,8 @@ class NavigationTest(TestCase):
         NavType.objects.create(content_type=self.url_ct, search_field='url', label_rule=NavType.LABEL_USE_SEARCH_FIELD)
         self.editor = None
         self.staff = None
-        self.srv_url = reverse("navigation_tree")
+        self.tree = NavTree.objects.create()
+        self.srv_url = reverse("navigation_tree", args=[self.tree.id])
 
     def _log_as_editor(self):
         if not self.editor:
@@ -128,7 +129,7 @@ class NavigationTest(TestCase):
         
         nodes = []
         for i, link in enumerate(links):
-            nodes.append(NavNode.objects.create(label=link.url, content_object=link, ordering=i+1, parent=None))
+            nodes.append(NavNode.objects.create(tree=self.tree, label=link.url, content_object=link, ordering=i+1, parent=None))
         
         self._log_as_editor()
         
@@ -157,7 +158,7 @@ class NavigationTest(TestCase):
         
         nodes = []
         for i, link in enumerate(links):
-            nodes.append(NavNode.objects.create(label=link.url, content_object=link, ordering=i+1, parent=None))
+            nodes.append(NavNode.objects.create(tree=self.tree, label=link.url, content_object=link, ordering=i+1, parent=None))
         nodes[1].parent = nodes[0]
         nodes[1].ordering = 1
         nodes[1].save()
@@ -211,7 +212,7 @@ class NavigationTest(TestCase):
         
         nodes = []
         for i, link in enumerate(links):
-            nodes.append(NavNode.objects.create(label=link.url, content_object=link, ordering=i+1, parent=None))
+            nodes.append(NavNode.objects.create(tree=self.tree, label=link.url, content_object=link, ordering=i+1, parent=None))
         
         self._log_as_editor()
         
@@ -253,7 +254,7 @@ class NavigationTest(TestCase):
         
         nodes = []
         for i, link in enumerate(links):
-            nodes.append(NavNode.objects.create(label=link.url, content_object=link, ordering=i+1, parent=None))
+            nodes.append(NavNode.objects.create(tree=self.tree, label=link.url, content_object=link, ordering=i+1, parent=None))
         
         self._log_as_editor()
         
@@ -280,7 +281,7 @@ class NavigationTest(TestCase):
         
         nodes = []
         for i, link in enumerate(links):
-            nodes.append(NavNode.objects.create(label=link.url, content_object=link, ordering=i+1, parent=None))
+            nodes.append(NavNode.objects.create(tree=self.tree, label=link.url, content_object=link, ordering=i+1, parent=None))
         
         nodes[-1].parent = nodes[-2]
         nodes[-1].ordering = 1
@@ -312,7 +313,7 @@ class NavigationTest(TestCase):
         
         nodes = []
         for i, link in enumerate(links):
-            nodes.append(NavNode.objects.create(label=link.url, content_object=link, ordering=i+1, parent=None))
+            nodes.append(NavNode.objects.create(tree=self.tree, label=link.url, content_object=link, ordering=i+1, parent=None))
         
         self._log_as_editor()
         
@@ -341,7 +342,7 @@ class NavigationTest(TestCase):
         
         nodes = []
         for i, link in enumerate(links):
-            nodes.append(NavNode.objects.create(label=link.url, content_object=link, ordering=i+1, parent=None))
+            nodes.append(NavNode.objects.create(tree=self.tree, label=link.url, content_object=link, ordering=i+1, parent=None))
         
         self._log_as_editor()
         
@@ -398,7 +399,7 @@ class NavigationTest(TestCase):
         links = [Link.objects.create(url=a) for a in addrs]
         
         link = links[0]
-        node = NavNode.objects.create(label=link.url, content_object=link, ordering=1, parent=None)
+        node = NavNode.objects.create(tree=self.tree, label=link.url, content_object=link, ordering=1, parent=None)
         
         self._log_as_editor()
         
@@ -411,7 +412,60 @@ class NavigationTest(TestCase):
         result = json.loads(response.content)
         self.assertEqual(result['status'], 'success')
         self.assertEqual(len(result['suggestions']), 2)
+        
+    def test_get_suggest_tree_type_all(self):
+        nt_link = NavType.objects.get(content_type=self.url_ct)
+        
+        ct = ContentType.objects.get_for_model(get_article_class())
+        nt_art = NavType.objects.create(content_type=ct, search_field='title', label_rule=NavType.LABEL_USE_SEARCH_FIELD)
+        
+        self.assertEqual(self.tree.types.count(), 0)
+        
+        addrs = ("http://www.google.fr", "http://www.python.org", "http://www.quinode.fr", "http://www.apidev.fr")
+        links = [Link.objects.create(url=a) for a in addrs]
+        
+        article = get_article_class().objects.create(title="python", content='nice snake')
+        
+        self._log_as_editor()
+        
+        data = {
+            'msg_id': 'get_suggest_list',
+            'term': 'python'
+        }
+        
+        response = self.client.post(self.srv_url, data=data, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 200)
+        result = json.loads(response.content)
+        self.assertEqual(result['status'], 'success')
+        self.assertEqual(len(result['suggestions']), 2)
 
+    def test_get_suggest_tree_type_filter(self):
+        nt_link = NavType.objects.get(content_type=self.url_ct)
+        
+        ct = ContentType.objects.get_for_model(get_article_class())
+        nt_art = NavType.objects.create(content_type=ct, search_field='title', label_rule=NavType.LABEL_USE_SEARCH_FIELD)
+        
+        self.tree.types.add(nt_art)
+        self.tree.save()
+        
+        addrs = ("http://www.google.fr", "http://www.python.org", "http://www.quinode.fr", "http://www.apidev.fr")
+        links = [Link.objects.create(url=a) for a in addrs]
+        
+        article = get_article_class().objects.create(title="python", content='nice snake')
+        
+        self._log_as_editor()
+        
+        data = {
+            'msg_id': 'get_suggest_list',
+            'term': 'python'
+        }
+        
+        response = self.client.post(self.srv_url, data=data, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 200)
+        result = json.loads(response.content)
+        self.assertEqual(result['status'], 'success')
+        self.assertEqual(len(result['suggestions']), 1)
+        self.assertEqual(result['suggestions'][0]['label'], 'python')
         
     def test_unknow_message(self):
         self._log_as_editor()
@@ -501,7 +555,7 @@ class NavigationTest(TestCase):
                 'msg_id': msg_id
             }
             if msg_id != 'add_navnode':
-                node = NavNode.objects.create(label=link.url, content_object=link, ordering=1, parent=None)
+                node = NavNode.objects.create(tree=self.tree, label=link.url, content_object=link, ordering=1, parent=None)
                 data.update({'node_id': node.id, 'node_ids': node.id})
             
             self._log_as_staff()
@@ -522,7 +576,7 @@ class NavigationTest(TestCase):
         self._log_as_editor()
         
         link = Link.objects.create(url='http://www.google.fr')
-        node = NavNode.objects.create(label=link.url, content_object=link, ordering=1, parent=None, in_navigation=True)
+        node = NavNode.objects.create(tree=self.tree, label=link.url, content_object=link, ordering=1, parent=None, in_navigation=True)
         
         data = {
             'msg_id': 'navnode_in_navigation',
@@ -542,7 +596,7 @@ class NavigationTest(TestCase):
         self._log_as_editor()
         
         link = Link.objects.create(url='http://www.google.fr')
-        node = NavNode.objects.create(label=link.url, content_object=link, ordering=1, parent=None, in_navigation=False)
+        node = NavNode.objects.create(tree=self.tree, label=link.url, content_object=link, ordering=1, parent=None, in_navigation=False)
         
         data = {
             'msg_id': 'navnode_in_navigation',
@@ -565,7 +619,7 @@ class NavigationTest(TestCase):
         nodes = []
         parent = None
         for i, link in enumerate(links):
-            parent = NavNode.objects.create(label=link.url, content_object=link, ordering=i+1, parent=parent)
+            parent = NavNode.objects.create(tree=self.tree, label=link.url, content_object=link, ordering=i+1, parent=parent)
             
         links[1].delete()
         
@@ -583,18 +637,19 @@ class NavigationParentTest(TestCase):
     def setUp(self):
         ct = ContentType.objects.get_for_model(get_article_class())
         NavType.objects.create(content_type=ct, search_field='title', label_rule=NavType.LABEL_USE_SEARCH_FIELD)
+        self.tree = NavTree.objects.create()
     
     def test_set_himself_as_parent_raise_error(self):
         art = get_article_class().objects.create(title='toto', content='oups')
-        node = NavNode.objects.create(label=art.title, content_object=art, ordering=1, parent=None)
+        node = NavNode.objects.create(tree=self.tree, label=art.title, content_object=art, ordering=1, parent=None)
         self.assertRaises(ValidationError, art._set_navigation_parent, node.id)
         
     def test_set_child_as_parent_raise_error(self):
         art1 = get_article_class().objects.create(title='toto', content='oups')
-        node1 = NavNode.objects.create(label=art1.title, content_object=art1, ordering=1, parent=None)
+        node1 = NavNode.objects.create(tree=self.tree, label=art1.title, content_object=art1, ordering=1, parent=None)
         
         art2 = get_article_class().objects.create(title='titi', content='oups')
-        node2 = NavNode.objects.create(label=art2.title, content_object=art2, ordering=1, parent=node1)
+        node2 = NavNode.objects.create(tree=self.tree, label=art2.title, content_object=art2, ordering=1, parent=node1)
         
         self.assertRaises(ValidationError, art1._set_navigation_parent, node2.id)
     
@@ -606,7 +661,7 @@ class NavigationParentTest(TestCase):
         
     def test_add_to_navigation_as_child(self):
         art1 = get_article_class().objects.create(title='toto', content='oups')
-        node1 = NavNode.objects.create(label=art1.title, content_object=art1, ordering=1, parent=None)
+        node1 = NavNode.objects.create(tree=self.tree, label=art1.title, content_object=art1, ordering=1, parent=None)
         art2 = get_article_class().objects.create(title='titi', content='oups')
         art2.navigation_parent = node1.id
         ct = ContentType.objects.get_for_model(get_article_class())
@@ -615,9 +670,9 @@ class NavigationParentTest(TestCase):
         
     def test_move_in_navigation_to_root(self):
         art1 = get_article_class().objects.create(title='toto', content='oups')
-        node1 = NavNode.objects.create(label=art1.title, content_object=art1, ordering=1, parent=None)
+        node1 = NavNode.objects.create(tree=self.tree, label=art1.title, content_object=art1, ordering=1, parent=None)
         art2 = get_article_class().objects.create(title='titi', content='oups')
-        node2 = NavNode.objects.create(label=art2.title, content_object=art2, ordering=1, parent=node1)
+        node2 = NavNode.objects.create(tree=self.tree, label=art2.title, content_object=art2, ordering=1, parent=node1)
         art2.navigation_parent = 0
         ct = ContentType.objects.get_for_model(get_article_class())
         node = NavNode.objects.get(content_type=ct, object_id=art2.id)
@@ -625,9 +680,9 @@ class NavigationParentTest(TestCase):
         
     def test_move_in_navigation_to_child(self):
         art1 = get_article_class().objects.create(title='toto', content='oups')
-        node1 = NavNode.objects.create(label=art1.title, content_object=art1, ordering=1, parent=None)
+        node1 = NavNode.objects.create(tree=self.tree, label=art1.title, content_object=art1, ordering=1, parent=None)
         art2 = get_article_class().objects.create(title='titi', content='oups')
-        node2 = NavNode.objects.create(label=art2.title, content_object=art2, ordering=1, parent=None)
+        node2 = NavNode.objects.create(tree=self.tree, label=art2.title, content_object=art2, ordering=1, parent=None)
         art2.navigation_parent = node1.id
         ct = ContentType.objects.get_for_model(get_article_class())
         node = NavNode.objects.get(content_type=ct, object_id=art2.id)
@@ -635,14 +690,14 @@ class NavigationParentTest(TestCase):
         
     def test_remove_from_navigation(self):
         art1 = get_article_class().objects.create(title='toto', content='oups')
-        node1 = NavNode.objects.create(label=art1.title, content_object=art1, ordering=1, parent=None)
+        node1 = NavNode.objects.create(tree=self.tree, label=art1.title, content_object=art1, ordering=1, parent=None)
         art1.navigation_parent = None
         ct = ContentType.objects.get_for_model(get_article_class())
         self.assertRaises(NavNode.DoesNotExist, NavNode.objects.get, content_type=ct, object_id=art1.id)
         
     def test_remove_from_navigation_twice(self):
         art1 = get_article_class().objects.create(title='toto', content='oups')
-        node1 = NavNode.objects.create(label=art1.title, content_object=art1, ordering=1, parent=None)
+        node1 = NavNode.objects.create(tree=self.tree, label=art1.title, content_object=art1, ordering=1, parent=None)
         art1.navigation_parent = None
         ct = ContentType.objects.get_for_model(get_article_class())
         self.assertRaises(NavNode.DoesNotExist, NavNode.objects.get, content_type=ct, object_id=art1.id)
@@ -652,9 +707,9 @@ class NavigationParentTest(TestCase):
         
     def test_get_navigation_parent(self):
         art1 = get_article_class().objects.create(title='toto', content='oups')
-        node1 = NavNode.objects.create(label=art1.title, content_object=art1, ordering=1, parent=None)
+        node1 = NavNode.objects.create(tree=self.tree, label=art1.title, content_object=art1, ordering=1, parent=None)
         art2 = get_article_class().objects.create(title='titi', content='oups')
-        node2 = NavNode.objects.create(label=art2.title, content_object=art2, ordering=1, parent=node1)
+        node2 = NavNode.objects.create(tree=self.tree, label=art2.title, content_object=art2, ordering=1, parent=node1)
         art3 = get_article_class().objects.create(title='tutu', content='oups')
         self.assertEqual(art1.navigation_parent, 0)
         self.assertEqual(art2.navigation_parent, art1.id)
@@ -674,12 +729,14 @@ class TemplateTagsTest(TestCase):
         
         self.nodes = []
         
-        self.nodes.append(NavNode.objects.create(label=link1.url, content_object=link1, ordering=1, parent=None))
-        self.nodes.append(NavNode.objects.create(label=link2.url, content_object=link2, ordering=2, parent=None))
-        self.nodes.append(NavNode.objects.create(label=link3.url, content_object=link3, ordering=3, parent=None))
-        self.nodes.append(NavNode.objects.create(label=link4.url, content_object=link4, ordering=1, parent=self.nodes[2]))
-        self.nodes.append(NavNode.objects.create(label=link5.url, content_object=link5, ordering=1, parent=self.nodes[3]))
-        self.nodes.append(NavNode.objects.create(label=link6.url, content_object=link6, ordering=2, parent=self.nodes[3]))
+        self.tree = tree = NavTree.objects.create()
+        
+        self.nodes.append(NavNode.objects.create(tree=tree, label=link1.url, content_object=link1, ordering=1, parent=None))
+        self.nodes.append(NavNode.objects.create(tree=tree, label=link2.url, content_object=link2, ordering=2, parent=None))
+        self.nodes.append(NavNode.objects.create(tree=tree, label=link3.url, content_object=link3, ordering=3, parent=None))
+        self.nodes.append(NavNode.objects.create(tree=tree, label=link4.url, content_object=link4, ordering=1, parent=self.nodes[2]))
+        self.nodes.append(NavNode.objects.create(tree=tree, label=link5.url, content_object=link5, ordering=1, parent=self.nodes[3]))
+        self.nodes.append(NavNode.objects.create(tree=tree, label=link6.url, content_object=link6, ordering=2, parent=self.nodes[3]))
         
     def test_view_navigation(self):
         tpl = Template('{% load coop_navigation %}{%navigation_as_nested_ul%}')
@@ -694,7 +751,7 @@ class TemplateTagsTest(TestCase):
         
     def _insert_new_node(self):
         link7 = Link.objects.create(url='http://www.tutu.fr')
-        self.nodes.insert(-1, NavNode.objects.create(label=link7.url, content_object=link7, ordering=2, parent=self.nodes[3]))
+        self.nodes.insert(-1, NavNode.objects.create(tree=self.tree, label=link7.url, content_object=link7, ordering=2, parent=self.nodes[3]))
         self.nodes[-1].ordering = 3
         self.nodes[-1].save()
         
@@ -1538,3 +1595,71 @@ class AbsUrlTest(TestCase):
         abs_html = test_html % settings.COOP_CMS_SITE_PREFIX
         self.assertEqual(abs_html, make_links_absolute(rel_html))
         
+class NavigationTreeTest(TestCase):
+    
+    def setUp(self):
+        ct = ContentType.objects.get_for_model(get_article_class())
+        nt_articles = NavType.objects.create(content_type=ct, search_field='title',
+            label_rule=NavType.LABEL_USE_SEARCH_FIELD)
+        
+        ct = ContentType.objects.get(app_label='coop_cms', model='link')
+        nt_links = NavType.objects.create(content_type=ct, search_field='url',
+            label_rule=NavType.LABEL_USE_SEARCH_FIELD)
+        
+        self.default_tree = NavTree.objects.create()
+        self.tree1 = NavTree.objects.create(name="tree1")
+        self.tree2 = NavTree.objects.create(name="tree2")
+        self.tree2.types.add(nt_links)
+        self.tree2.save()
+        
+    def test_view_default_navigation(self):
+        tpl = Template('{% load coop_navigation %}{% navigation_as_nested_ul %}')
+        
+        link1 = Link.objects.create(url='http://www.google.fr')
+        link2 = Link.objects.create(url='http://www.apidev.fr')
+        art1 = get_article_class().objects.create(title='Article Number One', content='oups')
+        art2 = get_article_class().objects.create(title='Article Number Two', content='hello')
+        art3 = get_article_class().objects.create(title='Article Number Three', content='bye-bye')
+        
+        node1 = NavNode.objects.create(tree=self.default_tree, label=link1.url, content_object=link1, ordering=1, parent=None)
+        node2 = NavNode.objects.create(tree=self.default_tree, label=art1.title, content_object=art1, ordering=2, parent=None)
+        node3 = NavNode.objects.create(tree=self.default_tree, label=art2.title, content_object=art2, ordering=1, parent=node2)
+        node4 = NavNode.objects.create(tree=self.tree1, label=art3.title, content_object=art3, ordering=1, parent=None)
+        node5 = NavNode.objects.create(tree=self.tree1, label=art1.title, content_object=art1, ordering=2, parent=None)
+        node6 = NavNode.objects.create(tree=self.tree1, label=link2.url, content_object=link2, ordering=2, parent=node5)
+        
+        nodes_in, nodes_out = [art1, art2, link1], [art3, link2]
+        
+        html = tpl.render(Context({}))
+        
+        for n in nodes_in:
+            self.assertTrue(html.find(unicode(n))>=0)
+            
+        for n in nodes_out:
+            self.assertFalse(html.find(unicode(n))>=0)
+            
+    def test_view_alternative_navigation(self):
+        tpl = Template('{% load coop_navigation %}{% navigation_as_nested_ul tree=tree1 %}')
+        
+        link1 = Link.objects.create(url='http://www.google.fr')
+        link2 = Link.objects.create(url='http://www.apidev.fr')
+        art1 = get_article_class().objects.create(title='Article Number One', content='oups')
+        art2 = get_article_class().objects.create(title='Article Number Two', content='hello')
+        art3 = get_article_class().objects.create(title='Article Number Three', content='bye-bye')
+        
+        node1 = NavNode.objects.create(tree=self.default_tree, label=link1.url, content_object=link1, ordering=1, parent=None)
+        node2 = NavNode.objects.create(tree=self.default_tree, label=art1.title, content_object=art1, ordering=2, parent=None)
+        node3 = NavNode.objects.create(tree=self.default_tree, label=art2.title, content_object=art2, ordering=1, parent=node2)
+        node4 = NavNode.objects.create(tree=self.tree1, label=art3.title, content_object=art3, ordering=1, parent=None)
+        node5 = NavNode.objects.create(tree=self.tree1, label=art1.title, content_object=art1, ordering=2, parent=None)
+        node6 = NavNode.objects.create(tree=self.tree1, label=link2.url, content_object=link2, ordering=2, parent=node5)
+        
+        nodes_in, nodes_out = [art1, art3, link2], [art2, link1]
+        
+        html = tpl.render(Context({}))
+        
+        for n in nodes_in:
+            self.assertTrue(html.find(unicode(n))>=0)
+            
+        for n in nodes_out:
+            self.assertFalse(html.find(unicode(n))>=0)

@@ -5,4 +5,5 @@ def get_article_templates(article, user):
         ('standard.html', 'Standard'),
         ('homepage.html', 'Homepage'),
         ('blog.html', 'Blog'),
+        ('standard_en.html', 'English'),
     )

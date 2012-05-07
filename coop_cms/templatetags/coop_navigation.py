@@ -51,7 +51,8 @@ class NavigationAsNestedUlNode(NavigatationTemplateNode):
    
    def render(self, context):
       kwargs = self.resolve_kwargs(context)
-      root_nodes = NavNode.objects.filter(parent__isnull=True).order_by("ordering")
+      tree_name = kwargs.pop('tree', 'default')
+      root_nodes = NavNode.objects.filter(tree__name=tree_name, parent__isnull=True).order_by("ordering")
       return u''.join([node.as_navigation(**kwargs) for node in root_nodes])
 
 @register.tag
@@ -71,8 +72,9 @@ class NavigationBreadcrumbNode(NavigatationTemplateNode):
    def render(self, context):
       object = self.object_var.resolve(context)
       ct=ContentType.objects.get_for_model(object.__class__)
-      nav_nodes = NavNode.objects.filter(content_type=ct, object_id=object.id)
       kwargs = self.resolve_kwargs(context)
+      tree_name = kwargs.get('tree', 'default')
+      nav_nodes = NavNode.objects.filter(tree__name=tree_name, content_type=ct, object_id=object.id)
       if nav_nodes.count()>0:
          return nav_nodes[0].as_breadcrumb(**kwargs)
       return u''
@@ -94,8 +96,9 @@ class NavigationChildrenNode(NavigatationTemplateNode):
    def render(self, context):
       object = self.object_var.resolve(context)
       ct=ContentType.objects.get_for_model(object.__class__)
-      nav_nodes = NavNode.objects.filter(content_type=ct, object_id=object.id)
       kwargs = self.resolve_kwargs(context)
+      tree_name = kwargs.pop('tree', 'default')
+      nav_nodes = NavNode.objects.filter(tree__name=tree_name, content_type=ct, object_id=object.id)
       if nav_nodes.count()>0:
          return nav_nodes[0].children_as_navigation(**kwargs)
       return u''
@@ -117,8 +120,9 @@ class NavigationSiblingsNode(NavigatationTemplateNode):
    def render(self, context):
       object = self.object_var.resolve(context)
       ct=ContentType.objects.get_for_model(object.__class__)
-      nav_nodes = NavNode.objects.filter(content_type=ct, object_id=object.id)
       kwargs = self.resolve_kwargs(context)
+      tree_name = kwargs.pop('tree', 'default')
+      nav_nodes = NavNode.objects.filter(tree__name=tree_name, content_type=ct, object_id=object.id)
       if nav_nodes.count()>0:
          return nav_nodes[0].siblings_as_navigation(**kwargs)
       return u''

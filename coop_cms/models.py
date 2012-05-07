@@ -46,8 +46,11 @@ def set_node_ordering(node, parent_id):
     max_ordering = sibling_nodes.aggregate(max_ordering=Max('ordering'))['max_ordering'] or 0
     node.ordering = max_ordering + 1
     
-def create_navigation_node(content_type, object, parent_id):
-    node = NavNode(label=get_object_label(content_type, object))
+def create_navigation_node(tree, content_type, object, parent_id):
+    if tree == None:
+        tree, _is_new = NavTree.objects.get_or_create(name='default')
+        
+    node = NavNode(tree=tree, label=get_object_label(content_type, object))
     #add it as last child of the selected node
     set_node_ordering(node, parent_id)
     #associate with a content object
@@ -89,6 +92,7 @@ class NavNode(models.Model):
     Point on a content_object 
     """
     
+    tree = models.ForeignKey("NavTree", verbose_name=_("tree"))
     label = models.CharField(max_length=200, verbose_name=_("label"))
     parent = models.ForeignKey("NavNode", blank=True, null=True, default=0, verbose_name=_("parent"))
     ordering = models.PositiveIntegerField(_("ordering"), default=0)
@@ -113,7 +117,7 @@ class NavNode(models.Model):
     class Meta:
         verbose_name = _(u'navigation node')
         verbose_name_plural = _(u'navigation nodes')
-        unique_together = ('content_type', 'object_id')
+        #unique_together = ('content_type', 'object_id')
 
     def get_children(self, in_navigation=None):
         nodes = NavNode.objects.filter(parent=self).order_by("ordering")
@@ -210,9 +214,21 @@ class NavNode(models.Model):
     
 class NavTree(models.Model):
     last_update = models.DateTimeField(auto_now=True)
+    name = models.CharField(_(u'name'), max_length=100, db_index=True, unique=True, default='default')
+    types = models.ManyToManyField(NavType, blank=True)
     
+    def __unicode__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse('navigation_tree', args=[self.id])
+        
+    def get_root_nodes(self):
+        return NavNode.objects.filter(tree=self, parent__isnull=True).order_by("ordering")
+
     class Meta:
-        verbose_name_plural = verbose_name = _(u'Navigation tree')
+        verbose_name = _(u'Navigation tree')
+        verbose_name_plural = _(u'Navigation trees')
 
 content_cleaner = html_cleaner.HTMLCleaner(
     allow_tags=['a', 'img', 'p', 'br', 'b', 'i', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
@@ -302,7 +318,7 @@ class BaseArticle(TimeStampedModel):
         ct = ContentType.objects.get_for_model(get_article_class())
         already_in_navigation = self.id and NavNode.objects.filter(content_type=ct, object_id=self.id)
         if value != None and not already_in_navigation:
-            create_navigation_node(ct, self, value)
+            create_navigation_node(None, ct, self, value)
         else:
             try:
                 node = NavNode.objects.get(content_type=ct, object_id=self.id)

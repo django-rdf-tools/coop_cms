@@ -3,7 +3,7 @@ from django.conf.urls.defaults import patterns, include, url
 from django.conf import settings
 
 urlpatterns = patterns('coop_cms.views',
-    url(r'^cms/tree/$', 'process_nav_edition', name='navigation_tree'),
+    url(r'^cms/tree/(?P<tree_id>\d*)/$', 'process_nav_edition', name='navigation_tree'),
     url(r'^cms/media-images/$', 'show_media', {'media_type': 'image'}, name='coop_cms_media_images'),
     url(r'^cms/media-documents/$', 'show_media', {'media_type': 'document'}, name='coop_cms_media_documents'),
     url(r'^cms/upload-image/$', 'upload_image', name="coop_cms_upload_image"),
