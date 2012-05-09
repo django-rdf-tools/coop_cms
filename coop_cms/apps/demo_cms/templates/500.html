@@ -1,0 +1,18 @@
+{% load i18n %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="{{ lang }}" xml:lang="{{ lang }}" >
+<head>
+	<title>{% trans "Server Error" %}</title>
+</head>
+<body>
+{% block content %}    
+
+    <h2>{% trans "Sorry! we can not process your request. The server encountered an error." %}</h2>
+    <p>
+    {% trans "We've been informed and we will make our best to fix the problem as soon as possible" %}</br></br>
+    {% trans "Please retry in a short while or go back to the" %} <a href="/">{% trans "homepage" %}</a>. 
+    </p>
+    
+{% endblock %}    
+</body>
+</html>

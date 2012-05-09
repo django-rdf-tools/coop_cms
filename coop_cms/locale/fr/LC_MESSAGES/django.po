@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coop_cms\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-09 22:31+0200\n"
-"PO-Revision-Date: 2012-05-09 22:48+0100\n"
+"POT-Creation-Date: 2012-05-09 23:16+0200\n"
+"PO-Revision-Date: 2012-05-09 23:20+0100\n"
 "Last-Translator: Luc Jean <ljean@apidev.fr>\n"
 "Language-Team: Apidev, Quinode <contact@quinode.fr>\n"
 "MIME-Version: 1.0\n"
@@ -322,6 +322,10 @@ msgstr "articles"
 msgid "set the parent in navigation."
 msgstr "ajouter le noeud à la navigation."
 
+#: .\models.py:376
+msgid "URL"
+msgstr "URL"
+
 #: .\models.py:390
 #: .\apps\rss_sync\models.py:27
 msgid "link"
@@ -494,6 +498,48 @@ msgstr "L'email de test a été envoyé à {0} adresses: {1}"
 #: .\views.py:771
 msgid "An error occured! Please contact your support."
 msgstr "Une erreur est intervenue, contactez le support technique."
+
+#: .\apps\demo_cms\templates\403.html.py:4
+#: .\apps\demo_cms\templates\403.html.py:6
+msgid "Permission Denied"
+msgstr "Permission refusée"
+
+#: .\apps\demo_cms\templates\403.html.py:9
+msgid "You are not allowed to see this page"
+msgstr "Vous n'êtes pas autorisé à voir cette page"
+
+#: .\apps\demo_cms\templates\404.html.py:4
+#: .\apps\demo_cms\templates\404.html.py:7
+msgid "Page not found"
+msgstr "Page non trouvée"
+
+#: .\apps\demo_cms\templates\404.html.py:7
+msgid "Error 404"
+msgstr "Erreur 404"
+
+#: .\apps\demo_cms\templates\404.html.py:10
+msgid "The request page can't be found on the server. Please check it"
+msgstr "La page demandée ne peut-être trouvée. Veuillez vérifier l'url saisie."
+
+#: .\apps\demo_cms\templates\500.html.py:5
+msgid "Server Error"
+msgstr "Erreur Interne du Serveur"
+
+#: .\apps\demo_cms\templates\500.html.py:10
+msgid "Sorry! we can not process your request. The server encountered an error."
+msgstr "Désolé mais nous ne pouvons pas traiter votre demande. Le serveur a rencontré une erreur."
+
+#: .\apps\demo_cms\templates\500.html.py:12
+msgid "We've been informed and we will make our best to fix the problem as soon as possible"
+msgstr "Nous avons été informé et nous faisons notre possible pour corriger le problème dans les plus brefs délais."
+
+#: .\apps\demo_cms\templates\500.html.py:13
+msgid "Please retry in a short while or go back to the"
+msgstr "Veuillez réessayer dans un instant ou revenir à la"
+
+#: .\apps\demo_cms\templates\500.html.py:13
+msgid "homepage"
+msgstr "page d'accueil"
 
 #: .\apps\demo_cms\templates\base.html.py:16
 msgid "Homepage"

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block meta_title %}{% trans "Page not found" %}{% endblock %}
+      
+    
+{% block title %}<h1>{% trans "Error 404" %}: {% trans "Page not found" %}</h1>{% endblock %}
+        
+{% block content %}
+    {% trans "The request page can't be found on the server. Please check it" %}
+{% endblock %}
+
