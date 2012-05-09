@@ -14,6 +14,7 @@
 	width: 600px;
 	margin-top: 5px;
 	font-size: small;
+	margin-left: 12px;
 }
 
 li.nav-node {
@@ -37,28 +38,29 @@ li.nav-node {
 }
 
 .add_object_section {
-	border: thin #ccc solid;
 	padding: 10px;
+	vertical-align: middle;
 }
 
 #add_object{
-	top: 2px;
 	position: relative;
-	height: 22px;
 }
 
 #object_label{
-	height: 14px;
 	width: 250px;
+	margin-top: 10px;
 }
 
 aside, #aside {
-	float: right;
-	width: 50%;
-	border: solid 2px #eee;
+	float: left;
+	border: 1px solid #dadada;
 	min-height: 100px;
-	padding: 10px 10px;
-	font-size: small;
+	padding: 16px;
+	left: 284px;
+	position: absolute;
+	border-radius: 4px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
 }
 
 
@@ -68,7 +70,10 @@ aside, #aside {
 }
 
 .content-links {
-	margin: 0;
+	list-style-position: inside;
+	list-style-type: none;
+	padding-left: 0;
+	margin-top: 10px;
 }
 
 .content-links li{
@@ -76,4 +81,5 @@ aside, #aside {
 	font-weight: bold;
 	line-height: 16px;
 }
+
 

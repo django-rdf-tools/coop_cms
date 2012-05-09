@@ -567,12 +567,12 @@ def navnode_in_navigation(request):
     node.in_navigation = not node.in_navigation
     node.save()
     if node.in_navigation:
-        response['message'] = _(u"The node is now in navigation.")
-        response['label'] = _(u"Remove from navigation")
+        response['message'] = _(u"The node is now visible.")
+        response['label'] = _(u"Hide node in navigation")
         response['icon'] = "in_nav"
     else:
-        response['message'] = _(u"The node has been removed of the navigation.")
-        response['label'] = _(u"Add to navigation")
+        response['message'] = _(u"The node is now hidden.")
+        response['label'] = _(u"Show node in navigation")
         response['icon'] = "out_nav"
     return response
     
