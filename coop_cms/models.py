@@ -373,7 +373,7 @@ class BaseArticle(TimeStampedModel):
     
 class Link(TimeStampedModel):
     """Link to a given url"""
-    url = models.URLField()
+    url = models.CharField(_(u'URL'), max_length=200)
     
     def get_absolute_url(self):
         return self.url
