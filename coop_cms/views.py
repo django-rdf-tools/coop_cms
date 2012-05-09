@@ -398,6 +398,7 @@ def download_doc(request, doc_id):
     
 #navigation tree --------------------------------------------------------------
 
+
 def view_navnode(request, tree):
     """show info about the node when selected"""
     response = {}
@@ -421,19 +422,21 @@ def view_navnode(request, tree):
     
     return response
 
+
 def rename_navnode(request, tree):
     """change the name of a node when renamed in the tree"""
     response = {}
     node_id = request.POST['node_id']
-    node = models.NavNode.objects.get(tree=tree, id=node_id) #get the node
-    old_name = node.label #get the old name for success message
-    node.label = request.POST['name'] #change the name
+    node = models.NavNode.objects.get(tree=tree, id=node_id)  # get the node
+    old_name = node.label  # get the old name for success message
+    node.label = request.POST['name']  # change the name
     node.save()
     if old_name != node.label:
         response['message'] = _(u"The node '{0}' has been renamed into '{1}'.").format(old_name, node.label)
     else:
         response['message'] = ''
     return response
+
 
 def remove_navnode(request, tree):
     """delete a node"""
@@ -442,11 +445,12 @@ def remove_navnode(request, tree):
     node_ids = request.POST['node_ids'].split(";")
     for node_id in node_ids:
         models.NavNode.objects.get(tree=tree, id=node_id).delete()
-    if len(node_ids)==1:
+    if len(node_ids) == 1:
         response['message'] = _(u"The node has been removed.")
     else:
         response['message'] = _(u"{0} nodes has been removed.").format(len(node_ids))
     return response
+
 
 def move_navnode(request, tree):
     """move a node in the tree"""
@@ -492,7 +496,7 @@ def move_navnode(request, tree):
                 node.ordering = ref_node.ordering
             elif ref_pos == "after":
                 to_be_moved = sibling_nodes.filter(ordering__gt=ref_node.ordering)
-                node.ordering = ref_node.ordering+1
+                node.ordering = ref_node.ordering + 1
             for n in to_be_moved:
                 n.ordering += 1
                 n.save()
@@ -500,7 +504,7 @@ def move_navnode(request, tree):
         else:
             #add at the end
             max_ordering = sibling_nodes.aggregate(max_ordering=Max('ordering'))['max_ordering'] or 0
-            node.ordering = max_ordering+1
+            node.ordering = max_ordering + 1
     
     else:
     
@@ -536,7 +540,7 @@ def move_navnode(request, tree):
         
         else:
             max_ordering = sibling_nodes.aggregate(max_ordering=Max('ordering'))['max_ordering'] or 0
-            node.ordering = max_ordering+1
+            node.ordering = max_ordering + 1
         
     node.save()
     response['message'] = _(u"The node '{0}' has been moved.").format(node.label)
@@ -609,17 +613,18 @@ def get_suggest_list(request, tree):
                     'label': models.get_object_label(ct, object),
                     'value': object.id,
                     'category': ct.model_class()._meta.verbose_name.capitalize(),
-                    'type': ct.app_label+u'.'+ct.model,
+                    'type': ct.app_label + u'.' + ct.model,
                 })
     
     response['suggestions'] = suggestions
     return response
-    
+
+
 def navnode_in_navigation(request, tree):
     """toogle the is_visible_flag of a navnode"""
     response = {}
     node_id = request.POST['node_id']
-    node = models.NavNode.objects.get(tree=tree, id=node_id) #get the node
+    node = models.NavNode.objects.get(tree=tree, id=node_id)  # get the node
     node.in_navigation = not node.in_navigation
     node.save()
     if node.in_navigation:
@@ -632,6 +637,7 @@ def navnode_in_navigation(request, tree):
         response['icon'] = "out_nav"
     return response
     
+
 @login_required
 def process_nav_edition(request, tree_id):
     """This handle ajax request sent by the tree component"""
@@ -656,14 +662,14 @@ def process_nav_edition(request, tree_id):
             
             #If no exception raise: Success
             response['status'] = 'success'
-            response.setdefault('message', 'Ok') #if no message defined in response, add something
+            response.setdefault('message', 'Ok')  # if no message defined in response, add something
 
         except KeyError, msg:
             response = {'status': 'error', 'message': _("Unsupported message {0}").format(msg)}
         except PermissionDenied:
             response = {'status': 'error', 'message': _("You are not allowed to add a node")}
         except ValidationError, ex:
-           response = {'status': 'error', 'message': u' - '.join(ex.messages)}
+            response = {'status': 'error', 'message': u' - '.join(ex.messages)}
         except Exception, msg:
             #print msg
             response = {'status': 'error', 'message': _("An error occured")}
@@ -673,6 +679,7 @@ def process_nav_edition(request, tree_id):
         #return the result as json object
         return HttpResponse(json.dumps(response), mimetype='application/json')
     raise Http404
+
 
 @login_required
 def edit_newsletter(request, newsletter_id):
@@ -712,6 +719,7 @@ def edit_newsletter(request, newsletter_id):
         context_instance=RequestContext(request)
     )
 
+
 def view_newsletter(request, newsletter_id):
     newsletter = get_object_or_404(models.Newsletter, id=newsletter_id)
 
@@ -725,6 +733,7 @@ def view_newsletter(request, newsletter_id):
         context_dict,
         context_instance=RequestContext(request)
     )
+
 
 @login_required
 @popup_redirect
@@ -748,6 +757,7 @@ def change_newsletter_template(request, newsletter_id):
         {'form': form, 'newsletter': newsletter},
         context_instance=RequestContext(request)
     )
+
 
 @login_required
 @popup_redirect
@@ -774,7 +784,7 @@ def test_newsletter(request, newsletter_id):
                 exc_info=sys.exc_info,
                 extra={
                     'status_code': 500,
-                    'request':request
+                    'request': request
                 }
             )
             
@@ -785,7 +795,8 @@ def test_newsletter(request, newsletter_id):
         {'newsletter': newsletter, 'dests': dests},
         context_instance=RequestContext(request)
     )
-    
+ 
+
 @login_required
 @popup_redirect
 def schedule_newsletter_sending(request, newsletter_id):

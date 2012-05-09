@@ -317,9 +317,9 @@
       <div id="object-links">
       </div>
       <ul class="content-links">
-          <li><a href="{{navtree.get_absolute_url}}" id="rename_node">{% trans "Rename" %}</a></li>
-          <li><a href="{{navtree.get_absolute_url}}" id="delete_node">{% trans "Remove" %}</a></li>
-          <li><a href="{{navtree.get_absolute_url}}" id="navnode_in_navigation">{% trans 'Navigation' %}</a></li>
+          <li><a href="{{content.get_absolute_url}}" id="rename_node">{% trans "Rename this node" %}</a></li>
+          <li><a href="{{content.get_absolute_url}}" id="delete_node">{% trans "Remove this node" %}</a></li>
+          <li><a href="{{content.get_absolute_url}}" id="navnode_in_navigation">{% trans "Navigation" %}</a></li>
       </ul>
     </div>
     <div id="nodes" class="">

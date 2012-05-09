@@ -7,6 +7,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
 from coop_cms.settings import get_article_class
 
+
 class NavNodeAdmin(admin.ModelAdmin):
     list_display = ["label", 'parent', 'ordering', 'in_navigation', 'content_type', 'object_id']
 
@@ -17,6 +18,7 @@ class NavTypeAdmin(admin.ModelAdmin):
     form = NavTypeForm
     
 admin.site.register(models.NavType, NavTypeAdmin)
+
 
 class NavTreeAdmin(admin.ModelAdmin):
     list_display = ['__unicode__', 'name', 'navtypes_list']
@@ -45,6 +47,7 @@ class NavTreeAdmin(admin.ModelAdmin):
 
 admin.site.register(models.NavTree, NavTreeAdmin)
 
+
 class ArticleAdmin(admin.ModelAdmin):
     form = ArticleAdminForm
     list_display = ['slug', 'title', 'publication', 'is_homepage', 'in_newsletter', 'section', 'modified']
@@ -58,6 +61,7 @@ class ArticleAdmin(admin.ModelAdmin):
         (_('Summary'), {'fields': ('summary',)}),
         (_('Debug'), {'fields': ('temp_logo',)}),
     )
+    
     def get_form(self, request, obj=None, **kwargs):
         form = super(ArticleAdmin, self).get_form(request, obj, **kwargs)
         form.current_user = request.user
@@ -69,6 +73,7 @@ admin.site.register(models.Document)
 admin.site.register(models.Image)
 admin.site.register(models.PieceOfHtml)
 admin.site.register(models.NewsletterSending)
+
 
 class ArticleSectionAdmin(admin.ModelAdmin):
     list_display = ['name', 'ordering']
