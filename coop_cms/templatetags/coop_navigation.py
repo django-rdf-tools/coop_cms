@@ -5,7 +5,7 @@ from django.template.loader import get_template
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext as _
-from coop_cms.models import NavNode
+from coop_cms.models import NavNode, NavTree
 from django.contrib.contenttypes.models import ContentType
 register = template.Library()
 from django.template import VariableDoesNotExist
@@ -41,6 +41,15 @@ class NavigatationTemplateNode(template.Node):
          if k=='css_class':
             kwargs[k] = self.format_css_class(v)
 
+      if not 'tree' in kwargs:
+         kwargs['tree'] = 'default'
+
+      tree, _is_new = NavTree.objects.get_or_create(name=kwargs['tree'])
+      if 'coop_cms_navtrees' in context.dicts[0]:
+         context.dicts[0]['coop_cms_navtrees'].append(tree)
+      else:
+         context.dicts[0]['coop_cms_navtrees'] = [tree]
+      
       return kwargs
 
 #----------------------------------------------------------
@@ -51,7 +60,8 @@ class NavigationAsNestedUlNode(NavigatationTemplateNode):
    
    def render(self, context):
       kwargs = self.resolve_kwargs(context)
-      root_nodes = NavNode.objects.filter(parent__isnull=True).order_by("ordering")
+      tree_name = kwargs.pop('tree', 'default')
+      root_nodes = NavNode.objects.filter(tree__name=tree_name, parent__isnull=True).order_by("ordering")
       return u''.join([node.as_navigation(**kwargs) for node in root_nodes])
 
 @register.tag
@@ -71,8 +81,9 @@ class NavigationBreadcrumbNode(NavigatationTemplateNode):
    def render(self, context):
       object = self.object_var.resolve(context)
       ct=ContentType.objects.get_for_model(object.__class__)
-      nav_nodes = NavNode.objects.filter(content_type=ct, object_id=object.id)
       kwargs = self.resolve_kwargs(context)
+      tree_name = kwargs.pop('tree', 'default')
+      nav_nodes = NavNode.objects.filter(tree__name=tree_name, content_type=ct, object_id=object.id)
       if nav_nodes.count()>0:
          return nav_nodes[0].as_breadcrumb(**kwargs)
       return u''
@@ -94,8 +105,9 @@ class NavigationChildrenNode(NavigatationTemplateNode):
    def render(self, context):
       object = self.object_var.resolve(context)
       ct=ContentType.objects.get_for_model(object.__class__)
-      nav_nodes = NavNode.objects.filter(content_type=ct, object_id=object.id)
       kwargs = self.resolve_kwargs(context)
+      tree_name = kwargs.pop('tree', 'default')
+      nav_nodes = NavNode.objects.filter(tree__name=tree_name, content_type=ct, object_id=object.id)
       if nav_nodes.count()>0:
          return nav_nodes[0].children_as_navigation(**kwargs)
       return u''
@@ -117,8 +129,9 @@ class NavigationSiblingsNode(NavigatationTemplateNode):
    def render(self, context):
       object = self.object_var.resolve(context)
       ct=ContentType.objects.get_for_model(object.__class__)
-      nav_nodes = NavNode.objects.filter(content_type=ct, object_id=object.id)
       kwargs = self.resolve_kwargs(context)
+      tree_name = kwargs.pop('tree', 'default')
+      nav_nodes = NavNode.objects.filter(tree__name=tree_name, content_type=ct, object_id=object.id)
       if nav_nodes.count()>0:
          return nav_nodes[0].siblings_as_navigation(**kwargs)
       return u''

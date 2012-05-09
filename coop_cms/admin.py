@@ -19,29 +19,41 @@ class NavTypeAdmin(admin.ModelAdmin):
 admin.site.register(models.NavType, NavTypeAdmin)
 
 class NavTreeAdmin(admin.ModelAdmin):
+    list_display = ['__unicode__', 'name', 'navtypes_list']
+    list_editable = ['name']
+    list_filters = ['id']
 
-    def nodes_li(self):
-        root_nodes = models.NavNode.objects.filter(parent__isnull=True).order_by("ordering")
+    def nodes_li(self, tree):
+        root_nodes = tree.get_root_nodes()
         nodes_li = u''.join([node.as_jstree() for node in root_nodes])
         return nodes_li
     
-    def suggest_list_url(self):
-        return reverse('object_suggest_list')
-        
-    def get_absolute_url(self):
-        return reverse('navigation_tree')
+    def navtypes_list(self, tree):
+        if tree.types.count() == 0:
+            return _(u'All')
+        else:
+            return u' - '.join([unicode(x) for x in tree.types.all()])
+    navtypes_list.short_description = _(u'navigable types')
+    
+    def change_view(self, request, object_id, extra_context=None):
+        extra_context = extra_context or {}
+        tree = models.NavTree.objects.get(id=object_id)
+        extra_context['navtree'] = tree
+        extra_context['navtree_nodes'] = self.nodes_li(tree)
+        return super(NavTreeAdmin, self).change_view(request, object_id,
+            extra_context=extra_context)
 
 admin.site.register(models.NavTree, NavTreeAdmin)
 
 class ArticleAdmin(admin.ModelAdmin):
     form = ArticleAdminForm
-    list_display = ['slug', 'title', 'publication', 'in_newsletter', 'section', 'modified']
-    list_editable = ['publication', 'in_newsletter', 'section']
+    list_display = ['slug', 'title', 'publication', 'is_homepage', 'in_newsletter', 'section', 'modified']
+    list_editable = ['publication', 'is_homepage', 'in_newsletter', 'section']
     readonly_fields = ['slug', 'created', 'modified']
     fieldsets = (
-        (_('Navigation'), {'fields': ('navigation_parent',)}),
+        #(_('Navigation'), {'fields': ('navigation_parent',)}),
         (_('General'), {'fields': ('slug', 'title', 'content',)}),
-        (_('Advanced'), {'fields': ('template', 'section', 'logo', 'in_newsletter')}),
+        (_('Advanced'), {'fields': ('template', 'section', 'logo', 'is_homepage', 'in_newsletter')}),
         (_('Publication'), {'fields': ('publication', 'created', 'modified')}),
         (_('Summary'), {'fields': ('summary',)}),
         (_('Debug'), {'fields': ('temp_logo',)}),

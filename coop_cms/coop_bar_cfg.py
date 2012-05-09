@@ -60,6 +60,20 @@ def django_admin_edit_article(request, context):
         return make_link(reverse(view_name, args=[article.id]), _(u'Article admin'), 'fugue/table.png',
             classes=['icon', 'alert_on_click'])
 
+def django_admin_navtree(request, context):
+    if request.user.is_staff:
+        coop_cms_navtrees = context.get('coop_cms_navtrees', None)
+        if coop_cms_navtrees:
+            if len(coop_cms_navtrees) == 1:
+                tree = coop_cms_navtrees[0]
+                url = reverse('admin:coop_cms_navtree_change', args=[tree.id])
+                label = _(u'Navigation tree')
+            else:
+                url = reverse('admin:coop_cms_navtree_changelist')
+                label = _(u'Navigation trees')
+            return make_link(url, label, 'fugue/leaf-plant.png',
+                classes=['icon', 'alert_on_click'])
+
 @can_edit
 def cms_media_library(request, context):
     if context.get('edit_mode'):
@@ -80,8 +94,16 @@ def cms_upload_doc(request, context):
 
 @can_add_article
 def cms_new_article(request, context):
-        url = reverse('coop_cms_new_article')
-        return make_link(url, _(u'Add article'), 'fugue/document--plus.png',
+    url = reverse('coop_cms_new_article')
+    return make_link(url, _(u'Add article'), 'fugue/document--plus.png',
+        classes=['alert_on_click', 'colorbox-form', 'icon'])
+
+@can_add_article
+def cms_set_homepage(request, context):
+    article = context.get('article', None)
+    if context.get('edit_mode') and article and (not article.is_homepage):
+        url = reverse('coop_cms_set_homepage', args=[article.id])
+        return make_link(url, _(u'Set homepage'), 'fugue/home--pencil.png',
             classes=['alert_on_click', 'colorbox-form', 'icon'])
 
 @can_edit_article    
@@ -200,12 +222,12 @@ def schedule_newsletter(request, context):
 def load_commands(coop_bar):
     
     coop_bar.register([
-        [django_admin, django_admin_edit_article],
+        [django_admin, django_admin_edit_article, django_admin_navtree],
         [edit_newsletter, cancel_edit_newsletter, save_newsletter,
             change_newsletter_settings, change_newsletter_template,
             test_newsletter, schedule_newsletter],
         [cms_edit, cms_view, cms_save, cms_cancel],
-        [cms_new_article, cms_article_settings],
+        [cms_new_article, cms_article_settings, cms_set_homepage],
         [cms_publish],
         [cms_media_library, cms_upload_image, cms_upload_doc],
         [log_out]

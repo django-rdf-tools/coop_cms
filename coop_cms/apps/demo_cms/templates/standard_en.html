@@ -1,0 +1,10 @@
+{% extends "standard.html" %}
+
+{% load i18n coop_navigation %}
+
+{% block navigation %}
+<ul id="nav">
+  {% navigation_as_nested_ul tree="english" li_template="dropdown_li.html" ul_template="dropdown_ul.html" li_args="dropdown_li_class.html" %}
+  {% navigation_as_nested_ul li_template="dropdown_li.html" ul_template="dropdown_ul.html" li_args="dropdown_li_class.html" %}
+</ul>
+{% endblock %}

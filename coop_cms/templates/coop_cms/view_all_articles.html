@@ -1,0 +1,46 @@
+{% extends "coop_cms/base.html" %}
+{% load i18n pagination_tags %}
+
+{% block meta_title %}coop_cms{% endblock %}
+
+{% block extra_head %}
+{{block.super}}
+<style>
+    ul.article-list li.draft {
+        font-style: italic;
+    }
+</style>
+{% endblock %}
+
+{% block document %}
+    {% blocktrans %}
+    <h1>Welcome on coop_cms</h1>
+    <p>
+        coop_cms is a simple CMS for the Django web framework.<br/>
+        The goal is to make article edition as simple as possible thanks to HTML5 content editable and Aloha editor.
+    </p>
+    {% endblocktrans %}
+    {% if articles %}
+    {% blocktrans %}
+    <p>
+        Here is the list of articles in the CMS.
+    </p>
+    {% endblocktrans %}
+    {% else %}
+    {% blocktrans %}
+    <p>
+        Let's start and create your first first article by clicking "Add article" in the left menu.
+    </p>
+    {% endblocktrans %}
+        
+    {% endif %}
+    
+    {% autopaginate articles 50 %}
+    <ul class="article-list">
+    {% for art in articles %}
+        <li{% if art.publication == 0 %} class="draft"{% endif %}><a href="{{ art.get_absolute_url }}">{{ art.title }}</a></li>
+    {% endfor %}
+    </ul>
+    
+    {% paginate %}
+{% endblock %}

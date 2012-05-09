@@ -8,14 +8,24 @@
 
 
 {% block extra_head %}
+    {{ block.super }}
     <link rel="stylesheet" type="text/css" media="screen, print" href="{{ STATIC_URL }}slickmap/slickmap.css" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/demo-style.css" type="text/css" />
+    <style>
+      #primaryNav li{
+        list-style: none;
+      }
+      div#main {
+        border: none;
+        padding: 0 0;
+        background: transparent;
+      }
+    </style>
 {% endblock %}
 
-{% block document %}
-  {% block navigation %}
-  <nav>
+{% block navigation %}
     <ul id="primaryNav" class="col4">{% navigation_as_nested_ul %}</ul>
-  </nav>
-  {% endblock %}
-    
+{% endblock %}
+
+{% block content %}
 {% endblock %}

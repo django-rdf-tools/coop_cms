@@ -41,6 +41,51 @@ def tree_map(request):
         RequestContext(request)
     )   
 
+def homepage(request):
+    try:
+        article = get_article_class().objects.get(is_homepage=True)
+        return HttpResponseRedirect(article.get_absolute_url())
+    except get_article_class().DoesNotExist:
+        return HttpResponseRedirect(reverse('coop_cms_view_all_articles'))
+    
+@login_required
+def view_all_articles(request):
+    return render_to_response(
+        'coop_cms/view_all_articles.html',
+        {'articles': get_article_class().objects.all().order_by('title')},
+        RequestContext(request)
+    )
+
+@login_required
+@popup_redirect
+def set_homepage(request, article_id):
+    """use the article as homepage"""
+    try:
+        article = get_object_or_404(get_article_class(), id=article_id)
+        
+        if not request.user.has_perm('can_publish_article', article):
+            raise PermissionDenied
+        
+        if request.method == "POST":
+            article.is_homepage = True
+            article.save()
+            return HttpResponseRedirect(reverse('coop_cms_homepage'))
+        
+        context_dict = {
+            'article': article,
+            'title': _(u"Do you want to use this article as homepage?"),
+        }
+        
+        return render_to_response(
+            'coop_cms/popup_set_homepage.html',
+            context_dict,
+            context_instance=RequestContext(request)
+        )
+    except Exception, msg:
+        print "## ERR", msg
+        raise
+        
+
 
 def view_article(request, url):
     """view the article"""
@@ -353,12 +398,12 @@ def download_doc(request, doc_id):
     
 #navigation tree --------------------------------------------------------------
 
-def view_navnode(request):
+def view_navnode(request, tree):
     """show info about the node when selected"""
     response = {}
 
     node_id = request.POST['node_id']
-    node = models.NavNode.objects.get(id=node_id)
+    node = models.NavNode.objects.get(tree=tree, id=node_id)
 
     #get the admin url
     app, mod = node.content_type.app_label, node.content_type.model
@@ -376,11 +421,11 @@ def view_navnode(request):
     
     return response
 
-def rename_navnode(request):
+def rename_navnode(request, tree):
     """change the name of a node when renamed in the tree"""
     response = {}
     node_id = request.POST['node_id']
-    node = models.NavNode.objects.get(id=node_id) #get the node
+    node = models.NavNode.objects.get(tree=tree, id=node_id) #get the node
     old_name = node.label #get the old name for success message
     node.label = request.POST['name'] #change the name
     node.save()
@@ -390,20 +435,20 @@ def rename_navnode(request):
         response['message'] = ''
     return response
 
-def remove_navnode(request):
+def remove_navnode(request, tree):
     """delete a node"""
     #Keep multi node processing even if multi select is not allowed
     response = {}
     node_ids = request.POST['node_ids'].split(";")
     for node_id in node_ids:
-        models.NavNode.objects.get(id=node_id).delete()
+        models.NavNode.objects.get(tree=tree, id=node_id).delete()
     if len(node_ids)==1:
         response['message'] = _(u"The node has been removed.")
     else:
         response['message'] = _(u"{0} nodes has been removed.").format(len(node_ids))
     return response
 
-def move_navnode(request):
+def move_navnode(request, tree):
     """move a node in the tree"""
     response = {}
     
@@ -412,26 +457,26 @@ def move_navnode(request):
     parent_id = request.POST.get('parent_id', 0)
     ref_id = request.POST.get('ref_id', 0)
     
-    node = models.NavNode.objects.get(id=node_id)
+    node = models.NavNode.objects.get(tree=tree, id=node_id)
     
     if parent_id:
-        sibling_nodes = models.NavNode.objects.filter(parent__id=parent_id)
-        parent_node = models.NavNode.objects.get(id=parent_id)
+        sibling_nodes = models.NavNode.objects.filter(tree=tree, parent__id=parent_id)
+        parent_node = models.NavNode.objects.get(tree=tree, id=parent_id)
     else:
-        sibling_nodes = models.NavNode.objects.filter(parent__isnull=True)
+        sibling_nodes = models.NavNode.objects.filter(tree=tree, parent__isnull=True)
         parent_node = None
         
     if ref_id:
-        ref_node = models.NavNode.objects.get(id=ref_id)
+        ref_node = models.NavNode.objects.get(tree=tree, id=ref_id)
     else:
         ref_node = None
     
     #Update parent if changed
     if parent_node != node.parent:
         if node.parent:
-            ex_siblings = models.NavNode.objects.filter(parent=node.parent).exclude(id=node.id)
+            ex_siblings = models.NavNode.objects.filter(tree=tree, parent=node.parent).exclude(id=node.id)
         else:
-            ex_siblings = models.NavNode.objects.filter(parent__isnull=True).exclude(id=node.id)
+            ex_siblings = models.NavNode.objects.filter(tree=tree, parent__isnull=True).exclude(id=node.id)
         
         node.parent = parent_node
         
@@ -499,7 +544,7 @@ def move_navnode(request):
     return response
 
     
-def add_navnode(request):
+def add_navnode(request, tree):
     """Add a new node"""
     response = {}
     
@@ -518,11 +563,16 @@ def add_navnode(request):
         raise ValidationError(_(u"{0} {1} not found").format(model_class._meta.verbose_name, object_id))
     
     #objects can not be added twice in the navigation tree
-    if models.NavNode.objects.filter(content_type=ct, object_id=object.id).count() > 0:
+    if models.NavNode.objects.filter(tree=tree, content_type=ct, object_id=object.id).count() > 0:
         raise ValidationError(_(u"The {0} is already in navigation").format(model_class._meta.verbose_name))
     
     #Create the node
-    node = models.create_navigation_node(ct, object, request.POST.get('parent_id', 0))
+    parent_id = request.POST.get('parent_id', 0)
+    if parent_id:
+        parent = models.NavNode.objects.get(tree=tree, id=parent_id)
+    else:
+        parent = None
+    node = models.create_navigation_node(ct, object, tree, parent)
     
     response['label'] = node.label
     response['id'] = 'node_{0}'.format(node.id)
@@ -530,11 +580,17 @@ def add_navnode(request):
     
     return response
 
-def get_suggest_list(request):
+def get_suggest_list(request, tree):
     response = {}
     suggestions = []
     term = request.POST["term"]#the 1st chars entered in the autocomplete
-    for nt in models.NavType.objects.all():
+    
+    if tree.types.count() == 0:
+        nav_types = models.NavType.objects.all()
+    else:
+        nav_types = tree.types.all()
+    
+    for nt in nav_types:
         ct = nt.content_type
         if nt.label_rule == models.NavType.LABEL_USE_SEARCH_FIELD:
             #Get the name of the default field for the current type (eg: Page->title, Url->url ...)
@@ -544,7 +600,7 @@ def get_suggest_list(request):
             objects = [obj for obj in ct.model_class().objects.all() if term in obj.get_label()]
         else:
             objects = [obj for obj in ct.model_class().objects.all() if term in unicode(obj)]
-        already_in_navigation = [node.object_id for node in models.NavNode.objects.filter(content_type=ct)]
+        already_in_navigation = [node.object_id for node in models.NavNode.objects.filter(tree=tree, content_type=ct)]
         #Get suggestions as a list of {label: object.get_label() or unicode if no get_label, 'value':<object.id>}
         for object in objects:
             if object.id not in already_in_navigation:
@@ -559,11 +615,11 @@ def get_suggest_list(request):
     response['suggestions'] = suggestions
     return response
     
-def navnode_in_navigation(request):
+def navnode_in_navigation(request, tree):
     """toogle the is_visible_flag of a navnode"""
     response = {}
     node_id = request.POST['node_id']
-    node = models.NavNode.objects.get(id=node_id) #get the node
+    node = models.NavNode.objects.get(tree=tree, id=node_id) #get the node
     node.in_navigation = not node.in_navigation
     node.save()
     if node.in_navigation:
@@ -577,10 +633,13 @@ def navnode_in_navigation(request):
     return response
     
 @login_required
-def process_nav_edition(request):
+def process_nav_edition(request, tree_id):
     """This handle ajax request sent by the tree component"""
     if request.method == 'POST' and request.is_ajax() and request.POST.has_key('msg_id'):
         try:
+            #Get the current tree
+            tree = get_object_or_404(models.NavTree, id=tree_id)
+            
             #check permissions
             if not request.user.has_perm('coop_cms.change_navtree'):
                 raise PermissionDenied
@@ -593,7 +652,7 @@ def process_nav_edition(request):
                 supported_msg[fct.__name__] = fct
             
             #Call the handler corresponding to the requested message
-            response = supported_msg[request.POST['msg_id']](request)
+            response = supported_msg[request.POST['msg_id']](request, tree)
             
             #If no exception raise: Success
             response['status'] = 'success'
@@ -710,7 +769,6 @@ def test_newsletter(request, newsletter_id):
 
         except Exception, msg:
             messages.add_message(request, messages.ERROR, _(u"An error occured! Please contact your support."))
-            print "####", msg
             logger = getLogger('django.request')
             logger.error('Internal Server Error: %s' % request.path,
                 exc_info=sys.exc_info,
