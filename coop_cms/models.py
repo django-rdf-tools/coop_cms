@@ -13,8 +13,8 @@ from django.core.urlresolvers import reverse
 from django.db.models.aggregates import Max
 from django.utils.html import escape
 from django.core.exceptions import ValidationError
-from html_field.db.models import HTMLField
-from html_field import html_cleaner
+#from html_field.db.models import HTMLField
+#from html_field import html_cleaner
 from coop_cms.settings import get_article_class, get_article_logo_size, get_newsletter_item_classes
 from django.contrib.staticfiles import finders
 from django.core.files import File
@@ -227,15 +227,14 @@ class NavTree(models.Model):
         verbose_name = _(u'Navigation tree')
         verbose_name_plural = _(u'Navigation trees')
 
-content_cleaner = html_cleaner.HTMLCleaner(
-    allow_tags=['a', 'img', 'p', 'br', 'b', 'i', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-        'sup', 'pre', 'ul', 'li', 'ol', 'table', 'th', 'tr', 'td', 'tbody', 'span', 'div',
-        'strong','u','dd','dt','dl','hr','em','font','iframe','object','param','embed'],
-        #iframe is a security risk but needed until we find how to integrate oembed
-    allow_attrs_for_tag={'a': ['href', 'target'], 'img': ['src', 'alt']}
-)
-title_cleaner = html_cleaner.HTMLCleaner(allow_tags=['br','span','em','i','strong','b','font','u'])
-
+#content_cleaner = html_cleaner.HTMLCleaner(
+#    allow_tags=['a', 'img', 'p', 'br', 'b', 'i', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+#        'sup', 'pre', 'ul', 'li', 'ol', 'table', 'th', 'tr', 'td', 'tbody', 'span', 'div',
+#        'strong','u','dd','dt','dl','hr','em','font','iframe','object','param','embed'],
+#        #iframe is a security risk but needed until we find how to integrate oembed
+#    allow_attrs_for_tag={'a': ['href', 'target'], 'img': ['src', 'alt']}
+#)
+#title_cleaner = html_cleaner.HTMLCleaner(allow_tags=['br','span','em','i','strong','b','font','u'])
     
 class ArticleSection(models.Model):
     name = models.CharField(_(u'name'), max_length=100)
@@ -263,9 +262,10 @@ class BaseArticle(TimeStampedModel):
         return u'{0}/{1}/{2}'.format(img_root, self.id, filename)
     
     slug = AutoSlugField(populate_from='title', max_length=100, unique=True)
-    title = HTMLField(title_cleaner, verbose_name=_(u'title'), default=_('Page title'))
+    #title = HTMLField(title_cleaner, verbose_name=_(u'title'), default=_('Page title'))
     #content = HTMLField(content_cleaner, verbose_name=_(u'content'), default=_('Page content'))
-    content = models.TextField(_(u'content'), default=_('Page content'))
+    title = models.TextField(_(u'title'), default=_('Page title'), blank=True)
+    content = models.TextField(_(u'content'), default=_('Page content'), blank=True)
     publication = models.IntegerField(_(u'publication'), choices=PUBLICATION_STATUS, default=PUBLISHED)
     template = models.CharField(_(u'template'), max_length=200, default='', blank=True)
     logo = models.ImageField(upload_to=get_logo_folder, blank=True, null=True, default='')
@@ -473,7 +473,8 @@ class Document(Media):
 
 class PieceOfHtml(models.Model):
     div_id = models.CharField(verbose_name=_(u"identifier"), max_length=100, db_index=True)    
-    content = HTMLField(content_cleaner, verbose_name=_(u"content"), default="", blank=True)
+    #content = HTMLField(content_cleaner, verbose_name=_(u"content"), default="", blank=True)
+    content = models.TextField(_(u"content"), default="", blank=True)
 
     def __unicode__(self):
         return self.div_id
@@ -541,7 +542,8 @@ post_save.connect(on_create_newsletterable_instance)
 
 class Newsletter(models.Model):
     subject = models.CharField(max_length=200, verbose_name=_(u'subject'), blank=True, default="")
-    content = HTMLField(content_cleaner, verbose_name=_(u"content"), default="<br>", blank=True)
+    #content = HTMLField(content_cleaner, verbose_name=_(u"content"), default="<br>", blank=True)
+    content = models.TextField(_(u"content"), default="<br>", blank=True)
     items = models.ManyToManyField(NewsletterItem, blank=True)
     template = models.CharField(_(u'template'), max_length=200, default='', blank=True)
 
