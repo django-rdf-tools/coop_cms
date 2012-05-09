@@ -1,6 +1,6 @@
 body {
 	background-color: #eef;
-	font-family: Calibri;
+	font-family: Arial;
 	font-size: 0.9em;
 }
 
@@ -57,22 +57,21 @@ table td{
 }
 
 h1,h2,h3,h4,h5,h6, nav{
-	font-family: "PT Sans Narrow", "Trebuchet MS", Trebuchet, Tahoma, Arial;
+	/*font-family: "PT Sans Narrow", "Trebuchet MS", Trebuchet, Tahoma, Arial;*/
 }
 
 h1{
-	font-size: 3.5em;
+	font-size: 2.2em;
 	padding-top: 10px;
-	padding-left: 20px;
 }
 
 
-header h1 a, header h1 a:visited{
+.header h1 a, #header h1 a:visited{
 	color: #6c6c6c;
 	text-decoration: none;
 }
 
-header h1 a:active{
+.header h1 a:active{
 	background-color: white;
 }
 
@@ -285,8 +284,12 @@ Laisser tranquille , surclasser ailleurs
     height: 300px
 }
 
+.article h1, .rightcol h1{
+    font-size: 1.9em;
+}
+
 .article h2, .rightcol h2{
-    font-size: 1.8em;
+    font-size: 1.7em;
 }
 
 .article h3, .rightcol h3{
@@ -310,8 +313,10 @@ Laisser tranquille , surclasser ailleurs
     width: 128px;
     height: 128px;
     float: left;
-    margin: 0 5px 0 5px;
+    margin: 0 0;
     vertical-align: top;
+	margin-right: 8px;
+	margin-bottom: 0px;
 }
 
 .article-content {
