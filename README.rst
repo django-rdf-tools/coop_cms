@@ -20,8 +20,7 @@ Coop-cms has some sister apps to make it more usable:
 
 * `coop_bar <https://github.com/quinode/coop-bar/>`_, an extensible toolbar (same concept : any app you create can add links in the toolbar)
 * `djaloha <https://github.com/quinode/djaloha/>`_, a great in-site editor based on `Aloha Editor <http://aloha-editor.org/>`_
-* rss-sync, a RSS syndication module that will import new articles from your defined RSS sources right in the django admin.
-
+* `colorbox <https://github.com/quinode/coop-colorbox/>`_, make easy integration of jquery colorbox library. 
 
 .. _quick-start:
 
@@ -32,17 +31,16 @@ Python 2.6+, Django 1.3+ required
 
 Install it with ``pip install coop-cms``
 
-
 urls.py
 ~~~~~~~
 
 At *the very end* of your urls.py file, add::
 
-urlpatterns += patterns('',
-    (r'^djaloha/', include('djaloha.urls')),
-    (r'^', include('coop_cms.urls')),
-    (r'^coop_bar/', include('coop_bar.urls')),
-)
+    urlpatterns += patterns('',
+        (r'^djaloha/', include('djaloha.urls')),
+        (r'^', include('coop_cms.urls')),
+        (r'^coop_bar/', include('coop_bar.urls')),
+    )
 
 Please note that coop-cms will handle any page slug, except the ones you will have defined before.
 
@@ -169,25 +167,29 @@ Base template
 You need to create a base template ``base.html`` in one of your template folders
 
 You need the following templatetags libs::
+
     {% load coop_navigation coop_bar_tags %}
 
 In the <head> of the document::
+
   {% coop_bar_headers %}
   {% block jquery_declaration %}{% endblock %}
   {% block extra_head %}{% endblock %}
 
 In the <body> of the document::
+
     {% block document %}...{% endblock %}
     {% coop_bar %}
 
 You can also put some navigations in the <body>::
+
     {% navigation_as_nested_ul %}
 
 The navigation_as_nested_ul templatetag accepts several args
-* ``tree``="english" --> The name of the navigation_tree to use. "default" if missing
-* ``li_template``="dropdown_li.html" --> a template for every <li> tags
-* ``ul_template``="dropdown_ul.html" --> a template for every <ul> tags
-* ``li_args``="dropdown_li_class.html" ---> args to be used for any <li> tags
+ * ``tree``="english" --> The name of the navigation_tree to use. "default" if missing
+ * ``li_template``="dropdown_li.html" --> a template for every <li> tags
+ * ``ul_template``="dropdown_ul.html" --> a template for every <ul> tags
+ * ``li_args``="dropdown_li_class.html" ---> args to be used for any <li> tags
 
 There are others templatetags for navigation : ``navigation_breadcrumb``, ``navigation_children``, ``navigation_siblings`` with similar behavior
 
@@ -197,10 +199,11 @@ Going further
 -------------
 
 You can look at the demo_app in apps folder to see how to customize the behavior of coop_cms:
-* Custom templates for articles and newsletters
-* Custom fields in article
-* Custom admin bar
-* Configuration values
+
+ * Custom templates for articles and newsletters
+ * Custom fields in article
+ * Custom admin bar
+ * Configuration values
 
 
 License
