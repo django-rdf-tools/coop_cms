@@ -50,9 +50,36 @@ def homepage(request):
     
 @login_required
 def view_all_articles(request):
+    
+    articles_admin_url = newsletters_admin_url = add_article_url = add_newsletter_url = None
+    
+    
+    if request.user.is_staff:
+        article_class = get_article_class()
+        view_name = 'admin:%s_%s_changelist' % (article_class._meta.app_label,  article_class._meta.module_name)
+        articles_admin_url = reverse(view_name)
+    
+        newsletters_admin_url = reverse('admin:coop_cms_newsletter_changelist')
+        
+        add_newsletter_url = reverse('admin:coop_cms_newsletter_add')
+    
+    Article = get_article_class()
+    ct = ContentType.objects.get_for_model(Article)
+    perm = '{0}.add_{1}'.format(ct.app_label, ct.model)
+    if request.user.has_perm(perm):
+        add_article_url = reverse('coop_cms_new_article')
+    
     return render_to_response(
         'coop_cms/view_all_articles.html',
-        {'articles': get_article_class().objects.all().order_by('title')},
+        {
+            'articles': get_article_class().objects.all().order_by('-id')[:10],
+            'newsletters': models.Newsletter.objects.all().order_by('-id')[:10],
+            'editable': True,
+            'articles_list_url': articles_admin_url,
+            'newsletters_list_url': newsletters_admin_url,
+            'add_article_url': add_article_url,
+            'add_newsletter_url': add_newsletter_url,
+        },
         RequestContext(request)
     )
 

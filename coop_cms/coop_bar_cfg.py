@@ -74,12 +74,17 @@ def django_admin_navtree(request, context):
             return make_link(url, label, 'fugue/leaf-plant.png',
                 classes=['icon', 'alert_on_click'])
 
+def view_all_articles(request, context):
+    if request.user.is_staff:
+        return make_link(reverse('coop_cms_view_all_articles'), _(u'Articles'), 'fugue/documents-stack.png',
+            classes=['icon', 'alert_on_click'])
+
 @can_edit
 def cms_media_library(request, context):
     if context.get('edit_mode'):
         return make_link(reverse('coop_cms_media_images'), _(u'Media library'), 'fugue/images-stack.png',
             'coopbar_medialibrary', ['icon', 'slide'])
-
+        
 @can_edit
 def cms_upload_image(request, context):
     if context.get('edit_mode'):
@@ -222,7 +227,7 @@ def schedule_newsletter(request, context):
 def load_commands(coop_bar):
     
     coop_bar.register([
-        [django_admin, django_admin_edit_article, django_admin_navtree],
+        [django_admin, django_admin_edit_article, django_admin_navtree, view_all_articles],
         [edit_newsletter, cancel_edit_newsletter, save_newsletter,
             change_newsletter_settings, change_newsletter_template,
             test_newsletter, schedule_newsletter],
