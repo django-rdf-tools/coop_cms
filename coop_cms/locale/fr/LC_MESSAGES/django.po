@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coop_cms\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-09 23:16+0200\n"
-"PO-Revision-Date: 2012-05-09 23:20+0100\n"
+"POT-Creation-Date: 2012-05-10 12:42+0200\n"
+"PO-Revision-Date: 2012-05-10 12:45+0100\n"
 "Last-Translator: Luc Jean <ljean@apidev.fr>\n"
 "Language-Team: Apidev, Quinode <contact@quinode.fr>\n"
 "MIME-Version: 1.0\n"
@@ -19,33 +19,33 @@ msgstr ""
 "X-Poedit-Language: French\n"
 "X-Poedit-Country: FRANCE\n"
 
-#: .\admin.py:33
+#: .\admin.py:35
 msgid "All"
 msgstr "Tous"
 
-#: .\admin.py:36
+#: .\admin.py:38
 #: .\models.py:82
 msgid "navigable types"
 msgstr "types navigables"
 
-#: .\admin.py:55
+#: .\admin.py:58
 msgid "General"
 msgstr "Général"
 
-#: .\admin.py:56
+#: .\admin.py:59
 msgid "Advanced"
 msgstr "Avancé"
 
-#: .\admin.py:57
+#: .\admin.py:60
 msgid "Publication"
 msgstr "Publication"
 
-#: .\admin.py:58
+#: .\admin.py:61
 #: .\models.py:273
 msgid "Summary"
 msgstr "Résumé"
 
-#: .\admin.py:59
+#: .\admin.py:62
 msgid "Debug"
 msgstr "Debug"
 
@@ -67,78 +67,84 @@ msgstr "Arborescence"
 msgid "Navigation trees"
 msgstr "Arborescences"
 
-#: .\coop_bar_cfg.py:80
+#: .\coop_bar_cfg.py:79
+#: .\templates\coop_cms\view_all_articles.html.py:52
+msgid "Articles"
+msgstr "Articles"
+
+#: .\coop_bar_cfg.py:85
 msgid "Media library"
 msgstr "Médiathèque"
 
-#: .\coop_bar_cfg.py:86
+#: .\coop_bar_cfg.py:91
 msgid "Add image"
 msgstr "Ajouter une image"
 
-#: .\coop_bar_cfg.py:92
+#: .\coop_bar_cfg.py:97
 msgid "Add document"
 msgstr "Ajouter un document"
 
-#: .\coop_bar_cfg.py:98
+#: .\coop_bar_cfg.py:103
+#: .\templates\coop_cms\view_all_articles.html.py:61
 msgid "Add article"
 msgstr "Ajouter un article"
 
-#: .\coop_bar_cfg.py:106
+#: .\coop_bar_cfg.py:111
 msgid "Set homepage"
-msgstr "Définir comme page d'accueil"
+msgstr "Définir la page d'accueil"
 
-#: .\coop_bar_cfg.py:114
+#: .\coop_bar_cfg.py:119
 #: .\templates\coop_cms\popup_article_settings.html.py:3
 msgid "Article settings"
 msgstr "Réglages article"
 
-#: .\coop_bar_cfg.py:121
-#: .\coop_bar_cfg.py:188
+#: .\coop_bar_cfg.py:126
+#: .\coop_bar_cfg.py:193
 msgid "Save"
 msgstr "Enregistrer"
 
-#: .\coop_bar_cfg.py:128
+#: .\coop_bar_cfg.py:133
 msgid "View"
 msgstr "Visualiser"
 
-#: .\coop_bar_cfg.py:135
-#: .\coop_bar_cfg.py:181
+#: .\coop_bar_cfg.py:140
+#: .\coop_bar_cfg.py:186
 msgid "Cancel"
 msgstr "Annuler"
 
-#: .\coop_bar_cfg.py:142
-#: .\coop_bar_cfg.py:175
+#: .\coop_bar_cfg.py:147
+#: .\coop_bar_cfg.py:180
 msgid "Edit"
 msgstr "Editer"
 
-#: .\coop_bar_cfg.py:151
-#: .\models.py:254
+#: .\coop_bar_cfg.py:156
+#: .\models.py:253
 #: .\templates\coop_cms\popup_publish_article.html.py:36
 msgid "Draft"
 msgstr "Brouillon"
 
-#: .\coop_bar_cfg.py:154
-#: .\models.py:255
+#: .\coop_bar_cfg.py:159
+#: .\models.py:254
 msgid "Published"
 msgstr "Publié"
 
-#: .\coop_bar_cfg.py:168
+#: .\coop_bar_cfg.py:173
 msgid "Log out"
 msgstr "Déconnexion"
 
-#: .\coop_bar_cfg.py:196
+#: .\coop_bar_cfg.py:201
 msgid "Newsletter settings"
 msgstr "Réglages lettre"
 
-#: .\coop_bar_cfg.py:204
+#: .\coop_bar_cfg.py:209
 msgid "Newsletter template"
 msgstr "Modèle Lettre"
 
-#: .\coop_bar_cfg.py:211
+#: .\coop_bar_cfg.py:216
 msgid "Send test"
 msgstr "Test envoi"
 
-#: .\coop_bar_cfg.py:219
+#: .\coop_bar_cfg.py:224
 msgid "Schedule sending"
 msgstr "Programmer"
 
@@ -229,17 +235,17 @@ msgid "parent"
 msgstr "parent"
 
 #: .\models.py:95
-#: .\models.py:242
+#: .\models.py:241
 msgid "ordering"
 msgstr "ordre"
 
 #: .\models.py:98
-#: .\models.py:497
+#: .\models.py:498
 msgid "content_type"
 msgstr "type de contenu"
 
 #: .\models.py:99
-#: .\models.py:498
+#: .\models.py:499
 msgid "object id"
 msgstr "identifiant de l'objet"
 
@@ -257,31 +263,31 @@ msgstr "noeuds de navigation"
 
 #: .\models.py:202
 msgid "A node can not be its own parent"
-msgstr "Un noeud ne peut pas être son propre parent"
+msgstr "Un élément ne peut pas être son propre parent"
 
 #: .\models.py:208
 msgid "A node can not be child of its own child"
-msgstr "Un noeud ne peut pas être son propre enfant"
+msgstr "Un élément ne peut pas être son propre enfant"
 
 #: .\models.py:214
-#: .\models.py:241
+#: .\models.py:240
 #: .\models.py:403
 msgid "name"
 msgstr "nom"
 
-#: .\models.py:266
+#: .\models.py:267
 #: .\apps\rss_sync\models.py:9
 #: .\apps\rss_sync\models.py:28
 msgid "title"
 msgstr "titre"
 
-#: .\models.py:266
+#: .\models.py:267
 msgid "Page title"
 msgstr "Titre de la page"
 
 #: .\models.py:268
-#: .\models.py:476
-#: .\models.py:544
+#: .\models.py:477
+#: .\models.py:546
 msgid "content"
 msgstr "contenu"
 
@@ -294,7 +300,7 @@ msgid "publication"
 msgstr "publication"
 
 #: .\models.py:270
-#: .\models.py:546
+#: .\models.py:548
 msgid "template"
 msgstr "modèle"
 
@@ -308,7 +314,7 @@ msgstr "Sur une lettre d'information?"
 
 #: .\models.py:276
 msgid "Is homepage"
-msgstr "Est la page d'accueil"
+msgstr "Page d'accueil"
 
 #: .\models.py:300
 msgid "article"
@@ -320,7 +326,7 @@ msgstr "articles"
 
 #: .\models.py:329
 msgid "set the parent in navigation."
-msgstr "ajouter le noeud à la navigation."
+msgstr "ajouter l’élément à la navigation."
 
 #: .\models.py:376
 msgid "URL"
@@ -360,158 +366,149 @@ msgstr "documents"
 msgid "identifier"
 msgstr "identifier"
 
-#: .\models.py:482
+#: .\models.py:483
 msgid "piece of HTML"
 msgstr "bloc HTML"
 
-#: .\models.py:483
+#: .\models.py:484
 msgid "pieces of HTML"
 msgstr "blocs HTML"
 
-#: .\models.py:503
+#: .\models.py:504
 msgid "newsletter item"
 msgstr "élément de lettre d'information"
 
-#: .\models.py:504
+#: .\models.py:505
 msgid "newsletter items"
 msgstr "éléments de lettre d'information"
 
-#: .\models.py:543
+#: .\models.py:544
 msgid "subject"
 msgstr "sujet"
 
-#: .\models.py:581
+#: .\models.py:583
 msgid "newsletter"
 msgstr "lettre d'information"
 
-#: .\models.py:582
+#: .\models.py:584
 msgid "newsletters"
 msgstr "lettres d'information"
 
-#: .\models.py:588
+#: .\models.py:590
 msgid "scheduling date"
 msgstr "date de programmation"
 
-#: .\models.py:589
+#: .\models.py:591
 msgid "sending date"
 msgstr "date d'envoi"
 
-#: .\models.py:595
+#: .\models.py:597
 msgid "newsletter sending"
 msgstr "Envoi de lettre d'information"
 
-#: .\models.py:596
+#: .\models.py:598
 msgid "newsletter sendings"
 msgstr "Envois de lettre d'informations"
 
-#: .\views.py:76
+#: .\views.py:103
 msgid "Do you want to use this article as homepage?"
 msgstr "Voulez-vous utiliser cet article comme page d'accueil ?"
 
-#: .\views.py:143
+#: .\views.py:170
 msgid "The article has been saved properly"
-msgstr "L'article a été enregistré avec succès"
+msgstr "L’article a été enregistré avec succès"
 
-#: .\views.py:198
+#: .\views.py:225
 msgid "Do you want to publish this article?"
 msgstr "Voulez-vous publier cet article ?"
 
-#: .\views.py:198
+#: .\views.py:225
 msgid "Make it draft?"
 msgstr "Voulez-vous passez en mode brouillon?"
 
-#: .\views.py:420
+#: .\views.py:448
 msgid "Node content loaded."
 msgstr "Contenu du noeud chargé."
 
-#: .\views.py:433
+#: .\views.py:462
 msgid "The node '{0}' has been renamed into '{1}'."
-msgstr "Le noeud '{0}' a été renommé en '{1}'."
+msgstr "L’élément '{0}' a été renommé en '{1}'."
 
-#: .\views.py:446
+#: .\views.py:476
 msgid "The node has been removed."
-msgstr "Le noeud a été supprimé"
+msgstr "L’élément a été supprimé"
 
-#: .\views.py:448
+#: .\views.py:478
 msgid "{0} nodes has been removed."
-msgstr "{0} noeuds ont été supprimés"
+msgstr "{0} éléments ont été supprimés"
 
-#: .\views.py:542
+#: .\views.py:573
 msgid "The node '{0}' has been moved."
-msgstr "Le noeud '{0}' a été déplacé"
+msgstr "L'élément '{0}' a été déplacé"
 
-#: .\views.py:559
+#: .\views.py:590
 msgid "Please choose an existing {0}"
 msgstr "Veuillez choisir un {0} existant"
 
-#: .\views.py:563
+#: .\views.py:594
 msgid "{0} {1} not found"
 msgstr "{0} {1} est introuvable"
 
-#: .\views.py:567
+#: .\views.py:598
 msgid "The {0} is already in navigation"
-msgstr "Le {0} est déjà dans l'arborescence"
+msgstr "Le {0} est déjà dans l’arborescence"
 
-#: .\views.py:579
+#: .\views.py:610
 msgid "'{0}' has added to the navigation tree."
-msgstr "'{0}' ajouté à l'arborescence."
+msgstr "'{0}' ajouté à l’arborescence."
 
-#: .\views.py:626
-msgid "The node is now in navigation."
-msgstr "le noeud est à présent visible dans l'arborescence."
+#: .\views.py:659
+msgid "The node is now visible."
+msgstr "l’élément est à présent visible dans l’arborescence."
 
-#: .\views.py:627
+#: .\views.py:660
 #: .\templates\coop_cms\navtree_content\default.html.py:5
-msgid "Remove from navigation"
-msgstr "Supprimer de l arborescence"
+msgid "Hide node in navigation"
+msgstr "Masquer cet élément"
 
-#: .\views.py:630
-msgid "The node has been removed of the navigation."
-msgstr "Le noeud a été supprimé de l arborescence"
+#: .\views.py:663
+msgid "The node is now hidden."
+msgstr "Cet élément est maintenant masqué."
 
-#: .\views.py:631
+#: .\views.py:664
 #: .\templates\coop_cms\navtree_content\default.html.py:7
-msgid "Add to navigation"
-msgstr "Rendre le noeud visible dans l arborescence"
+msgid "Show node in navigation"
+msgstr "Rendre visible cet élément"
 
-#: .\views.py:662
+#: .\views.py:696
 msgid "Unsupported message {0}"
 msgstr "Message {0} inconnu"
 
-#: .\views.py:664
+#: .\views.py:698
 msgid "You are not allowed to add a node"
-msgstr "Vous n'êtes pas autorisé à ajouter un noeud"
+msgstr "Vous n'êtes pas autorisé à ajouter un élément"
 
-#: .\views.py:669
-#: .\views.py:671
+#: .\views.py:703
+#: .\views.py:705
 msgid "An error occured"
 msgstr "Une erreur est survenue"
 
-#: .\views.py:697
+#: .\views.py:732
 msgid "The newsletter has been saved properly"
 msgstr "La lettre d'information a été enregistré avec succès"
 
-#: .\views.py:767
+#: .\views.py:805
 msgid "The test email has been sent to {0} addresses: {1}"
 msgstr "L'email de test a été envoyé à {0} adresses: {1}"
 
-#: .\views.py:771
+#: .\views.py:809
 msgid "An error occured! Please contact your support."
 msgstr "Une erreur est intervenue, contactez le support technique."
-
-#: .\apps\demo_cms\templates\403.html.py:4
-#: .\apps\demo_cms\templates\403.html.py:6
-msgid "Permission Denied"
-msgstr "Permission refusée"
-
-#: .\apps\demo_cms\templates\403.html.py:9
-msgid "You are not allowed to see this page"
-msgstr "Vous n'êtes pas autorisé à voir cette page"
 
 #: .\apps\demo_cms\templates\404.html.py:4
 #: .\apps\demo_cms\templates\404.html.py:7
 msgid "Page not found"
-msgstr "Page non trouvée"
+msgstr "Page introuvable"
 
 #: .\apps\demo_cms\templates\404.html.py:7
 msgid "Error 404"
@@ -519,23 +516,23 @@ msgstr "Erreur 404"
 
 #: .\apps\demo_cms\templates\404.html.py:10
 msgid "The request page can't be found on the server. Please check it"
-msgstr "La page demandée ne peut-être trouvée. Veuillez vérifier l'url saisie."
+msgstr "La page ne peut pas être trouvée sur le serveur. Veuillez vérifiez l'URL demandée."
 
 #: .\apps\demo_cms\templates\500.html.py:5
 msgid "Server Error"
-msgstr "Erreur Interne du Serveur"
+msgstr "Erreur Interne"
 
 #: .\apps\demo_cms\templates\500.html.py:10
 msgid "Sorry! we can not process your request. The server encountered an error."
-msgstr "Désolé mais nous ne pouvons pas traiter votre demande. Le serveur a rencontré une erreur."
+msgstr "Désolé nous ne pouvons pas traiter votre demande. Une erreur est survenue."
 
 #: .\apps\demo_cms\templates\500.html.py:12
 msgid "We've been informed and we will make our best to fix the problem as soon as possible"
-msgstr "Nous avons été informé et nous faisons notre possible pour corriger le problème dans les plus brefs délais."
+msgstr "Nous avons été informé et nous essaierons de corriger le problème dès que possible."
 
 #: .\apps\demo_cms\templates\500.html.py:13
 msgid "Please retry in a short while or go back to the"
-msgstr "Veuillez réessayer dans un instant ou revenir à la"
+msgstr "Veuillez réessayer dans un instant ou retournez à la "
 
 #: .\apps\demo_cms\templates\500.html.py:13
 msgid "homepage"
@@ -632,7 +629,7 @@ msgstr "Créer un article"
 
 #: .\templates\admin\coop_cms\navtree\change_form.html.py:251
 msgid "Are you sure to delete the selected node?"
-msgstr "Etes-vous sur de vouloir supprimer le noeud sélectionné ?"
+msgstr "Etes-vous sur de vouloir supprimer l’élément sélectionné ?"
 
 #: .\templates\admin\coop_cms\navtree\change_form.html.py:296
 msgid "Home"
@@ -650,30 +647,30 @@ msgstr "Le site nécessite l'activation de javascript"
 
 #: .\templates\admin\coop_cms\navtree\change_form.html.py:310
 msgid "Add a new node"
-msgstr "Ajouter un nouveau noeud"
+msgstr "Ajouter un nouvel élément"
 
 #: .\templates\admin\coop_cms\navtree\change_form.html.py:320
-msgid "Rename"
-msgstr "Renommer"
+msgid "Rename this node"
+msgstr "Renommer cet élément"
 
 #: .\templates\admin\coop_cms\navtree\change_form.html.py:321
-msgid "Remove"
-msgstr "Supprimer"
-
-#: .\templates\admin\coop_cms\navtree\change_form.html.py:322
 msgid "Navigation"
 msgstr "Arborescence"
 
-#: .\templates\admin\coop_cms\navtree\change_form.html.py:335
+#: .\templates\admin\coop_cms\navtree\change_form.html.py:322
+msgid "Remove this node"
+msgstr "Supprimer cet élément de l’arborescence"
+
+#: .\templates\admin\coop_cms\navtree\change_form.html.py:336
 msgid "History"
 msgstr "Historique"
 
-#: .\templates\admin\coop_cms\navtree\change_form.html.py:336
+#: .\templates\admin\coop_cms\navtree\change_form.html.py:337
 #: .\templates\coop_cms\navtree_content\default.html.py:14
 msgid "View on site"
 msgstr "Voir sur le site"
 
-#: .\templates\admin\coop_cms\navtree\change_form.html.py:347
+#: .\templates\admin\coop_cms\navtree\change_form.html.py:348
 msgid "Please correct the error below."
 msgid_plural "Please correct the errors below."
 msgstr[0] "Veuillez corriger l'erreur ci-dessous"
@@ -775,7 +772,7 @@ msgstr "Documents"
 msgid "Site Map"
 msgstr "Plan de site"
 
-#: .\templates\coop_cms\view_all_articles.html.py:16
+#: .\templates\coop_cms\view_all_articles.html.py:44
 msgid ""
 "\n"
 "    <h1>Welcome on coop_cms</h1>\n"
@@ -788,38 +785,26 @@ msgstr ""
 "\n"
 "    <h1>Bienvenue sur coop_cms</h1>\n"
 "    <p>\n"
-"        coop_cms est un logiciel de gestion de contenu (CMS) pour le framework Django.<br/>\n"
-"        Le but est d'essayer de rendre l'édition d'un article aussi simple que possible en tirant partie d'HTML5 et de l'éditeur Aloha.\n"
+"        coop_cms est un CMS simple pour l'environnement de développement Django.<br/>\n"
+"        Son but est de rendre l'édition d'article aussi simple que possible grâce à Aloha editor et à la balise HTML5 \"content-editable\".\n"
 "    </p>\n"
 "    "
 
-#: .\templates\coop_cms\view_all_articles.html.py:24
-msgid ""
-"\n"
-"    <p>\n"
-"        Here is the list of articles in the CMS.\n"
-"    </p>\n"
-"    "
-msgstr ""
-"\n"
-"    <p>\n"
-"       Voici la liste des articles.\n"
-"    </p>\n"
-"    "
+#: .\templates\coop_cms\view_all_articles.html.py:60
+msgid "View all articles"
+msgstr "Voir tous les articles"
 
-#: .\templates\coop_cms\view_all_articles.html.py:30
-msgid ""
-"\n"
-"    <p>\n"
-"        Let's start and create your first first article by clicking \"Add article\" in the left menu.\n"
-"    </p>\n"
-"    "
-msgstr ""
-"\n"
-"    <p>\n"
-"        Pour commencern créez votre 1er article avec le lien \"Ajouter un article\" du menu d'administration.\n"
-"    </p>\n"
-"    "
+#: .\templates\coop_cms\view_all_articles.html.py:69
+msgid "Newsletters"
+msgstr "Lettres d'information"
+
+#: .\templates\coop_cms\view_all_articles.html.py:79
+msgid "View all newsletters"
+msgstr "Voir toutes les lettres d'information"
+
+#: .\templates\coop_cms\view_all_articles.html.py:80
+msgid "Create a newsletter"
+msgstr "Créer une lettre d'information"
 
 #: .\templates\coop_cms\navtree_content\article.html.py:5
 msgid "Edit on site"
@@ -849,8 +834,51 @@ msgstr "navigation_children requiert un objet en argument"
 msgid "navigation_siblings requires object as argument"
 msgstr "navigation_siblings requiert un objet en argument"
 
+#~ msgid ""
+#~ "\n"
+#~ "    <p>\n"
+#~ "        Here is the list of articles in the CMS.\n"
+#~ "    </p>\n"
+#~ "    "
+#~ msgstr ""
+#~ "\n"
+#~ "    <p>\n"
+#~ "        Voici une liste d'articles dans le CMS.\n"
+#~ "    </p>\n"
+#~ "    "
+
+#~ msgid ""
+#~ "\n"
+#~ "    <p>\n"
+#~ "        Let's start and create your first first article by clicking \"Add "
+#~ "article\" in the left menu.\n"
+#~ "    </p>\n"
+#~ "    "
+#~ msgstr ""
+#~ "\n"
+#~ "    <p>\n"
+#~ "        Commencez par créer votre premier article en cliquant sur "
+#~ "\"Ajouter un article\" dans le menu de gauche.\n"
+#~ "    </p>\n"
+#~ "    "
+
+#~ msgid "Remove from navigation"
+#~ msgstr "Masquer cet élément"
+
+#~ msgid "Add to navigation"
+#~ msgstr "Rendre visible cet élément"
+
 #~ msgid "<root node>"
 #~ msgstr "< racine >"
+
+#~ msgid "The node has been removed of the navigation."
+#~ msgstr "Le noeud a été supprimé de l arborescence"
+
+#~ msgid "Rename"
+#~ msgstr "Renommer"
+
+#~ msgid "Remove"
+#~ msgstr "Supprimer"
 
 #~ msgid "Template"
 #~ msgstr "Modèle d'article"

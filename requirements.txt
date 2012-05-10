@@ -1,1 +1,0 @@
-git+git://github.com/gabrielgrant/django-html-field.git#egg=html_field
