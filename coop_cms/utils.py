@@ -87,10 +87,12 @@ def send_newsletter(newsletter, dests):
     emails = []
     connection = get_connection()
     from_email = settings.COOP_CMS_FROM_EMAIL
+    reply_to = getattr(settings, 'COOP_CMS_REPLY_TO', None)
+    headers = {'Reply-To': reply_to} if reply_to else None
 
     for addr in dests:
         text = html2text(html_text)
-        email = EmailMultiAlternatives(newsletter.subject, text, from_email, [addr])
+        email = EmailMultiAlternatives(newsletter.subject, text, from_email, [addr], headers=headers)
         email.attach_alternative(html_text, "text/html")
         emails.append(email)
     return connection.send_messages(emails)
