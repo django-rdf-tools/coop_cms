@@ -2,9 +2,9 @@
 {% with node.content_object as content %}
 <script>
 {% if node.in_navigation %}
-$("#navnode_in_navigation").html('{% trans "Remove from navigation" %}');
+$("#navnode_in_navigation").html('{% trans "Hide node in navigation" %}');
 {% else %}
-$("#navnode_in_navigation").html('{% trans "Add to navigation" %}');
+$("#navnode_in_navigation").html('{% trans "Show node in navigation" %}');
 {% endif %}
 </script>
 <h3>{% block navtree_content_title %}{{node.content_type|capfirst}}: {{content}}{% endblock %}</h3>

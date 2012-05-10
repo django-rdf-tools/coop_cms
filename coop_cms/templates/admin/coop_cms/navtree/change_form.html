@@ -248,7 +248,7 @@
         var selected_nodes = $("#nodes").jstree('get_selected');
         var length = selected_nodes.length;
         if (length>0){
-          var confirm_msg = '{% trans "Are you sure to delete the selected node?"%}'
+          var confirm_msg = "{% trans 'Are you sure to delete the selected node?' %}"
           if (confirm(confirm_msg)) {
             var node_ids = [];
             for (var i=0; i<length; i++) {
@@ -280,7 +280,7 @@
         return false;
       });
   
-    })();
+    });
   </script>
 {% endif %}
 {% endblock %}
@@ -318,8 +318,9 @@
       </div>
       <ul class="content-links">
           <li><a href="{{content.get_absolute_url}}" id="rename_node">{% trans "Rename this node" %}</a></li>
-          <li><a href="{{content.get_absolute_url}}" id="delete_node">{% trans "Remove this node" %}</a></li>
           <li><a href="{{content.get_absolute_url}}" id="navnode_in_navigation">{% trans "Navigation" %}</a></li>
+          <li><a href="{{content.get_absolute_url}}" id="delete_node">{% trans "Remove this node" %}</a></li>
+
       </ul>
     </div>
     <div id="nodes" class="">

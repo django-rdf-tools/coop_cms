@@ -55,12 +55,13 @@ aside, #aside {
 	float: left;
 	border: 1px solid #dadada;
 	min-height: 100px;
-	padding: 16px;
-	left: 284px;
+	left: 455px;
 	position: absolute;
 	border-radius: 4px;
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
+	padding: 16px;
+	background-color: #f8f8f8;
 }
 
 

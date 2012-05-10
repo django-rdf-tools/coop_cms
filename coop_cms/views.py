@@ -584,10 +584,11 @@ def add_navnode(request, tree):
     
     return response
 
+
 def get_suggest_list(request, tree):
     response = {}
     suggestions = []
-    term = request.POST["term"]#the 1st chars entered in the autocomplete
+    term = request.POST["term"]  # the 1st chars entered in the autocomplete
     
     if tree.types.count() == 0:
         nav_types = models.NavType.objects.all()
@@ -598,7 +599,7 @@ def get_suggest_list(request, tree):
         ct = nt.content_type
         if nt.label_rule == models.NavType.LABEL_USE_SEARCH_FIELD:
             #Get the name of the default field for the current type (eg: Page->title, Url->url ...)
-            lookup = {nt.search_field+'__icontains': term}
+            lookup = {nt.search_field + '__icontains': term}
             objects = ct.model_class().objects.filter(**lookup)
         elif nt.label_rule == models.NavType.LABEL_USE_GET_LABEL:
             objects = [obj for obj in ct.model_class().objects.all() if term in obj.get_label()]
