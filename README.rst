@@ -186,10 +186,10 @@ You can also put some navigations in the <body>::
     {% navigation_as_nested_ul %}
 
 The navigation_as_nested_ul templatetag accepts several args
- * ``tree``="english" --> The name of the navigation_tree to use. "default" if missing
- * ``li_template``="dropdown_li.html" --> a template for every <li> tags
- * ``ul_template``="dropdown_ul.html" --> a template for every <ul> tags
- * ``li_args``="dropdown_li_class.html" ---> args to be used for any <li> tags
+ * tree="english" --> The name of the navigation_tree to use. "default" if missing
+ * li_template="dropdown_li.html" --> a template for every <li> tags
+ * ul_template="dropdown_ul.html" --> a template for every <ul> tags
+ * li_args="dropdown_li_class.html" ---> args to be used for any <li> tags
 
 There are others templatetags for navigation : ``navigation_breadcrumb``, ``navigation_children``, ``navigation_siblings`` with similar behavior
 
@@ -199,12 +199,10 @@ Going further
 -------------
 
 You can look at the demo_app in apps folder to see how to customize the behavior of coop_cms:
-
  * Custom templates for articles and newsletters
  * Custom fields in article
  * Custom admin bar
  * Configuration values
-
 
 License
 =======
