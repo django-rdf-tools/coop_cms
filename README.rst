@@ -164,7 +164,7 @@ In settings.py::
 
 Base template
 ~~~~~~~~~~~~~
-You need to create a base template ``base.html`` in one of your template folders
+You need to create a base template ``base.html`` in one of your template folders. The ``article.html`` will inherit from this base template.
 
 You need the following templatetags libs::
 
@@ -193,12 +193,11 @@ The navigation_as_nested_ul templatetag accepts several args
 
 There are others templatetags for navigation : ``navigation_breadcrumb``, ``navigation_children``, ``navigation_siblings`` with similar behavior
 
-The ``article.html`` will inherit from this base template
-
 Going further
 -------------
 
 You can look at the demo_app in apps folder to see how to customize the behavior of coop_cms:
+ * Editable "pieces of HTML" in your page : A editable block that can be shared by several pages.
  * Custom templates for articles and newsletters
  * Custom fields in article
  * Custom admin bar
