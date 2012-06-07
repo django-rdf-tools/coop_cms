@@ -272,8 +272,8 @@ class BaseArticle(TimeStampedModel):
     temp_logo = models.ImageField(upload_to=get_logo_folder, blank=True, null=True, default='')
     summary = models.TextField(_(u'Summary'), blank=True, default='')
     section = models.ForeignKey(ArticleSection, verbose_name=_(u'Section'), blank=True, null=True, default=None, related_name="%(app_label)s_%(class)s_rel")
-    in_newsletter = models.BooleanField(_(u'In newsletter'), default=True, help_text='Can be inserted in a newsletter')
-    is_homepage = models.BooleanField(_(u'Is homepage'), default=False, help_text='define if this page is teh homepage. Only one homepage per site')
+    in_newsletter = models.BooleanField(_(u'In newsletter'), default=True, help_text=_('make this article available for newsletters.'))
+    is_homepage = models.BooleanField(_(u'Is homepage'), default=False, help_text=_('Make this article the website homepage (only one homepage per site)'))
 
     def logo_thumbnail(self, temp=False, logo_size=None):
         logo = self.temp_logo if (temp and self.temp_logo) else self.logo
