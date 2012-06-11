@@ -20,6 +20,10 @@ from django.contrib.staticfiles import finders
 from django.core.files import File
 from django.db.models.signals import pre_delete, post_save
 
+from sorl.thumbnail import default
+ADMIN_THUMBS_SIZE = '60x60' 
+
+
 def get_object_label(content_type, object):
     """
     returns the label used in navigation according to the configured rule
@@ -287,7 +291,7 @@ class BaseArticle(TimeStampedModel):
     def _get_default_logo(self):
         #copy from static to media in order to use sorl thumbnail without raising a suspicious operation
         filename = 'img/default-logo.png'
-        media_filename = os.path.normpath(settings.MEDIA_ROOT+'/coop_cms/'+filename)
+        media_filename = os.path.normpath(settings.MEDIA_ROOT + '/coop_cms/' + filename)
         if not os.path.exists(media_filename):
             dir = os.path.dirname(media_filename)
             if not os.path.exists(dir):
@@ -295,7 +299,16 @@ class BaseArticle(TimeStampedModel):
             static_filename = finders.find(filename)
             shutil.copyfile(static_filename, media_filename)
         return File(open(media_filename, 'r'))
-    
+
+    def logo_list_display(self):
+        if self.logo:
+            thumb = default.backend.get_thumbnail(self.logo.file, ADMIN_THUMBS_SIZE)
+            return '<img width="%s" src="%s" />' % (thumb.width, thumb.url)
+        else:
+            return _(u"No Image") 
+    logo_list_display.short_description = _(u"logo")
+    logo_list_display.allow_tags = True   
+
     class Meta:
         verbose_name = _(u"article")
         verbose_name_plural = _(u"articles")
