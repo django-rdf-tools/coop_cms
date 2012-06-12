@@ -13,7 +13,7 @@ from coop_cms.widgets import ImageEdit
 class PieceOfHtmlEditNode(DjalohaEditNode):
     def render(self, context):
         if context.get('form', None):
-            context.dicts[0]['djaloah_edit'] = True
+            context.dicts[0]['djaloha_edit'] = True
         #context.dicts[0]['can_edit_template'] = True
         return super(PieceOfHtmlEditNode, self).render(context)
 
