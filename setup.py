@@ -44,7 +44,7 @@ setup(
                         'sorl-thumbnail==11.09',
                         'coop-colorbox==0.1.3',
                         'coop-bar==0.3.6',
-                        'djaloha==0.3.5',
+                        'djaloha==0.3.7',
                         'django-pagination',
                         'feedparser',
                         ],
