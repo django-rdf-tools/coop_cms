@@ -24,7 +24,6 @@ setup(
                 'coop_cms.apps',
                 'coop_cms.apps.basic_cms',
                 'coop_cms.apps.demo_cms',
-                'coop_cms.fixtures',
                 'coop_cms.management',
                 'coop_cms.management.commands',
                 'coop_cms.templatetags',
