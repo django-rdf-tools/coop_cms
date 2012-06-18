@@ -26,12 +26,9 @@ $(document).ready(function(){
 		{% endif %}
 	}
 	$(".show-dirty").hide();
-	GENTICS.Aloha.EventRegistry.subscribe(GENTICS.Aloha, "editableDeactivated",
-        //Callback called when the fragment edition is done -> Push to the page
-        function(event, eventProperties) {
-            toggle_save();
-        }
-    );
+	Aloha.bind('aloha-editable-deactivated', function(event, eventProperties){
+        toggle_save();
+	});
 	$(".djaloha-editable").keypress(function() {
 		toggle_save();
 	});
