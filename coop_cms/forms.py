@@ -45,8 +45,8 @@ class ArticleForm(floppyforms.ModelForm):
         model = get_article_class()
         fields = ('title', 'content', 'logo')
         widgets = {
-            'title': AlohaInput(),
-            'content': AlohaInput(),
+            'title': AlohaInput(text_color_plugin=False),
+            'content': AlohaInput(text_color_plugin=False),
         }
         
     def set_logo_size(self, logo_size=None):
