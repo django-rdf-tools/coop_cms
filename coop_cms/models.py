@@ -252,7 +252,7 @@ class ArticleCategory(models.Model):
         verbose_name_plural = _(u'article categories')
 
 
-class BaseArticle(TimeStampedModel):
+class BaseArticle(models.Model):
     """An article : static page, blog item, ..."""
 
     DRAFT = 0

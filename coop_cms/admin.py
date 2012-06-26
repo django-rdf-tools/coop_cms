@@ -50,14 +50,13 @@ admin.site.register(models.NavTree, NavTreeAdmin)
 
 class ArticleAdmin(admin.ModelAdmin):
     form = ArticleAdminForm
-    list_display = ['slug', 'title', 'publication', 'is_homepage', 'in_newsletter', 'category', 'modified']
+    list_display = ['slug', 'title', 'publication', 'is_homepage', 'in_newsletter', 'category']
     list_editable = ['publication', 'is_homepage', 'in_newsletter', 'category']
-    readonly_fields = ['slug', 'created', 'modified']
+    readonly_fields = ['slug']
     fieldsets = (
         #(_('Navigation'), {'fields': ('navigation_parent',)}),
-        (_('General'), {'fields': ('slug', 'title', 'content',)}),
+        (_('General'), {'fields': ('slug', 'title', 'content', 'publication')}),
         (_('Advanced'), {'fields': ('template', 'category', 'logo', 'is_homepage', 'in_newsletter')}),
-        (_('Publication'), {'fields': ('publication', 'created', 'modified')}),
         (_('Summary'), {'fields': ('summary',)}),
         (_('Debug'), {'fields': ('temp_logo',)}),
     )
