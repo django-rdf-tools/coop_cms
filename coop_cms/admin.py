@@ -16,7 +16,7 @@ admin.site.register(models.NavNode, NavNodeAdmin)
 
 class NavTypeAdmin(admin.ModelAdmin):
     form = NavTypeForm
-    
+
 admin.site.register(models.NavType, NavTypeAdmin)
 
 
@@ -29,14 +29,14 @@ class NavTreeAdmin(admin.ModelAdmin):
         root_nodes = tree.get_root_nodes()
         nodes_li = u''.join([node.as_jstree() for node in root_nodes])
         return nodes_li
-    
+
     def navtypes_list(self, tree):
         if tree.types.count() == 0:
             return _(u'All')
         else:
             return u' - '.join([unicode(x) for x in tree.types.all()])
     navtypes_list.short_description = _(u'navigable types')
-    
+
     def change_view(self, request, object_id, extra_context=None):
         extra_context = extra_context or {}
         tree = models.NavTree.objects.get(id=object_id)
@@ -50,18 +50,18 @@ admin.site.register(models.NavTree, NavTreeAdmin)
 
 class ArticleAdmin(admin.ModelAdmin):
     form = ArticleAdminForm
-    list_display = ['slug', 'title', 'publication', 'is_homepage', 'in_newsletter', 'section', 'modified']
-    list_editable = ['publication', 'is_homepage', 'in_newsletter', 'section']
+    list_display = ['slug', 'title', 'publication', 'is_homepage', 'in_newsletter', 'category', 'modified']
+    list_editable = ['publication', 'is_homepage', 'in_newsletter', 'category']
     readonly_fields = ['slug', 'created', 'modified']
     fieldsets = (
         #(_('Navigation'), {'fields': ('navigation_parent',)}),
         (_('General'), {'fields': ('slug', 'title', 'content',)}),
-        (_('Advanced'), {'fields': ('template', 'section', 'logo', 'is_homepage', 'in_newsletter')}),
+        (_('Advanced'), {'fields': ('template', 'category', 'logo', 'is_homepage', 'in_newsletter')}),
         (_('Publication'), {'fields': ('publication', 'created', 'modified')}),
         (_('Summary'), {'fields': ('summary',)}),
         (_('Debug'), {'fields': ('temp_logo',)}),
     )
-    
+
     def get_form(self, request, obj=None, **kwargs):
         form = super(ArticleAdmin, self).get_form(request, obj, **kwargs)
         form.current_user = request.user
@@ -75,10 +75,10 @@ admin.site.register(models.PieceOfHtml)
 admin.site.register(models.NewsletterSending)
 
 
-class ArticleSectionAdmin(admin.ModelAdmin):
+class ArticleCategoryAdmin(admin.ModelAdmin):
     list_display = ['name', 'ordering']
     list_editable = ['ordering']
-admin.site.register(models.ArticleSection, ArticleSectionAdmin)
+admin.site.register(models.ArticleCategory, ArticleCategoryAdmin)
 
 #class NewsletterItemAdmin(admin.ModelAdmin):
 #    form = NewsletterItemAdminForm
@@ -92,7 +92,7 @@ admin.site.register(models.ArticleSection, ArticleSectionAdmin)
 
 class NewsletterAdmin(admin.ModelAdmin):
     form = NewsletterAdminForm
-        
+
     def get_form(self, request, obj=None, **kwargs):
         form = super(NewsletterAdmin, self).get_form(request, obj, **kwargs)
         form.current_user = request.user

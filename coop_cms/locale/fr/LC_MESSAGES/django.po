@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coop_cms\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-14 13:12+0200\n"
-"PO-Revision-Date: 2012-06-14 13:13+0100\n"
+"POT-Creation-Date: 2012-06-26 21:48+0200\n"
+"PO-Revision-Date: 2012-06-26 21:49+0100\n"
 "Last-Translator: Dominique Guardiola <dguardiola@quinode.fr>\n"
 "Language-Team: Apidev, Quinode <contact@quinode.fr>\n"
 "Language: \n"
@@ -41,7 +41,7 @@ msgid "Publication"
 msgstr "Publication"
 
 #: admin.py:61
-#: models.py:277
+#: models.py:282
 msgid "Summary"
 msgstr "Résumé"
 
@@ -118,13 +118,13 @@ msgid "Edit"
 msgstr "Editer"
 
 #: coop_bar_cfg.py:156
-#: models.py:257
+#: models.py:262
 #: templates/coop_cms/popup_publish_article.html:36
 msgid "Draft"
 msgstr "Brouillon"
 
 #: coop_bar_cfg.py:159
-#: models.py:258
+#: models.py:263
 msgid "Published"
 msgstr "Publié"
 
@@ -235,17 +235,16 @@ msgid "parent"
 msgstr "parent"
 
 #: models.py:99
-#: models.py:245
 msgid "ordering"
 msgstr "ordre"
 
 #: models.py:102
-#: models.py:512
+#: models.py:517
 msgid "content_type"
 msgstr "type de contenu"
 
 #: models.py:103
-#: models.py:513
+#: models.py:518
 msgid "object id"
 msgstr "identifiant de l'objet"
 
@@ -271,166 +270,174 @@ msgstr "Un élément ne peut pas être son propre enfant"
 
 #: models.py:218
 #: models.py:244
-#: models.py:417
+#: models.py:422
 msgid "name"
 msgstr "nom"
 
-#: models.py:271
+#: models.py:251
+msgid "article category"
+msgstr "catégorie d'article"
+
+#: models.py:252
+msgid "article categories"
+msgstr "catégories d'article"
+
+#: models.py:276
 #: apps/rss_sync/models.py:9
 #: apps/rss_sync/models.py:28
 msgid "title"
 msgstr "titre"
 
-#: models.py:271
+#: models.py:276
 msgid "Page title"
 msgstr "Titre de la page"
 
-#: models.py:272
-#: models.py:491
-#: models.py:560
+#: models.py:277
+#: models.py:496
+#: models.py:565
 msgid "content"
 msgstr "contenu"
 
-#: models.py:272
+#: models.py:277
 msgid "Page content"
 msgstr "Contenu de la page"
 
-#: models.py:273
+#: models.py:278
 msgid "publication"
 msgstr "publication"
 
-#: models.py:274
-#: models.py:562
+#: models.py:279
+#: models.py:567
 msgid "template"
 msgstr "modèle"
 
-#: models.py:278
-msgid "Section"
+#: models.py:283
+msgid "Category"
 msgstr "Catégorie"
 
-#: models.py:279
+#: models.py:284
 msgid "In newsletter"
 msgstr "Sur une lettre d'information?"
 
-#: models.py:279
+#: models.py:284
 msgid "Make this article available for newsletters."
 msgstr "rendre cet article disponible pour insertion dans une lettre d'information"
 
-#: models.py:280
+#: models.py:285
 msgid "Is homepage"
 msgstr "Page d'accueil"
 
-#: models.py:280
+#: models.py:285
 msgid "Make this article the website homepage (only one homepage per site)"
 msgstr "Faire de cet article la page d'accueil du site (une seule page d'accueil par site)"
 
-#: models.py:281
+#: models.py:286
 msgid "Headline"
 msgstr "à la une"
 
-#: models.py:281
+#: models.py:286
 msgid "Make this article appear on the home page"
 msgstr "Faire apparaitre cet article à la une du site"
 
-#: models.py:309
+#: models.py:314
 msgid "No Image"
 msgstr "Pas d'image"
 
-#: models.py:310
+#: models.py:315
 msgid "logo"
 msgstr "logo"
 
-#: models.py:314
+#: models.py:319
 msgid "article"
 msgstr "article"
 
-#: models.py:315
+#: models.py:320
 msgid "articles"
 msgstr "articles"
 
-#: models.py:343
+#: models.py:348
 msgid "set the parent in navigation."
 msgstr "ajouter l’élément à la navigation."
 
-#: models.py:390
+#: models.py:395
 msgid "URL"
 msgstr "URL"
 
-#: models.py:404
+#: models.py:409
 #: apps/rss_sync/models.py:27
 msgid "link"
 msgstr "lien"
 
-#: models.py:405
+#: models.py:410
 msgid "links"
 msgstr "liens"
 
-#: models.py:426
-#: models.py:456
+#: models.py:431
+#: models.py:461
 msgid "file"
 msgstr "fichier"
 
-#: models.py:435
+#: models.py:440
 msgid "image"
 msgstr "image"
 
-#: models.py:436
+#: models.py:441
 msgid "images"
 msgstr "images"
 
-#: models.py:485
+#: models.py:490
 msgid "document"
 msgstr "document"
 
-#: models.py:486
+#: models.py:491
 msgid "documents"
 msgstr "documents"
 
-#: models.py:489
+#: models.py:494
 msgid "identifier"
 msgstr "identifier"
 
-#: models.py:497
+#: models.py:502
 msgid "piece of HTML"
 msgstr "bloc HTML"
 
-#: models.py:498
+#: models.py:503
 msgid "pieces of HTML"
 msgstr "blocs HTML"
 
-#: models.py:518
+#: models.py:523
 msgid "newsletter item"
 msgstr "élément de lettre d'information"
 
-#: models.py:519
+#: models.py:524
 msgid "newsletter items"
 msgstr "éléments de lettre d'information"
 
-#: models.py:558
+#: models.py:563
 msgid "subject"
 msgstr "sujet"
 
-#: models.py:597
+#: models.py:602
 msgid "newsletter"
 msgstr "lettre d'information"
 
-#: models.py:598
+#: models.py:603
 msgid "newsletters"
 msgstr "lettres d'information"
 
-#: models.py:604
+#: models.py:609
 msgid "scheduling date"
 msgstr "date de programmation"
 
-#: models.py:605
+#: models.py:610
 msgid "sending date"
 msgstr "date d'envoi"
 
-#: models.py:611
+#: models.py:616
 msgid "newsletter sending"
 msgstr "Envoi de lettre d'information"
 
-#: models.py:612
+#: models.py:617
 msgid "newsletter sendings"
 msgstr "Envois de lettre d'informations"
 
@@ -857,6 +864,9 @@ msgstr "navigation_children requiert un objet en argument"
 #: templatetags/coop_navigation.py:144
 msgid "navigation_siblings requires object as argument"
 msgstr "navigation_siblings requiert un objet en argument"
+
+#~ msgid "Section"
+#~ msgstr "Catégorie"
 
 #~ msgid ""
 #~ "\n"

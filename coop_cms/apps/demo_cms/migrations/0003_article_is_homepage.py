@@ -7,13 +7,13 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        
+
         # Adding field 'Article.is_homepage'
         db.add_column('demo_cms_article', 'is_homepage', self.gf('django.db.models.fields.BooleanField')(default=False), keep_default=False)
 
 
     def backwards(self, orm):
-        
+
         # Deleting field 'Article.is_homepage'
         db.delete_column('demo_cms_article', 'is_homepage')
 
@@ -55,8 +55,8 @@ class Migration(SchemaMigration):
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
-        'coop_cms.articlesection': {
-            'Meta': {'object_name': 'ArticleSection'},
+        'coop_cms.articlecategory': {
+            'Meta': {'object_name': 'ArticleCategory'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'ordering': ('django.db.models.fields.IntegerField', [], {'default': '0'})
@@ -72,7 +72,7 @@ class Migration(SchemaMigration):
             'logo': ('django.db.models.fields.files.ImageField', [], {'default': "''", 'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'publication': ('django.db.models.fields.IntegerField', [], {'default': '1'}),
-            'section': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'demo_cms_article_rel'", 'null': 'True', 'blank': 'True', 'to': "orm['coop_cms.ArticleSection']"}),
+            'category': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'demo_cms_article_rel'", 'null': 'True', 'blank': 'True', 'to': "orm['coop_cms.ArticleCategory']"}),
             'slug': ('django.db.models.fields.SlugField', [], {'db_index': 'True', 'unique': 'True', 'max_length': '100', 'blank': 'True'}),
             'summary': ('django.db.models.fields.TextField', [], {'default': "''", 'blank': 'True'}),
             'temp_logo': ('django.db.models.fields.files.ImageField', [], {'default': "''", 'max_length': '100', 'null': 'True', 'blank': 'True'}),

@@ -22,7 +22,7 @@ class NavTypeForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(NavTypeForm, self).__init__(*args, **kwargs)
         self.fields['content_type'].widget = forms.Select(choices=get_navigable_content_types())
-        
+
     def clean_label_rule(self):
         rule = self.cleaned_data['label_rule']
         if rule == NavType.LABEL_USE_GET_LABEL:
@@ -35,7 +35,7 @@ class NavTypeForm(forms.ModelForm):
         model = NavType
 
 class ArticleForm(floppyforms.ModelForm):
-    
+
     def __init__(self, *args, **kwargs):
         super(ArticleForm, self).__init__(*args, **kwargs)
         self.article = kwargs.get('instance', None)
@@ -48,12 +48,12 @@ class ArticleForm(floppyforms.ModelForm):
             'title': AlohaInput(text_color_plugin=False),
             'content': AlohaInput(text_color_plugin=False),
         }
-        
+
     def set_logo_size(self, logo_size=None):
         thumbnail_src = self.logo_thumbnail(logo_size)
         update_url = reverse('coop_cms_update_logo', args=[self.article.id])
         self.fields['logo'].widget = ImageEdit(update_url, thumbnail_src.url if thumbnail_src else '')
-        
+
     def logo_thumbnail(self, logo_size=None):
         if self.article:
             return self.article.logo_thumbnail(True, logo_size=logo_size)
@@ -73,10 +73,10 @@ class ArticleForm(floppyforms.ModelForm):
 
         #if re.search(u'<(.*)>', title):
         #    raise ValidationError(_(u'HTML content is not allowed in the title'))
-        
+
         return title
-    
-    
+
+
 def get_node_choices():
     prefix = "--"
     #choices = [(None, _(u'<not in navigation>')), (0, _(u'<root node>'))]
@@ -105,13 +105,13 @@ class NewsletterItemAdminForm(forms.ModelForm):
         )
         self.fields['content_type'].required = False
         self.fields['content_type'].widget = forms.HiddenInput()
-        
+
     def clean_content_type(self):
         return ContentType.objects.get_for_model(get_article_class())
-        
+
 class ArticleFormWithNavigation(forms.ModelForm):
     navigation_parent = forms.ChoiceField()
-    
+
     def __init__(self, *args, **kwargs):
         super(ArticleFormWithNavigation, self).__init__(*args, **kwargs)
         self.article = kwargs.get('instance', None)
@@ -131,7 +131,7 @@ class ArticleFormWithNavigation(forms.ModelForm):
         #    except NavNode.DoesNotExist:
         #        pass
         return parent_id
-    
+
     def save(self, commit=True):
         article = super(ArticleFormWithNavigation, self).save(commit=False)
         parent_id = self.cleaned_data['navigation_parent']
@@ -143,16 +143,16 @@ class ArticleFormWithNavigation(forms.ModelForm):
             article.save()
         return article
 
-        
+
 class ArticleAdminForm(forms.ModelForm):
-    
+
     def __init__(self, *args, **kwargs):
         super(ArticleAdminForm, self).__init__(*args, **kwargs)
         self.article = kwargs.get('instance', None)
         templates = get_article_templates(self.article, self.current_user)
         if templates:
             self.fields['template'].widget = forms.Select(choices=templates)
-    
+
     class Meta:
         model = get_article_class()
         widgets = {
@@ -183,19 +183,19 @@ class ArticleTemplateForm(forms.Form):
         else:
             self.fields["template"] = forms.CharField()
         self.fields["template"].initial = article.template
-        
-    
+
+
 class ArticleLogoForm(forms.Form):
     image = forms.ImageField(required=True, label = _('Logo'),)
 
 class ArticleSettingsForm(forms.ModelForm):
     class Meta:
         model = get_article_class()
-        fields = ('template', 'section', 'in_newsletter', 'summary')
-    
+        fields = ('template', 'category', 'in_newsletter', 'summary')
+
     def __init__(self, user, *args, **kwargs):
         article = kwargs['instance']
-        
+
         try:
             initials = kwargs['initial']
         except:
@@ -206,7 +206,7 @@ class ArticleSettingsForm(forms.ModelForm):
         initials.update({'summary': summary})
         kwargs['initial'] = initials
         super(ArticleSettingsForm, self).__init__(*args, **kwargs)
-        
+
         choices = get_article_templates(article, user)
         if choices:
             self.fields["template"] = forms.ChoiceField(choices=choices)
@@ -217,7 +217,7 @@ class NewArticleForm(ArticleFormWithNavigation):
     class Meta:
         model = get_article_class()
         fields = ('title', 'template', 'publication')
-    
+
     def __init__(self, user, *args, **kwargs):
         super(NewArticleForm, self).__init__(*args, **kwargs)
         choices = get_article_templates(None, user)
@@ -231,11 +231,11 @@ class NewArticleForm(ArticleFormWithNavigation):
 class PublishArticleForm(forms.ModelForm):
     class Meta:
         model = get_article_class()
-        fields = ('publication',)# 'summary', 'section')
+        fields = ('publication',)# 'summary', 'category')
         widgets = {
             'publication': forms.HiddenInput(),
         }
-    
+
     #def __init__(self, *args, **kwargs):
     #    article = kwargs['instance']
     #    try:
@@ -248,17 +248,17 @@ class PublishArticleForm(forms.ModelForm):
     #    initials.update({'summary': summary})
     #    kwargs['initial'] = initials
     #    super(PublishArticleForm, self).__init__(*args, **kwargs)
-        
+
 
 class NewsletterForm(floppyforms.ModelForm):
-    
+
     class Meta:
         model = Newsletter
         fields = ('content',)
         widgets = {
             'content': AlohaInput(text_color_plugin=False),
         }
-        
+
     class Media:
         css = {
             'all': ('css/colorbox.css',),
@@ -270,20 +270,20 @@ class NewsletterSchedulingForm(floppyforms.ModelForm):
     class Meta:
         model = NewsletterSending
         fields = ('scheduling_dt',)
-        
+
     def clean_scheduling_dt(self):
         sch_dt = self.cleaned_data['scheduling_dt']
-        
+
         if not sch_dt:
             raise ValidationError(_(u"This field is required"))
-        
+
         if sch_dt < datetime.now():
             raise ValidationError(_(u"The scheduling date must be in future"))
-            
+
         return sch_dt
 
 class NewsletterTemplateForm(forms.Form):
-    
+
     def __init__(self, newsletter, user, *args, **kwargs):
         super(NewsletterTemplateForm, self).__init__(*args, **kwargs)
         choices = get_newsletter_templates(newsletter, user)
@@ -294,7 +294,7 @@ class NewsletterTemplateForm(forms.Form):
         self.fields["template"].initial = newsletter.template
 
 class NewsletterAdminForm(forms.ModelForm):
-    
+
     def __init__(self, *args, **kwargs):
         super(NewsletterAdminForm, self).__init__(*args, **kwargs)
         self.newsletter = kwargs.get('instance', None)
@@ -303,7 +303,7 @@ class NewsletterAdminForm(forms.ModelForm):
             self.fields["template"] = forms.ChoiceField(choices=choices)
         else:
             self.fields["template"] = forms.CharField()
-    
+
     class Meta:
         model = Newsletter
         fields = ('subject', 'content', 'template', 'items')
@@ -314,7 +314,7 @@ class NewsletterAdminForm(forms.ModelForm):
             })
         except NameError:
             pass
-        
+
     class Media:
         css = {
             'all': ('css/admin-tricks.css',),

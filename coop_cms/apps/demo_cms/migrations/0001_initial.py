@@ -7,7 +7,7 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        
+
         # Adding model 'Article'
         db.create_table('demo_cms_article', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
@@ -21,14 +21,14 @@ class Migration(SchemaMigration):
             ('logo', self.gf('django.db.models.fields.files.ImageField')(default='', max_length=100, null=True, blank=True)),
             ('temp_logo', self.gf('django.db.models.fields.files.ImageField')(default='', max_length=100, null=True, blank=True)),
             ('summary', self.gf('django.db.models.fields.TextField')(default='', blank=True)),
-            ('section', self.gf('django.db.models.fields.related.ForeignKey')(default=None, related_name='demo_cms_article_rel', null=True, blank=True, to=orm['coop_cms.ArticleSection'])),
+            ('category', self.gf('django.db.models.fields.related.ForeignKey')(default=None, related_name='demo_cms_article_rel', null=True, blank=True, to=orm['coop_cms.ArticleCategory'])),
             ('author', self.gf('django.db.models.fields.related.ForeignKey')(default=None, to=orm['auth.User'], null=True, blank=True)),
         ))
         db.send_create_signal('demo_cms', ['Article'])
 
 
     def backwards(self, orm):
-        
+
         # Deleting model 'Article'
         db.delete_table('demo_cms_article')
 
@@ -70,8 +70,8 @@ class Migration(SchemaMigration):
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
-        'coop_cms.articlesection': {
-            'Meta': {'object_name': 'ArticleSection'},
+        'coop_cms.articlecategory': {
+            'Meta': {'object_name': 'ArticleCategory'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'ordering': ('django.db.models.fields.IntegerField', [], {'default': '0'})
@@ -85,7 +85,7 @@ class Migration(SchemaMigration):
             'logo': ('django.db.models.fields.files.ImageField', [], {'default': "''", 'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'publication': ('django.db.models.fields.IntegerField', [], {'default': '1'}),
-            'section': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'demo_cms_article_rel'", 'null': 'True', 'blank': 'True', 'to': "orm['coop_cms.ArticleSection']"}),
+            'category': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'demo_cms_article_rel'", 'null': 'True', 'blank': 'True', 'to': "orm['coop_cms.ArticleCategory']"}),
             'slug': ('django.db.models.fields.SlugField', [], {'db_index': 'True', 'unique': 'True', 'max_length': '100', 'blank': 'True'}),
             'summary': ('django.db.models.fields.TextField', [], {'default': "''", 'blank': 'True'}),
             'temp_logo': ('django.db.models.fields.files.ImageField', [], {'default': "''", 'max_length': '100', 'null': 'True', 'blank': 'True'}),
