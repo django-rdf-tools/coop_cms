@@ -127,6 +127,19 @@ In settings.py::
         'demo_cms.Article',
     )
     
+    # Optional: you can overload the aloha plugins used by coop_cms --> see djaloha docs for details
+    DJALOHA_PLUGINS = (
+        "common/format",
+        "common/highlighteditables",
+    )
+    
+    # Optional: you can change the jquery version used by aloha --> see djaloha docs for details
+    DJALOHA_JQUERY = 'js/jquery.1.7.2.js'
+    
+    # Optional : you can customize the whole behavior of aloha by proving the url of config file. 
+    # It will overload the config provided by djaloha --> see djaloha for details
+    DJALOHA_INIT_URL = '/static/js/my_aloha_config.js'
+    
     #Default size of the article logo. Can be changed in template
     COOP_CMS_ARTICLE_LOGO_SIZE = "128x128"
     
