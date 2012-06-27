@@ -242,10 +242,14 @@ class NavTree(models.Model):
 
 class ArticleCategory(models.Model):
     name = models.CharField(_(u'name'), max_length=100)
+    slug = AutoSlugField(populate_from='name', max_length=100, unique=True)
     ordering = models.IntegerField(_(u'ordering'), default=0)
 
     def __unicode__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse('articles_category', args=[self.slug])
 
     class Meta:
         verbose_name = _(u'article category')

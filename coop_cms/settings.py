@@ -4,13 +4,14 @@ from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 from django.utils.importlib import import_module
 
+
 def get_navigable_content_types():
     ct_choices = []
     try:
         content_apps = settings.COOP_CMS_CONTENT_APPS
     except AttributeError:
-        content_apps=[]
-        not_to_be_mapped = ('south', 'django_extensions', 'd2rq') 
+        content_apps = []
+        not_to_be_mapped = ('south', 'django_extensions', 'd2rq')
         for m in settings.INSTALLED_APPS:
             if(not m.startswith('django.') and m not in not_to_be_mapped):
                 content_apps.append(m)
@@ -19,8 +20,9 @@ def get_navigable_content_types():
     for ct in navigable_content_types:
         is_navnode = ((ct.model == 'navnode') and (ct.app_label == 'coop_cms'))
         if (not is_navnode) and 'get_absolute_url' in dir(ct.model_class()):
-            ct_choices.append((ct.id, ct.app_label+u'.'+ct.model))
+            ct_choices.append((ct.id, ct.app_label + u'.' + ct.model))
     return ct_choices
+
 
 def get_article_class():
     if hasattr(get_article_class, '_cache_class'):
@@ -32,29 +34,29 @@ def get_article_class():
             module_name, class_name = full_class_name.rsplit('.', 1)
             module = import_module(module_name)
             article_class = getattr(module, class_name)
-        
+
         except AttributeError:
             if 'coop_cms.apps.basic_cms' in settings.INSTALLED_APPS:
                 from coop_cms.apps.basic_cms.models import Article
                 article_class = Article
-        
+
         if not article_class:
             raise Exception('No article class configured')
-        
+
         setattr(get_article_class, '_cache_class', article_class)
         return article_class
-    
+
 def get_article_form():
     try:
         full_class_name = getattr(settings, 'COOP_CMS_ARTICLE_FORM')
         module_name, class_name = full_class_name.rsplit('.', 1)
         module = import_module(module_name)
         article_form = getattr(module, class_name)
-    
+
     except AttributeError:
         from coop_cms.forms import ArticleForm
         article_form = ArticleForm
-    
+
     return article_form
 
 def get_newsletter_templates(newsletter, user):
@@ -78,12 +80,12 @@ def get_newsletter_form():
 def get_article_templates(article, user):
     if hasattr(settings, 'COOP_CMS_ARTICLE_TEMPLATES'):
         coop_cms_article_templates = getattr(settings, 'COOP_CMS_ARTICLE_TEMPLATES')
-        
+
         if type(coop_cms_article_templates) in (str, unicode):
             #COOP_CMS_ARTICLE_TEMPLATES is a string :
             # - a function name that will return a tuple
             # - a variable name taht contains a tuple
-            
+
             #extract module and function/var names
             module_name, object_name = coop_cms_article_templates.rsplit('.', 1)
             module = import_module(module_name) #import module
@@ -99,7 +101,7 @@ def get_article_templates(article, user):
             article_templates = coop_cms_article_templates
     else:
         article_templates = None
-    
+
     return article_templates
 
 def get_article_logo_size(article):
@@ -115,7 +117,7 @@ def get_article_logo_size(article):
                 size = get_size
         except ValueError:
             size = get_size_name
-    
+
     except AttributeError:
         size = "48x48"
     return size
@@ -139,6 +141,6 @@ def get_newsletter_item_classes():
 
         if not item_classes:
             raise Exception('No newsletter item classes configured')
-        
+
         setattr(get_newsletter_item_classes, '_cache_class', item_classes)
         return item_classes
