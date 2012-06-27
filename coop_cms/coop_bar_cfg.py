@@ -16,7 +16,7 @@ def can_do(perm, object_names):
                 return
             for object_name in object_names:
                 object = context.get(object_name)
-                if object and request.user.has_perm(perm+"_"+object_name, object):
+                if object and request and request.user.has_perm(perm+"_"+object_name, object):
                     yes_we_can = func(request, context)
                     if yes_we_can:
                         return yes_we_can
@@ -35,25 +35,18 @@ def can_add_article(func):
         Article = get_article_class()
         ct = ContentType.objects.get_for_model(Article)
         perm = '{0}.add_{1}'.format(ct.app_label, ct.model)
-        if request.user.has_perm(perm):
+        if request and request.user.has_perm(perm):
             return func(request, context)
         return None
     return wrapper
 
 def django_admin(request, context):
-    if request.user.is_staff:
+    if request and request.user.is_staff:
         return make_link(reverse("admin:index"), _(u'Administration'), 'fugue/tables.png',
             classes=['icon', 'alert_on_click'])
-
-#def django_admin_add_article(request, context):
-#    if request.user.is_staff:
-#        article_class = get_article_class()
-#        view_name = 'admin:%s_%s_add' % (article_class._meta.app_label,  article_class._meta.module_name)
-#        return make_link(reverse(view_name), _(u'Add article'), 'fugue/document--plus.png',
-#            classes=['icon', 'alert_on_click'])
         
 def django_admin_edit_article(request, context):
-    if request.user.is_staff and 'article' in context:
+    if request and request.user.is_staff and 'article' in context:
         article_class = get_article_class()
         article = context['article']
         view_name = 'admin:%s_%s_change' % (article_class._meta.app_label,  article_class._meta.module_name)
@@ -61,7 +54,7 @@ def django_admin_edit_article(request, context):
             classes=['icon', 'alert_on_click'])
 
 def django_admin_navtree(request, context):
-    if request.user.is_staff:
+    if request and request.user.is_staff:
         coop_cms_navtrees = context.get('coop_cms_navtrees', None)
         if coop_cms_navtrees:
             if len(coop_cms_navtrees) == 1:
@@ -75,7 +68,7 @@ def django_admin_navtree(request, context):
                 classes=['icon', 'alert_on_click'])
 
 def view_all_articles(request, context):
-    if request.user.is_staff:
+    if request and request.user.is_staff:
         return make_link(reverse('coop_cms_view_all_articles'), _(u'Articles'), 'fugue/documents-stack.png',
             classes=['icon', 'alert_on_click'])
 
@@ -169,7 +162,7 @@ def cms_extra_js(request, context):
         return None
 
 def log_out(request, context):
-    if request.user.is_authenticated():
+    if request and request.user.is_authenticated():
         return make_link(reverse("django.contrib.auth.views.logout"), _(u'Log out'), 'fugue/control-power.png',
             classes=['alert_on_click', 'icon'])
 

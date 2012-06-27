@@ -42,7 +42,7 @@ setup(
     install_requires = ['django-floppyforms==0.4.7',
                         'sorl-thumbnail==11.09',
                         'coop-colorbox==0.1.3',
-                        'coop-bar==0.3.6',
+                        'coop-bar==0.3.7',
                         'djaloha==0.3.7',
                         'django-pagination',
                         'feedparser',
