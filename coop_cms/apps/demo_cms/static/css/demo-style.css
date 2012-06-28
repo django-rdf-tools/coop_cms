@@ -335,3 +335,8 @@ Laisser tranquille , surclasser ailleurs
 a.private-doc img{
 	border: solid thin red;
 }
+
+.toto {
+	text-decoration: underline;
+	color: green;
+}
