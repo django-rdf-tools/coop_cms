@@ -1,6 +1,6 @@
 {% load i18n %}
 <li>
-    <h4><a href="{{ a.get_absolute_url }}">{{ item.title|safe }}</a></h4>
+    <h5><a href="{{ item.get_absolute_url }}">{{ item.title|safe }}</a></h5>
     <p>{{ item.content|safe|truncatewords_html:150 }}</p>
     <br/>
     <div class="article_details">

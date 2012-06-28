@@ -28,7 +28,7 @@
         //move the form submit to the coop_bar
         $("form#cms_form input[type='submit']").hide();
         $('.post-form').click(function(event) {
-            $("form#cms_form").submit();    
+            $("form#cms_form").submit();
             event.preventDefault();
         });
     })
@@ -84,7 +84,7 @@
     }
   </style>
   {% endblock %}
-    
+
     {% if by_email %}
     {% block email_only_header %}
     <div class="top-header email-only">
@@ -97,7 +97,7 @@
     </div>
     {% endblock %}
     {% endif %}
-    
+
     <div id="newsletter">
     {% block newsletter %}
         {% cms_edit newsletter %}
@@ -106,7 +106,7 @@
         {% end_cms_edit %}
     {% endblock %}
     </div>
-    
+
     {% if by_email %}
     {% block email_only_footer %}
         {% comment %}Put unsunbscribe link here{% endcomment %}
