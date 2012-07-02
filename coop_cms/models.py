@@ -249,7 +249,7 @@ class ArticleCategory(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('articles_category', args=[self.slug])
+        return reverse('coop_cms_articles_category', args=[self.slug])
 
     class Meta:
         verbose_name = _(u'article category')
