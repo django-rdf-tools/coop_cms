@@ -23,7 +23,7 @@ urlpatterns = patterns('coop_cms.views',
     url(r'^cms/newsletter/test/(?P<newsletter_id>\d+)/$', 'test_newsletter', name="coop_cms_test_newsletter"),
     url(r'^cms/newsletter/schedule/(?P<newsletter_id>\d+)/$', 'schedule_newsletter_sending', name="coop_cms_schedule_newsletter_sending"),
     url(r'sitemap/$', 'tree_map', name="default_site_map"),
-    url(r'articles/(?P<slug>\w+)/$', 'articles_category', name="articles_category"),
+    url(r'articles/(?P<slug>[-\w]+)/$', 'articles_category', name="coop_cms_articles_category"),
 
     # url(r'^articles/(?P<slug>\w+)/$', DetailView.as_view(   model=get_article_class(),
     #                                                         context_object_name="category",
