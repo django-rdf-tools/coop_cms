@@ -8,17 +8,17 @@ from django.contrib.contenttypes.models import ContentType
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
+        db.rename_table('coop_cms_articlesection', 'coop_cms_articlecategory')
         ct = ContentType.objects.filter(app_label='coop_cms', model='articlesection')
         if ct.exists():
-            db.rename_table('coop_cms_articlesection', 'coop_cms_articlecategory')
             ct[0].model = 'articlecategory'
             ct[0].name = 'article category'
             ct[0].save()
 
     def backwards(self, orm):
+        db.rename_table('coop_cms_articlecategory', 'coop_cms_articlesection')
         ct = ContentType.objects.filter(app_label='coop_cms', model='articlecategory')
         if ct.exists():
-            db.rename_table('coop_cms_articlecategory', 'coop_cms_articlesection')
             ct[0].model = 'articlesection'
             ct[0].name = 'article section'
             ct[0].save()
