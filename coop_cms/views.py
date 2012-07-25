@@ -693,16 +693,16 @@ def process_nav_edition(request, tree_id):
             response.setdefault('message', 'Ok')  # if no message defined in response, add something
 
         except KeyError, msg:
-            response = {'status': 'error', 'message': _("Unsupported message {0}").format(msg)}
+            response = {'status': 'error', 'message': u"Unsupported message : %s" % msg}
         except PermissionDenied:
-            response = {'status': 'error', 'message': _("You are not allowed to add a node")}
+            response = {'status': 'error', 'message': u"You are not allowed to add a node"}
         except ValidationError, ex:
             response = {'status': 'error', 'message': u' - '.join(ex.messages)}
         except Exception, msg:
             #print msg
-            response = {'status': 'error', 'message': _("An error occured")}
+            response = {'status': 'error', 'message': u"An error occured : %s" % msg }
         except:
-            response = {'status': 'error', 'message': _("An error occured")}
+            response = {'status': 'error', 'message': u"An error occured"}
 
         #return the result as json object
         return HttpResponse(json.dumps(response), mimetype='application/json')
