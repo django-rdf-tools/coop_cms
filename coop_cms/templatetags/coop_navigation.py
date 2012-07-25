@@ -22,9 +22,9 @@ def extract_kwargs(args):
     return kwargs
 
 
-class NavigatationTemplateNode(template.Node):
+class NavigationTemplateNode(template.Node):
     def __init__(self, *args, **kwargs):
-        super(NavigatationTemplateNode, self).__init__()
+        super(NavigationTemplateNode, self).__init__()
         self._kwargs = {}
         for (k, v) in kwargs.items():
             self._kwargs[k] = template.Variable(v)
@@ -57,7 +57,7 @@ class NavigatationTemplateNode(template.Node):
 #----------------------------------------------------------
 
 
-class NavigationAsNestedUlNode(NavigatationTemplateNode):
+class NavigationAsNestedUlNode(NavigationTemplateNode):
 
     def __init__(self, **kwargs):
         super(NavigationAsNestedUlNode, self).__init__(**kwargs)
@@ -78,7 +78,7 @@ def navigation_as_nested_ul(parser, token):
 #----------------------------------------------------------
 
 
-class NavigationBreadcrumbNode(NavigatationTemplateNode):
+class NavigationBreadcrumbNode(NavigationTemplateNode):
     def __init__(self, object, **kwargs):
         super(NavigationBreadcrumbNode, self).__init__(**kwargs)
         self.object_var = template.Variable(object)
@@ -103,7 +103,7 @@ def navigation_breadcrumb(parser, token):
     return NavigationBreadcrumbNode(args[1], **kwargs)
 
 
-class NavigationChildrenNode(NavigatationTemplateNode):
+class NavigationChildrenNode(NavigationTemplateNode):
 
     def __init__(self, object, **kwargs):
         super(NavigationChildrenNode, self).__init__(**kwargs)
@@ -129,7 +129,7 @@ def navigation_children(parser, token):
     return NavigationChildrenNode(args[1], **kwargs)
 
 
-class NavigationSiblingsNode(NavigatationTemplateNode):
+class NavigationSiblingsNode(NavigationTemplateNode):
 
     def __init__(self, object, **kwargs):
         super(NavigationSiblingsNode, self).__init__(**kwargs)
