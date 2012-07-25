@@ -692,6 +692,8 @@ def process_nav_edition(request, tree_id):
             #Call the handler corresponding to the requested message
             response = supported_msg[request.POST['msg_id']](request, tree)
 
+            print 'tout va bien'
+
             #If no exception raise: Success
             response['status'] = 'success'
             response.setdefault('message', 'Ok')  # if no message defined in response, add something
@@ -703,10 +705,10 @@ def process_nav_edition(request, tree_id):
         except ValidationError, ex:
             response = {'status': 'error', 'message': u' - '.join(ex.messages)}
         except Exception, msg:
-            #print msg
+            print msg
             response = {'status': 'error', 'message': u"An error occured : %s" % msg }
-        except:
-            response = {'status': 'error', 'message': u"An error occured"}
+        # except:
+        #     response = {'status': 'error', 'message': u"An error occured"}
 
         #return the result as json object
         return HttpResponse(json.dumps(response), mimetype='application/json')
