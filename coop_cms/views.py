@@ -418,7 +418,7 @@ def download_doc(request, doc_id):
         mime_type = u'application/octet-stream'
     response = HttpResponse(wrapper, mimetype=mime_type)
     response['Content-Length'] = file.size
-    filename = unicodedata.normalize('NFKD', os.path.split(file.name)[1]).encode("utf8",'ignore')
+    filename = unicodedata.normalize('NFKD', os.path.split(file.name)[1]).encode("utf8", 'ignore')
     filename = filename.replace(' ', '-')
     response['Content-Disposition'] = 'attachment; filename={0}'.format(filename)
     return response
@@ -441,7 +441,7 @@ def view_navnode(request, tree):
     #try to load the corresponding template and if not found use the default one
     model_name = unicode(node.content_type)
     object_label = unicode(node.content_object)
-    tplt = select_template(["coop_cms/navtree_content/{0}.html".format(node.content_type),
+    tplt = select_template(["coop_cms/navtree_content/{0}.html".format(model_name),
                             "coop_cms/navtree_content/default.html"])
     html = tplt.render(RequestContext(request, {"node": node, "admin_url": admin_url,
                                                 "model_name": model_name, "object_label": object_label}))
@@ -673,7 +673,7 @@ def navnode_in_navigation(request, tree):
 @login_required
 def process_nav_edition(request, tree_id):
     """This handle ajax request sent by the tree component"""
-    if request.method == 'POST' and request.is_ajax() and request.POST.has_key('msg_id'):
+    if request.method == 'POST' and request.is_ajax() and 'msg_id' in request.POST:
         try:
             #Get the current tree
             tree = get_object_or_404(models.NavTree, id=tree_id)
@@ -691,8 +691,6 @@ def process_nav_edition(request, tree_id):
 
             #Call the handler corresponding to the requested message
             response = supported_msg[request.POST['msg_id']](request, tree)
-
-            print 'tout va bien'
 
             #If no exception raise: Success
             response['status'] = 'success'
