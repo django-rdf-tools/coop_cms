@@ -448,7 +448,7 @@ def view_navnode(request, tree):
 
     #return data has dictionnary
     response['html'] = html
-    response['message'] = _(u"Node content loaded.")
+    response['message'] = u"Node content loaded."
 
     return response
 
