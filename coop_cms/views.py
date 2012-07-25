@@ -439,9 +439,10 @@ def view_navnode(request, tree):
 
     #load and render template for the object
     #try to load the corresponding template and if not found use the default one
+    model_name = unicode(node.content_type)
     tplt = select_template(["coop_cms/navtree_content/{0}.html".format(node.content_type),
                             "coop_cms/navtree_content/default.html"])
-    html = tplt.render(RequestContext(request, {'node': node, "admin_url": admin_url}))
+    html = tplt.render(RequestContext(request, {'node': node, "admin_url": admin_url, "model_name": model_name}))
 
     #return data has dictionnary
     response['html'] = html
