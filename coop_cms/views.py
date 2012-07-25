@@ -629,9 +629,10 @@ def get_suggest_list(request, tree):
             lookup = {nt.search_field + '__icontains': term}
             objects = ct.model_class().objects.filter(**lookup)
         elif nt.label_rule == models.NavType.LABEL_USE_GET_LABEL:
-            objects = [obj for obj in ct.model_class().objects.all() if term in obj.get_label()]
+            objects = [obj for obj in ct.model_class().objects.all() if term.lower() in obj.get_label().lower()]
         else:
-            objects = [obj for obj in ct.model_class().objects.all() if term in unicode(obj)]
+            objects = [obj for obj in ct.model_class().objects.all() if term.lower() in unicode(obj).lower()]
+
         already_in_navigation = [node.object_id for node in models.NavNode.objects.filter(tree=tree, content_type=ct)]
         #Get suggestions as a list of {label: object.get_label() or unicode if no get_label, 'value':<object.id>}
         for object in objects:

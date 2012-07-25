@@ -38,7 +38,7 @@ def get_object_label(content_type, object):
             label = unicode(object)
     except NavType.DoesNotExist:
         label = unicode(object)
-    return escape(label)
+    return label
 
 def set_node_ordering(node, tree, parent):
     if parent:
