@@ -7,7 +7,7 @@ $("#navnode_in_navigation").html('{% trans "Hide node in navigation" %}');
 $("#navnode_in_navigation").html('{% trans "Show node in navigation" %}');
 {% endif %}
 </script>
-<h3>{% block navtree_content_title %}{{model_name|capfirst}}: {{content}}{% endblock %}</h3>
+<h3>{% block navtree_content_title %}{{model_name|capfirst}}: {{object_label}}{% endblock %}</h3>
 {% block navtree_content_command%}
 <ul class="content-links">
     <li><a href="{{admin_url}}">{% trans "Edit in admin"%}</a></li>
