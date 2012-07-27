@@ -9,17 +9,19 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         db.rename_table('coop_cms_articlesection', 'coop_cms_articlecategory')
-        ct = ContentType.objects.get(app_label='coop_cms', model='articlesection')
-        ct.model = 'articlecategory'
-        ct.name = 'article category'
-        ct.save()
+        ct = ContentType.objects.filter(app_label='coop_cms', model='articlesection')
+        if ct.exists():
+            ct[0].model = 'articlecategory'
+            ct[0].name = 'article category'
+            ct[0].save()
 
     def backwards(self, orm):
         db.rename_table('coop_cms_articlecategory', 'coop_cms_articlesection')
-        ct = ContentType.objects.get(app_label='coop_cms', model='articlecategory')
-        ct.model = 'articlesection'
-        ct.name = 'article section'
-        ct.save()
+        ct = ContentType.objects.filter(app_label='coop_cms', model='articlecategory')
+        if ct.exists():
+            ct[0].model = 'articlesection'
+            ct[0].name = 'article section'
+            ct[0].save()
 
     models = {
         'contenttypes.contenttype': {

@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: coop_cms\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-06-26 21:48+0200\n"
-"PO-Revision-Date: 2012-06-27 15:30+0100\n"
+"PO-Revision-Date: 2012-07-26 12:21+0100\n"
 "Last-Translator: Dominique Guardiola <dguardiola@quinode.fr>\n"
 "Language-Team: Apidev, Quinode <contact@quinode.fr>\n"
 "Language: \n"
@@ -636,19 +636,19 @@ msgstr "traité"
 
 #: apps/rss_sync/models.py:38
 msgid "RSS item"
-msgstr "Elément RSS"
+msgstr "Article à importer (RSS)"
 
 #: apps/rss_sync/models.py:39
 msgid "RSS items"
-msgstr "Eléments RSS"
+msgstr "Articles à importer (RSS)"
 
 #: apps/rss_sync/views.py:25
 msgid "Collect RSS items"
-msgstr "Collecter les éléments RSS"
+msgstr "Collecter les articles via RSS"
 
 #: apps/rss_sync/views.py:40
 msgid "Create CMS Article"
-msgstr "Créer un article sur le CMS"
+msgstr "Importer l'article sur le site"
 
 #: apps/rss_sync/widgets.py:34
 msgid "Collect"
@@ -656,7 +656,7 @@ msgstr "Collecter"
 
 #: apps/rss_sync/widgets.py:52
 msgid "Create CMS article"
-msgstr "Créer un article"
+msgstr "Importer l'article"
 
 #: templates/admin/coop_cms/navtree/change_form.html:251
 msgid "Are you sure to delete the selected node?"

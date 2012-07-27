@@ -418,7 +418,7 @@ def download_doc(request, doc_id):
         mime_type = u'application/octet-stream'
     response = HttpResponse(wrapper, mimetype=mime_type)
     response['Content-Length'] = file.size
-    filename = unicodedata.normalize('NFKD', os.path.split(file.name)[1]).encode("utf8",'ignore')
+    filename = unicodedata.normalize('NFKD', os.path.split(file.name)[1]).encode("utf8", 'ignore')
     filename = filename.replace(' ', '-')
     response['Content-Disposition'] = 'attachment; filename={0}'.format(filename)
     return response
@@ -439,13 +439,16 @@ def view_navnode(request, tree):
 
     #load and render template for the object
     #try to load the corresponding template and if not found use the default one
-    tplt = select_template(["coop_cms/navtree_content/{0}.html".format(node.content_type),
+    model_name = unicode(node.content_type)
+    object_label = unicode(node.content_object)
+    tplt = select_template(["coop_cms/navtree_content/{0}.html".format(node.content_type.name),
                             "coop_cms/navtree_content/default.html"])
-    html = tplt.render(RequestContext(request, {'node': node, "admin_url": admin_url}))
+    html = tplt.render(RequestContext(request, {"node": node, "admin_url": admin_url,
+                                                "model_name": model_name, "object_label": object_label}))
 
     #return data has dictionnary
     response['html'] = html
-    response['message'] = _(u"Node content loaded.")
+    response['message'] = u"Node content loaded."
 
     return response
 
@@ -629,9 +632,10 @@ def get_suggest_list(request, tree):
             lookup = {nt.search_field + '__icontains': term}
             objects = ct.model_class().objects.filter(**lookup)
         elif nt.label_rule == models.NavType.LABEL_USE_GET_LABEL:
-            objects = [obj for obj in ct.model_class().objects.all() if term in obj.get_label()]
+            objects = [obj for obj in ct.model_class().objects.all() if term.lower() in obj.get_label().lower()]
         else:
-            objects = [obj for obj in ct.model_class().objects.all() if term in unicode(obj)]
+            objects = [obj for obj in ct.model_class().objects.all() if term.lower() in unicode(obj).lower()]
+
         already_in_navigation = [node.object_id for node in models.NavNode.objects.filter(tree=tree, content_type=ct)]
         #Get suggestions as a list of {label: object.get_label() or unicode if no get_label, 'value':<object.id>}
         for object in objects:
@@ -669,7 +673,7 @@ def navnode_in_navigation(request, tree):
 @login_required
 def process_nav_edition(request, tree_id):
     """This handle ajax request sent by the tree component"""
-    if request.method == 'POST' and request.is_ajax() and request.POST.has_key('msg_id'):
+    if request.method == 'POST' and request.is_ajax() and 'msg_id' in request.POST:
         try:
             #Get the current tree
             tree = get_object_or_404(models.NavTree, id=tree_id)
@@ -693,16 +697,16 @@ def process_nav_edition(request, tree_id):
             response.setdefault('message', 'Ok')  # if no message defined in response, add something
 
         except KeyError, msg:
-            response = {'status': 'error', 'message': _("Unsupported message {0}").format(msg)}
+            response = {'status': 'error', 'message': u"Unsupported message : %s" % msg}
         except PermissionDenied:
-            response = {'status': 'error', 'message': _("You are not allowed to add a node")}
+            response = {'status': 'error', 'message': u"You are not allowed to add a node"}
         except ValidationError, ex:
             response = {'status': 'error', 'message': u' - '.join(ex.messages)}
         except Exception, msg:
-            #print msg
-            response = {'status': 'error', 'message': _("An error occured")}
-        except:
-            response = {'status': 'error', 'message': _("An error occured")}
+            print msg
+            response = {'status': 'error', 'message': u"An error occured : %s" % msg }
+        # except:
+        #     response = {'status': 'error', 'message': u"An error occured"}
 
         #return the result as json object
         return HttpResponse(json.dumps(response), mimetype='application/json')

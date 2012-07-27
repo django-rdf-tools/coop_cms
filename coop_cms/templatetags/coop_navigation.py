@@ -22,9 +22,9 @@ def extract_kwargs(args):
     return kwargs
 
 
-class NavigatationTemplateNode(template.Node):
+class NavigationTemplateNode(template.Node):
     def __init__(self, *args, **kwargs):
-        super(NavigatationTemplateNode, self).__init__()
+        super(NavigationTemplateNode, self).__init__()
         self._kwargs = {}
         for (k, v) in kwargs.items():
             self._kwargs[k] = template.Variable(v)
@@ -57,7 +57,7 @@ class NavigatationTemplateNode(template.Node):
 #----------------------------------------------------------
 
 
-class NavigationAsNestedUlNode(NavigatationTemplateNode):
+class NavigationAsNestedUlNode(NavigationTemplateNode):
 
     def __init__(self, **kwargs):
         super(NavigationAsNestedUlNode, self).__init__(**kwargs)
@@ -78,7 +78,7 @@ def navigation_as_nested_ul(parser, token):
 #----------------------------------------------------------
 
 
-class NavigationBreadcrumbNode(NavigatationTemplateNode):
+class NavigationBreadcrumbNode(NavigationTemplateNode):
     def __init__(self, object, **kwargs):
         super(NavigationBreadcrumbNode, self).__init__(**kwargs)
         self.object_var = template.Variable(object)
@@ -103,7 +103,7 @@ def navigation_breadcrumb(parser, token):
     return NavigationBreadcrumbNode(args[1], **kwargs)
 
 
-class NavigationChildrenNode(NavigatationTemplateNode):
+class NavigationChildrenNode(NavigationTemplateNode):
 
     def __init__(self, object, **kwargs):
         super(NavigationChildrenNode, self).__init__(**kwargs)
@@ -111,11 +111,14 @@ class NavigationChildrenNode(NavigatationTemplateNode):
 
     def render(self, context):
         object = self.object_var.resolve(context)
+        print '---- navigation_children ----'
+        print object.__class__
+        print '-----------------------------'
         ct = ContentType.objects.get_for_model(object.__class__)
         kwargs = self.resolve_kwargs(context)
         tree_name = kwargs.pop('tree', 'default')
         nav_nodes = NavNode.objects.filter(tree__name=tree_name, content_type=ct, object_id=object.id)
-        if nav_nodes.count() > 0:
+        if nav_nodes.exists():
             return nav_nodes[0].children_as_navigation(**kwargs)
         return u''
 
@@ -125,11 +128,11 @@ def navigation_children(parser, token):
     args = token.contents.split()
     kwargs = extract_kwargs(args)
     if len(args) < 2:
-        raise template.TemplateSyntaxError(_("navigation_children requires object as argument"))
+        raise template.TemplateSyntaxError(_("navigation_children requires object as argument and optionally tree={{tree_name}}"))
     return NavigationChildrenNode(args[1], **kwargs)
 
 
-class NavigationSiblingsNode(NavigatationTemplateNode):
+class NavigationSiblingsNode(NavigationTemplateNode):
 
     def __init__(self, object, **kwargs):
         super(NavigationSiblingsNode, self).__init__(**kwargs)

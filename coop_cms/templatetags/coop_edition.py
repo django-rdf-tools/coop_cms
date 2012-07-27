@@ -148,19 +148,32 @@ class CmsEditNode(template.Node):
         inner_context = {}
         for x in context.dicts:
             inner_context.update(x)
-
+        
         #the context used for rendering the whole page
         self.post_url = the_object.get_edit_url()
         outer_context = {'post_url': self.post_url}
         
+        inner_context[self.var_name] = the_object
+        
+        safe_context = inner_context.copy()
+        inner_context[self.var_name] = the_object
+        inner_value = u""
+             
         if form:
             t = template.Template(CMS_FORM_TEMPLATE)
-            inner_context[self.var_name] = FormWrapper(form, the_object, logo_size=self._logo_size)
+            safe_context[self.var_name] = FormWrapper(form, the_object, logo_size=self._logo_size)
             outer_context.update(csrf(request))
+            #outer_context['inner'] = self.nodelist_content.render(template.Context(inner_context))
         else:
             t = template.Template("{{inner|safe}}")
-            inner_context[self.var_name] = SafeWrapper(the_object, logo_size=self._logo_size)
-        outer_context['inner'] = self.nodelist_content.render(template.Context(inner_context))
+            safe_context[self.var_name] = SafeWrapper(the_object, logo_size=self._logo_size)
+        for node in self.nodelist_content:
+            if isinstance(node, template.VariableNode) or isinstance(node, template.TextNode):
+                c = node.render(template.Context(safe_context))
+            else:
+                c = node.render(template.Context(inner_context))
+            inner_value += c
+        outer_context['inner'] = mark_safe(inner_value) if form else inner_value
         return t.render(template.Context(outer_context))
 
 @register.tag

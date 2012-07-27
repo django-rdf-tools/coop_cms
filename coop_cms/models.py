@@ -38,7 +38,7 @@ def get_object_label(content_type, object):
             label = unicode(object)
     except NavType.DoesNotExist:
         label = unicode(object)
-    return escape(label)
+    return label
 
 def set_node_ordering(node, tree, parent):
     if parent:
@@ -249,7 +249,7 @@ class ArticleCategory(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('articles_category', args=[self.slug])
+        return reverse('coop_cms_articles_category', args=[self.slug])
 
     class Meta:
         verbose_name = _(u'article category')
