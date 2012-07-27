@@ -1,0 +1,9 @@
+{% load coop_edition coop_navigation %}
+
+{% cms_edit article %}
+    {% navigation_siblings article %}
+    
+    <h2>Hello</h2>
+    
+    {{article.content}}
+{% end_cms_edit %}

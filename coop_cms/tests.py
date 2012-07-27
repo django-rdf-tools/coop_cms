@@ -5,7 +5,7 @@ from django.contrib.auth.models import User, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.template import Template, Context
-from coop_cms.models import Link, NavTree, NavNode, NavType, Document, Newsletter, NewsletterItem, PieceOfHtml, NewsletterSending
+from coop_cms.models import Link, NavTree, NavNode, NavType, Document, Newsletter, NewsletterItem, PieceOfHtml, NewsletterSending, BaseArticle
 import json
 from django.core.exceptions import ValidationError
 from coop_cms.settings import get_article_class
@@ -993,6 +993,62 @@ class TemplateTagsTest(TestCase):
         tpl = Template('{% load coop_navigation %}{% navigation_siblings obj %}')
         html = tpl.render(Context({'obj': link})).replace(' ', '')
         self.assertEqual(html, '')
+               
+        
+class CmsEditTagTest(TestCase):
+    
+    def setUp(self):
+        
+
+        self.link1 = Link.objects.create(url='http://www.google.fr')
+        self.tree = tree = NavTree.objects.create()
+        NavNode.objects.create(tree=tree, label=self.link1.url, content_object=self.link1, ordering=1, parent=None)
+    
+    def _log_as_editor(self):
+        self.user = user = User.objects.create_user('toto', 'toto@toto.fr', 'toto')
+        
+        ct = ContentType.objects.get_for_model(get_article_class())
+        
+        perm = 'change_{0}'.format(ct.model)
+        can_edit_article = Permission.objects.get(content_type=ct, codename=perm)
+        user.user_permissions.add(can_edit_article)
+        
+        perm = 'add_{0}'.format(ct.model)
+        can_add_article = Permission.objects.get(content_type=ct, codename=perm)
+        user.user_permissions.add(can_add_article)
+        
+        user.save()
+        
+        self.client.login(username='toto', password='toto')
+        
+    def _create_article(self):
+        Article = get_article_class()
+        article = Article.objects.create(
+            title='test', content='<h1>Ceci est un test</h1>', publication=BaseArticle.PUBLISHED,
+            template="test/nav_tag_in_edit_tag.html")
+        NavNode.objects.create(tree=self.tree, label=article.title, content_object=article, ordering=1, parent=None)
+        return article
+        
+    def test_view_navigation_inside_cms_edit_tag_visu(self):
+        article = self._create_article()
+        
+        response = self.client.get(article.get_absolute_url())
+        self.assertEqual(200, response.status_code)
+        
+        self.assertContains(response, "Hello") #text in template
+        self.assertContains(response, article.content)
+        self.assertContains(response, link1.url)
+ 
+    def test_view_navigation_inside_cms_edit_tag_edition(self):
+        self._log_as_editor()
+        article = self._create_article()
+        
+        response = self.client.get(article.get_edit_url(), follow=True)
+        self.assertEqual(200, response.status_code)
+        
+        self.assertContains(response, "Hello")
+        self.assertContains(response, article.content)
+        self.assertContains(response, link1.url)
         
 class DownloadDocTest(TestCase):
 
