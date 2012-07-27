@@ -115,7 +115,7 @@ class NavigationChildrenNode(NavigationTemplateNode):
         kwargs = self.resolve_kwargs(context)
         tree_name = kwargs.pop('tree', 'default')
         nav_nodes = NavNode.objects.filter(tree__name=tree_name, content_type=ct, object_id=object.id)
-        if nav_nodes.count() > 0:
+        if nav_nodes.exists():
             return nav_nodes[0].children_as_navigation(**kwargs)
         return u''
 
@@ -125,7 +125,7 @@ def navigation_children(parser, token):
     args = token.contents.split()
     kwargs = extract_kwargs(args)
     if len(args) < 2:
-        raise template.TemplateSyntaxError(_("navigation_children requires object as argument"))
+        raise template.TemplateSyntaxError(_("navigation_children requires object as argument and optionally tree={{tree_name}}"))
     return NavigationChildrenNode(args[1], **kwargs)
 
 
