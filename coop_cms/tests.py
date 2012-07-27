@@ -1037,7 +1037,7 @@ class CmsEditTagTest(TestCase):
         
         self.assertContains(response, "Hello") #text in template
         self.assertContains(response, article.content)
-        self.assertContains(response, link1.url)
+        self.assertContains(response, self.link1.url)
  
     def test_view_navigation_inside_cms_edit_tag_edition(self):
         self._log_as_editor()
@@ -1048,7 +1048,7 @@ class CmsEditTagTest(TestCase):
         
         self.assertContains(response, "Hello")
         self.assertContains(response, article.content)
-        self.assertContains(response, link1.url)
+        self.assertContains(response, self.link1.url)
         
 class DownloadDocTest(TestCase):
 
