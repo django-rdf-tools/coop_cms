@@ -111,6 +111,9 @@ class NavigationChildrenNode(NavigationTemplateNode):
 
     def render(self, context):
         object = self.object_var.resolve(context)
+        print '---- navigation_children ----'
+        print object.__class__
+        print '-----------------------------'
         ct = ContentType.objects.get_for_model(object.__class__)
         kwargs = self.resolve_kwargs(context)
         tree_name = kwargs.pop('tree', 'default')
