@@ -25,7 +25,11 @@ def collect_rss_items(user, source, check_user_rights=True):
         item, _is_new = RssItem.objects.get_or_create(link=e.link, source=source)
         #In any case, update the data
         item.title = e.title
-        item.updated = datetime.fromtimestamp(mktime(e.updated_parsed))
+        try:
+            item.updated = datetime.fromtimestamp(mktime(e.updated_parsed))
+        except AttributeError:
+            item.updated = datetime.now()
+
         item.author = getattr(e, 'author', '')[:100]
         item.summary = e.summary
         item.save()

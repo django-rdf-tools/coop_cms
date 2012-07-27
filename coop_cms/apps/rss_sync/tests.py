@@ -70,6 +70,10 @@ class RssTest(BaseTestCase):
         
     def test_creatitem_from_blogapidev(self):
         self._do_test_creatitem_from_source("http://www.apidev.fr/blog/rss/")
+        
+    def test_creatitem_from_crespaca(self):
+        #No update_date
+        self._do_test_creatitem_from_source("http://www.cresspaca.org/rss_actus.php")
             
     def test_synchro_url_is_not_rss(self):
         source = RssSource.objects.create(url='http://www.apidev.fr/')
