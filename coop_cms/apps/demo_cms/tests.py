@@ -6,11 +6,6 @@ from model_mommy import mommy
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from coop_cms.settings import get_article_class
-from coop_cms.apps.basic_cms import tests as basic_cms_tests
-
-class ArticleTest(basic_cms_tests.ArticleTest): 
-    def setUp(self):
-        settings.COOP_CMS_ARTICLE_CLASS = 'coop_cms.apps.demo_cms.models.Article'
 
 class AuthorPermissionTest(TestCase):
 
