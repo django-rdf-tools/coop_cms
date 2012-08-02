@@ -14,16 +14,16 @@ class RssSourceAdmin(admin.ModelAdmin):
         (_(u'Information'), {'fields': ('title', 'last_collect')}),
     )
     actions = [views.collect_rss_items_action]
-    
+
     def get_form(self, request, obj=None, **kwargs):
-        print 'get_form', obj, kwargs
+        #print 'get_form', obj, kwargs
         defaults = dict(kwargs)
         if obj:
             defaults.update({
                 'form': RssSourceAdminForm,
             })
         return super(RssSourceAdmin, self).get_form(request, obj, **defaults)
-        
+
 
 admin.site.register(models.RssSource, RssSourceAdmin)
 
