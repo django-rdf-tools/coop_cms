@@ -15,7 +15,7 @@ from coop_cms import forms
 from django.contrib.messages.api import success as success_message
 from coop_cms import models
 from django.contrib.auth.decorators import login_required
-from coop_cms.settings import get_article_class, get_article_form, get_newsletter_form
+from coop_cms.settings import get_article_class, get_article_form, get_newsletter_form, get_navTree_class
 from djaloha import utils as djaloha_utils
 from django.core.servers.basehttp import FileWrapper
 import mimetypes, unicodedata
@@ -37,7 +37,7 @@ def get_article_template(article):
 def tree_map(request):
     return render_to_response(
         'coop_cms/tree_map.html',
-        #{'tree': models.NavTree.objects.get(id=tree_id)},  # what is the default tree for the site
+        #{'tree': models.get_navTree_class().objects.get(id=tree_id)},  # what is the default tree for the site
         RequestContext(request)
     )
 
@@ -676,7 +676,7 @@ def process_nav_edition(request, tree_id):
     if request.method == 'POST' and request.is_ajax() and 'msg_id' in request.POST:
         try:
             #Get the current tree
-            tree = get_object_or_404(models.NavTree, id=tree_id)
+            tree = get_object_or_404(get_navTree_class(), id=tree_id)
 
             #check permissions
             if not request.user.has_perm('coop_cms.change_navtree'):

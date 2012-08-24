@@ -13,9 +13,10 @@ from django.core.urlresolvers import reverse
 from django.db.models.aggregates import Max
 from django.utils.html import escape
 from django.core.exceptions import ValidationError
-#from html_field.db.models import HTMLField
-#from html_field import html_cleaner
+# from html_field.db.models import HTMLField
+# from html_field import html_cleaner
 from coop_cms.settings import get_article_class, get_article_logo_size, get_newsletter_item_classes
+from coop_cms.settings import get_navTree_class, COOP_CMS_NAVTREE_CLASS
 from django.contrib.staticfiles import finders
 from django.core.files import File
 from django.db.models.signals import pre_delete, post_save
@@ -93,7 +94,7 @@ class NavNode(models.Model):
     Point on a content_object
     """
 
-    tree = models.ForeignKey("NavTree", verbose_name=_("tree"))
+    tree = models.ForeignKey(COOP_CMS_NAVTREE_CLASS, verbose_name=_("tree"))
     label = models.CharField(max_length=200, verbose_name=_("label"))
     parent = models.ForeignKey("NavNode", blank=True, null=True, default=0, verbose_name=_("parent"))
     ordering = models.PositiveIntegerField(_("ordering"), default=0)
@@ -213,10 +214,10 @@ class NavNode(models.Model):
                 cur_node = cur_node.parent
 
 
-class NavTree(models.Model):
+class BaseNavTree(models.Model):
     last_update = models.DateTimeField(auto_now=True)
     name = models.CharField(_(u'name'), max_length=100, db_index=True, unique=True, default='default')
-    types = models.ManyToManyField(NavType, blank=True)
+    types = models.ManyToManyField('coop_cms.NavType', blank=True)
 
     def __unicode__(self):
         return self.name
@@ -230,6 +231,7 @@ class NavTree(models.Model):
     class Meta:
         verbose_name = _(u'Navigation tree')
         verbose_name_plural = _(u'Navigation trees')
+        abstract = True
 
 #content_cleaner = html_cleaner.HTMLCleaner(
 #    allow_tags=['a', 'img', 'p', 'br', 'b', 'i', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
@@ -340,7 +342,7 @@ class BaseArticle(TimeStampedModel):
         if value != None:
             if value < 0:
                 tree_id = -value
-                tree = NavTree.objects.get(id=tree_id)
+                tree = get_navTree_class().objects.get(id=tree_id)
                 parent = None
             else:
                 parent = NavNode.objects.get(id=value)

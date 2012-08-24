@@ -1,5 +1,5 @@
 from django import forms
-from coop_cms.models import NavType, NavTree, NavNode, Newsletter, NewsletterSending
+from coop_cms.models import NavType, NavNode, Newsletter, NewsletterSending
 from django.contrib.contenttypes.models import ContentType
 from settings import get_navigable_content_types
 from django.core.exceptions import ValidationError
@@ -8,7 +8,7 @@ from djaloha.widgets import AlohaInput
 import floppyforms
 import re
 from django.conf import settings
-from coop_cms.settings import get_article_class, get_article_templates, get_newsletter_templates
+from coop_cms.settings import get_article_class, get_article_templates, get_newsletter_templates, get_navTree_class
 from coop_cms.widgets import ImageEdit
 from django.core.urlresolvers import reverse
 from coop_cms.utils import dehtml
@@ -85,7 +85,7 @@ def get_node_choices():
     #        choices.append((progeny.id, prefix*level+progeny.label))
     #return choices
     choices = [(None, _(u'<not in navigation>'))]
-    for tree in NavTree.objects.all():
+    for tree in get_navTree_class().objects.all():
         choices.append((-tree.id, tree.name))
         for root_node in NavNode.objects.filter(tree=tree, parent__isnull=True).order_by('ordering'):
             for (progeny, level) in root_node.get_progeny():

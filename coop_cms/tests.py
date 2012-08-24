@@ -5,10 +5,10 @@ from django.contrib.auth.models import User, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.template import Template, Context
-from coop_cms.models import Link, NavTree, NavNode, NavType, Document, Newsletter, NewsletterItem, PieceOfHtml, NewsletterSending, BaseArticle
+from coop_cms.models import Link, NavNode, NavType, Document, Newsletter, NewsletterItem, PieceOfHtml, NewsletterSending, BaseArticle
 import json
 from django.core.exceptions import ValidationError
-from coop_cms.settings import get_article_class, get_article_templates
+from coop_cms.settings import get_article_class, get_article_templates, get_navTree_class
 from model_mommy import mommy
 from django.conf import settings
 import os.path, shutil
@@ -336,7 +336,7 @@ class ArticleTest(TestCase):
     def test_new_article_navigation(self):
         Article = get_article_class()
         
-        tree = NavTree.objects.create()
+        tree = get_navTree_class().objects.create()
         
         self._log_as_editor()
         data = {
@@ -368,7 +368,7 @@ class ArticleTest(TestCase):
         Article = get_article_class()
         art1 = get_article_class().objects.create(publication=BaseArticle.PUBLISHED, **initial_data)
         
-        tree = NavTree.objects.create()
+        tree = get_navTree_class().objects.create()
         ct = ContentType.objects.get_for_model(Article)
         node1 = NavNode.objects.create(content_type=ct, object_id=art1.id, tree=tree)
         
@@ -403,7 +403,7 @@ class NavigationTest(TestCase):
         NavType.objects.create(content_type=self.url_ct, search_field='url', label_rule=NavType.LABEL_USE_SEARCH_FIELD)
         self.editor = None
         self.staff = None
-        self.tree = NavTree.objects.create()
+        self.tree = get_navTree_class().objects.create()
         self.srv_url = reverse("navigation_tree", args=[self.tree.id])
 
     def _log_as_editor(self):
@@ -1014,7 +1014,7 @@ class NavigationTest(TestCase):
 #    def setUp(self):
 #        ct = ContentType.objects.get_for_model(get_article_class())
 #        NavType.objects.create(content_type=ct, search_field='title', label_rule=NavType.LABEL_USE_SEARCH_FIELD)
-#        self.tree = NavTree.objects.create()
+#        self.tree = get_navTree_class().objects.create()
 #    
 #    def test_set_himself_as_parent_raise_error(self):
 #        art = get_article_class().objects.create(title='toto', content='oups')
@@ -1104,7 +1104,7 @@ class TemplateTagsTest(TestCase):
         
         self.nodes = []
         
-        self.tree = tree = NavTree.objects.create()
+        self.tree = tree = get_navTree_class().objects.create()
         
         self.nodes.append(NavNode.objects.create(tree=tree, label=link1.url, content_object=link1, ordering=1, parent=None))
         self.nodes.append(NavNode.objects.create(tree=tree, label=link2.url, content_object=link2, ordering=2, parent=None))
@@ -1378,7 +1378,7 @@ class CmsEditTagTest(TestCase):
         
 
         self.link1 = Link.objects.create(url='http://www.google.fr')
-        self.tree = tree = NavTree.objects.create()
+        self.tree = tree = get_navTree_class().objects.create()
         NavNode.objects.create(tree=tree, label=self.link1.url, content_object=self.link1, ordering=1, parent=None)
     
     def _log_as_editor(self):
@@ -2037,9 +2037,9 @@ class NavigationTreeTest(TestCase):
         nt_links = NavType.objects.create(content_type=ct, search_field='url',
             label_rule=NavType.LABEL_USE_SEARCH_FIELD)
         
-        self.default_tree = NavTree.objects.create()
-        self.tree1 = NavTree.objects.create(name="tree1")
-        self.tree2 = NavTree.objects.create(name="tree2")
+        self.default_tree = get_navTree_class().objects.create()
+        self.tree1 = get_navTree_class().objects.create(name="tree1")
+        self.tree2 = get_navTree_class().objects.create(name="tree2")
         self.tree2.types.add(nt_links)
         self.tree2.save()
         
