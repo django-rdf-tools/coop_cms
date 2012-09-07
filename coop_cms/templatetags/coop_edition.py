@@ -90,7 +90,7 @@ def if_cms_edition(parser, token):
 CMS_FORM_TEMPLATE = """
     <form id="cms_form" enctype="multipart/form-data"  method="POST" action="{{post_url}}">{% csrf_token %}
     {% include "coop_cms/_form_error.html" with errs=form.non_field_errors %}
-    {{inner}} <input type="submit"> </form>
+    {{inner}} <input type="submit" style="display: none"> </form>
 """
 
 class SafeWrapper:
