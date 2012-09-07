@@ -381,6 +381,41 @@ def new_article(request):
     )
 
 @login_required
+@popup_redirect
+def new_newsletter(request, newsletter_id=None):
+
+    #ct = ContentType.objects.get_for_model(Article)
+    #perm = '{0}.add_{1}'.format(ct.app_label, ct.model)
+
+    #if not request.user.has_perm(perm):
+    #    raise PermissionDenied
+    
+    if newsletter_id:
+        newsletter = get_object_or_404(models.Newsletter, id=newsletter_id)
+    else:
+        newsletter = None
+    
+    try:
+        if request.method == "POST":
+            form = forms.NewNewsletterForm(request.user, request.POST, instance=newsletter)
+            if form.is_valid():
+                #article.template = form.cleaned_data['template']
+                newsletter = form.save()
+                return HttpResponseRedirect(newsletter.get_edit_url())
+        else:
+            form = forms.NewNewsletterForm(request.user, instance=newsletter)
+    
+        return render_to_response(
+            'coop_cms/popup_new_newsletter.html',
+            locals(),
+            context_instance=RequestContext(request)
+        )
+    except Exception, msg:
+        print "#", msg
+        raise
+
+
+@login_required
 def update_logo(request, article_id):
     article = get_object_or_404(get_article_class(), id=article_id)
     if request.method == "POST":

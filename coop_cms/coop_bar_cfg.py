@@ -5,8 +5,8 @@ from django.template.loader import get_template
 from django.template import Context
 from coop_cms.settings import get_article_class
 from django.conf import settings
-from coop_bar.utils import make_link
 from django.contrib.contenttypes.models import ContentType
+from coop_bar.utils import make_link
 
 def can_do(perm, object_names):
     def inner_decorator(func):
@@ -23,7 +23,6 @@ def can_do(perm, object_names):
             return
         return wrapper
     return inner_decorator
-
 
 can_edit_article = can_do('can_edit', ['article'])
 can_publish_article = can_do('can_publish', ['article'])
@@ -82,7 +81,7 @@ def cms_media_library(request, context):
 def cms_upload_image(request, context):
     if context.get('edit_mode'):
         return make_link(reverse('coop_cms_upload_image'), _(u'Add image'), 'fugue/image--plus.png',
-            classes=['coopbar_addfile', 'colorbox-form', 'icon'])
+        classes=['coopbar_addfile', 'colorbox-form', 'icon'])
 
 @can_edit
 def cms_upload_doc(request, context):
@@ -92,9 +91,10 @@ def cms_upload_doc(request, context):
 
 @can_add_article
 def cms_new_article(request, context):
-    url = reverse('coop_cms_new_article')
-    return make_link(url, _(u'Add article'), 'fugue/document--plus.png',
-        classes=['alert_on_click', 'colorbox-form', 'icon'])
+    if not context.get('edit_mode'):
+        url = reverse('coop_cms_new_article')
+        return make_link(url, _(u'Add article'), 'fugue/document--plus.png',
+            classes=['alert_on_click', 'colorbox-form', 'icon'])
 
 @can_add_article
 def cms_set_homepage(request, context):
@@ -166,6 +166,13 @@ def log_out(request, context):
         return make_link(reverse("django.contrib.auth.views.logout"), _(u'Log out'), 'fugue/control-power.png',
             classes=['alert_on_click', 'icon'])
 
+@can_add_article
+def cms_new_newsletter(request, context):
+    if not context.get('edit_mode'):
+        url = reverse('coop_cms_new_newsletter')
+        return make_link(url, _(u'Create newsletter'), 'fugue/document--plus.png',
+            classes=['alert_on_click', 'colorbox-form', 'icon'])
+
 @can_edit_newsletter
 def edit_newsletter(request, context):
     if not context.get('edit_mode'):
@@ -188,12 +195,13 @@ def save_newsletter(request, context):
 
 @can_edit_newsletter
 def change_newsletter_settings(request, context):
-    if context.get('edit_mode'):
+    if not context.get('edit_mode'):
         newsletter = context.get('newsletter')
-        view_name = 'admin:coop_cms_newsletter_change'
-        return make_link(reverse(view_name, args=[newsletter.id]), _(u'Newsletter settings'), 'fugue/gear.png',
-            classes=['icon', 'alert_on_click'])
+        url = reverse('coop_cms_newsletter_settings', kwargs={'newsletter_id': newsletter.id})
+        return make_link(url, _(u'Newsletter settings'), 'fugue/gear.png',
+            classes=['icon', 'colorbox-form', 'alert_on_click'])
 
+#DEPRECATED
 @can_edit_newsletter
 def change_newsletter_template(request, context):
     if context.get('edit_mode'):
@@ -201,6 +209,7 @@ def change_newsletter_template(request, context):
         url = reverse('coop_cms_change_newsletter_template', args=[newsletter.id])
         return make_link(url, _(u'Newsletter template'), 'fugue/application-blog.png',
             classes=['alert_on_click', 'colorbox-form', 'icon'])
+###############
 
 @can_edit_newsletter
 def test_newsletter(request, context):
@@ -221,9 +230,9 @@ def load_commands(coop_bar):
     
     coop_bar.register([
         [django_admin, django_admin_edit_article, django_admin_navtree, view_all_articles],
-        [edit_newsletter, cancel_edit_newsletter, save_newsletter,
-            change_newsletter_settings, change_newsletter_template,
-            test_newsletter, schedule_newsletter],
+        [cms_new_newsletter, edit_newsletter, cancel_edit_newsletter, save_newsletter,
+            change_newsletter_settings,
+            schedule_newsletter, test_newsletter],
         [cms_edit, cms_view, cms_save, cms_cancel],
         [cms_new_article, cms_article_settings, cms_set_homepage],
         [cms_publish],
@@ -232,3 +241,16 @@ def load_commands(coop_bar):
     ])
     
     coop_bar.register_header(cms_extra_js)
+    
+    #def js_code(request, context):
+    #    return """<script>
+    #    $(function() {
+    #        $("a.modal").each(function(idx, elt) {
+    #            $(elt).modal({
+    #                remote: $(elt).attr('href')
+    #            });
+    #        });
+    #    });
+    #    </script>"""
+    #
+    #coop_bar.register_header(js_code)

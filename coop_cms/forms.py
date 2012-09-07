@@ -16,6 +16,7 @@ from datetime import datetime
 try:
     from chosen.widgets import ChosenSelectMultiple
 except ImportError:
+    print "chosen missing"
     pass
 
 class NavTypeForm(forms.ModelForm):
@@ -227,6 +228,28 @@ class NewArticleForm(ArticleFormWithNavigation):
             self.fields["template"] = forms.CharField()
         self.fields["title"].widget = forms.TextInput(attrs={'size': 30})
 
+class NewNewsletterForm(forms.ModelForm):
+    class Meta:
+        model = Newsletter
+        fields = ('subject', 'template', 'items')
+        #widgets = {}
+        #try:
+        #    widgets.update({
+        #        'items': ChosenSelectMultiple(),
+        #    })
+        #except NameError:
+        #    print 'NO ChosenSelectMultiple'
+        #    pass
+
+    def __init__(self, user, *args, **kwargs):
+        super(NewNewsletterForm, self).__init__(*args, **kwargs)
+        tpl_choices = get_newsletter_templates(None, user)
+        if tpl_choices:
+            self.fields["template"] = forms.ChoiceField(choices=tpl_choices)
+        else:
+            self.fields["template"] = forms.CharField()
+        self.fields["subject"].widget = forms.TextInput(attrs={'size': 30})
+
 
 class PublishArticleForm(forms.ModelForm):
     class Meta:
@@ -313,6 +336,7 @@ class NewsletterAdminForm(forms.ModelForm):
                 'items': ChosenSelectMultiple(),
             })
         except NameError:
+            print 'No ChosenSelectMultiple'
             pass
 
     class Media:

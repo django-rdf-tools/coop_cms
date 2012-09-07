@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
 
 from django.contrib.contenttypes.models import ContentType
-from django.conf import settings
+from django.conf import settings as django_settings
 from django.utils.importlib import import_module
 
 
 def get_navigable_content_types():
     ct_choices = []
     try:
-        content_apps = settings.COOP_CMS_CONTENT_APPS
+        content_apps = django_settings.COOP_CMS_CONTENT_APPS
     except AttributeError:
         content_apps = []
         not_to_be_mapped = ('south', 'django_extensions', 'd2rq')
-        for m in settings.INSTALLED_APPS:
+        for m in django_settings.INSTALLED_APPS:
             if(not m.startswith('django.') and m not in not_to_be_mapped):
                 content_apps.append(m)
     apps_labels = [app.rsplit('.')[-1] for app in content_apps]
@@ -30,13 +30,13 @@ def get_article_class():
     else:
         article_class = None
         try:
-            full_class_name = getattr(settings, 'COOP_CMS_ARTICLE_CLASS')
+            full_class_name = getattr(django_settings, 'COOP_CMS_ARTICLE_CLASS')
             module_name, class_name = full_class_name.rsplit('.', 1)
             module = import_module(module_name)
             article_class = getattr(module, class_name)
 
         except AttributeError:
-            if 'coop_cms.apps.basic_cms' in settings.INSTALLED_APPS:
+            if 'coop_cms.apps.basic_cms' in django_settings.INSTALLED_APPS:
                 from coop_cms.apps.basic_cms.models import Article
                 article_class = Article
 
@@ -48,7 +48,7 @@ def get_article_class():
 
 def get_article_form():
     try:
-        full_class_name = getattr(settings, 'COOP_CMS_ARTICLE_FORM')
+        full_class_name = getattr(django_settings, 'COOP_CMS_ARTICLE_FORM')
         module_name, class_name = full_class_name.rsplit('.', 1)
         module = import_module(module_name)
         article_form = getattr(module, class_name)
@@ -61,13 +61,14 @@ def get_article_form():
 
 def get_newsletter_templates(newsletter, user):
     try:
-        return settings.COOP_CMS_NEWSLETTER_TEMPLATES
+        return getattr(django_settings, 'COOP_CMS_NEWSLETTERS_TEMPLATES')
     except AttributeError:
+        print "# pas de COOP_CMS_NEWSLETTERS_TEMPLATES"
         return None
 
 def get_newsletter_form():
     try:
-        full_class_name = getattr(settings, 'COOP_CMS_NEWSLETTER_FORM')
+        full_class_name = getattr(django_settings, 'COOP_CMS_NEWSLETTER_FORM')
     except AttributeError:
         from coop_cms.forms import NewsletterForm
         newsletter_form = NewsletterForm
@@ -78,8 +79,8 @@ def get_newsletter_form():
     return newsletter_form
 
 def get_article_templates(article, user):
-    if hasattr(settings, 'COOP_CMS_ARTICLE_TEMPLATES'):
-        coop_cms_article_templates = getattr(settings, 'COOP_CMS_ARTICLE_TEMPLATES')
+    if hasattr(django_settings, 'COOP_CMS_ARTICLE_TEMPLATES'):
+        coop_cms_article_templates = getattr(django_settings, 'COOP_CMS_ARTICLE_TEMPLATES')
 
         if type(coop_cms_article_templates) in (str, unicode):
             #COOP_CMS_ARTICLE_TEMPLATES is a string :
@@ -106,7 +107,7 @@ def get_article_templates(article, user):
 
 def get_article_logo_size(article):
     try:
-        get_size_name = getattr(settings, 'COOP_CMS_ARTICLE_LOGO_SIZE')
+        get_size_name = getattr(django_settings, 'COOP_CMS_ARTICLE_LOGO_SIZE')
         try:
             module_name, fct_name = get_size_name.rsplit('.', 1)
             module = import_module(module_name)
@@ -128,7 +129,7 @@ def get_newsletter_item_classes():
     else:
         item_classes = []
         try:
-            full_classes_names = getattr(settings, 'COOP_CMS_NEWSLETTER_ITEM_CLASSES')
+            full_classes_names = getattr(django_settings, 'COOP_CMS_NEWSLETTER_ITEM_CLASSES')
         except AttributeError:
             item_classes = (get_article_class(),)
         else:
