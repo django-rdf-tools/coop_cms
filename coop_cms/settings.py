@@ -5,6 +5,9 @@ from django.conf import settings as django_settings
 from django.utils.importlib import import_module
 
 
+COOP_CMS_NAVTREE_CLASS = getattr(settings, 'COOP_CMS_NAVTREE_CLASS', 'coop_cms.NavTree')
+
+
 def get_navigable_content_types():
     ct_choices = []
     try:
@@ -22,6 +25,33 @@ def get_navigable_content_types():
         if (not is_navnode) and 'get_absolute_url' in dir(ct.model_class()):
             ct_choices.append((ct.id, ct.app_label + u'.' + ct.model))
     return ct_choices
+
+
+
+def get_navTree_class():
+    if hasattr(get_navTree_class, '_cache_class'):
+        return getattr(get_navTree_class, '_cache_class')
+    else:
+        navTree_class = None
+        try:
+            full_class_name = getattr(settings, 'COOP_CMS_NAVTREE_CLASS')
+            module_name, class_name = full_class_name.rsplit('.', 1)
+            if not module_name.endswith('models'):
+                module_name += '.models'
+            module = import_module(module_name)
+            navTree_class = getattr(module, class_name)
+
+        except AttributeError:
+            if 'coop_cms.apps.basic_cms' in settings.INSTALLED_APPS:
+                from coop_cms.apps.basic_cms.models import NavTree
+                navTree_class = NavTree
+
+        if not navTree_class:
+            raise Exception('No NavTree class configured')
+
+        setattr(get_navTree_class, '_cache_class', navTree_class)
+        return navTree_class
+
 
 
 def get_article_class():
@@ -58,6 +88,10 @@ def get_article_form():
         article_form = ArticleForm
 
     return article_form
+
+
+
+
 
 def get_newsletter_templates(newsletter, user):
     try:

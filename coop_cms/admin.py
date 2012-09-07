@@ -5,7 +5,7 @@ import models
 from forms import NavTypeForm, ArticleAdminForm, NewsletterItemAdminForm, NewsletterAdminForm
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
-from coop_cms.settings import get_article_class
+from coop_cms.settings import get_article_class, get_navTree_class
 
 
 class NavNodeAdmin(admin.ModelAdmin):
@@ -39,13 +39,13 @@ class NavTreeAdmin(admin.ModelAdmin):
 
     def change_view(self, request, object_id, extra_context=None):
         extra_context = extra_context or {}
-        tree = models.NavTree.objects.get(id=object_id)
+        tree = models.get_navTree_class().objects.get(id=object_id)
         extra_context['navtree'] = tree
         extra_context['navtree_nodes'] = self.nodes_li(tree)
         return super(NavTreeAdmin, self).change_view(request, object_id,
             extra_context=extra_context)
 
-admin.site.register(models.NavTree, NavTreeAdmin)
+admin.site.register(get_navTree_class(), NavTreeAdmin)
 
 
 class ArticleAdmin(admin.ModelAdmin):
