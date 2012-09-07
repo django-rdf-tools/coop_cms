@@ -206,6 +206,22 @@ The navigation_as_nested_ul templatetag accepts several args
 
 There are others templatetags for navigation : ``navigation_breadcrumb``, ``navigation_children``, ``navigation_siblings`` with similar behavior
 
+Navigation configuration
+~~~~~~~~~~~~~~~~~~~~~~~~
+Don't forget to register the navigable types. In order to be accessible from the navigation, Model classes must be registered.
+ * In the django admin, go to coop_cms - Navigable types
+ * Add a new object and choose the model class you want to make accessible in navigation
+ * Define how to get the label in navigation for a given object : use the __unicode__, use the search field or use a custom get_label method
+ * If search_field is choosed, define the name of this field.
+ * The search field make possible to define which field to use when the navigation tree ask for matching objects.
+ 
+ * Then Go to a Navigation object in admin, the admin page propose to configure it thanks to a tree view
+ * Type some text in the text field at the top
+ * The field autocomplete propose all the objects of a NavigableType matching the text you entered
+ * Select one object and click 'Add a new item'
+ * The object is now part of the current navigation
+
+
 Going further
 -------------
 
