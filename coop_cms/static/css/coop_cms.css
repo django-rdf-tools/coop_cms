@@ -1,3 +1,5 @@
+
+
 ul.messages {
 	list-style: none;
 	border: #ccc solid 3px;
@@ -17,4 +19,28 @@ ul.messages li.success {
 
 ul.messages li.error {
 	color: #f55;
+}
+
+.aloha-align-left {
+	text-align: left;
+}
+
+.aloha-align-right {
+	text-align: right;
+}
+
+.aloha-align-center {
+	text-align: center;
+}
+
+.aloha-align-justifiy {
+	text-align: justify;
+}
+
+img.aloha-align-left {
+	float: left;
+}
+
+img.aloha-align-right {
+	float: right;
 }
