@@ -48,7 +48,7 @@ setup(
                         #'djaloha==0.4.0',
                         'django-pagination',
                         'feedparser',
-                        'model_mommy',
+                        #'model_mommy', #---> ramène django 1.5
                         ],
     long_description = open('README.rst').read(),
     url = 'https://github.com/quinode/coop_cms/',
