@@ -1,6 +1,45 @@
 /* @override http://localhost:8000/static/css/tree.css */
 
-/* */
+
+
+
+li.ui-autocomplete-category:first-child{
+	margin-top: 12px;
+}
+
+li.ui-autocomplete-category {
+	color: #f8fafe;
+	display: inline-block;
+	width: 100%;
+	text-align: left;
+	text-indent: 5px;
+	border-top: 1px solid #697d90;
+	border-bottom: 1px solid #697d90;
+	padding-right: 4px;
+	background-color: #6893b2;
+	margin-left: -2px;
+	font-size: 14px;
+	font-variant: small-caps;
+	font-weight: bold;
+	padding-top: 4px;
+	padding-bottom: 4px;
+	margin-bottom: 4px;
+	margin-top: 4px;
+}
+
+.ui-widget li{
+    list-style: none;
+  }
+  
+.ui-autocomplete {
+    max-height: 200px;
+    overflow-y: auto;
+    /* prevent horizontal scrollbar */
+    overflow-x: hidden;
+    /* add padding to account for vertical scrollbar */
+    padding-right: 20px;
+ }
+  
 
 .actions a{
 	border: solid thin #ccc;
@@ -30,13 +69,6 @@ li.nav-node {
 	font-size: 12px;
 }
 
-.ui-autocomplete-category{
-	background-color: #cbd4e3;
-	color: white;
-	font-weight: normal;
-	font-style: normal;
-}
-
 .add_object_section {
 	padding: 10px;
 	vertical-align: middle;
@@ -44,6 +76,10 @@ li.nav-node {
 
 #add_object{
 	position: relative;
+}
+
+#object-links h3{
+	padding: 12px 16px 8px;
 }
 
 #object_label{
@@ -54,13 +90,11 @@ li.nav-node {
 aside, #aside {
 	float: left;
 	border: 1px solid #dadada;
-	min-height: 100px;
 	left: 455px;
 	position: absolute;
 	border-radius: 4px;
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
-	padding: 16px;
 	background-color: #f8f8f8;
 }
 
@@ -70,17 +104,25 @@ aside, #aside {
 	margin-bottom: 10px;
 }
 
+
 .content-links {
+	list-style-type: circle;
 	list-style-position: inside;
-	list-style-type: none;
-	padding-left: 0;
-	margin-top: 10px;
+	padding: 0 0 16px;
+	display: inline-block;
 }
+
+#object-links .content-links{
+	padding-bottom: 0;
+}
+
 
 .content-links li{
 	font-size: 12px;
 	font-weight: bold;
 	line-height: 16px;
+	padding-left: 16px;
+	padding-right: 16px;
 }
 
 

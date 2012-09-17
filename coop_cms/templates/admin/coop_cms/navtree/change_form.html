@@ -9,33 +9,7 @@
 {% if navtree %}
   <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/tree.css" />
   <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/smoothness/jquery-ui-1.8.14.custom.css" />
-  <style>
-  .ui-autocomplete-category {
-    font-weight: bold;
-    padding: .2em .4em;
-    margin: .8em 0 .2em;
-    line-height: 1.5;
-  }
-  
-  .ui-widget li{
-    list-style: none;
-  }
-  
-  .ui-autocomplete {
-    max-height: 200px;
-    overflow-y: auto;
-    /* prevent horizontal scrollbar */
-    overflow-x: hidden;
-    /* add padding to account for vertical scrollbar */
-    padding-right: 20px;
-  }
-  /* IE 6 doesn't support max-height
-   * we use height instead, but this forces the menu to always be this tall
-   */
-  * html .ui-autocomplete {
-    height: 200px;
-  }
-  </style>
+
   <script src="{{STATIC_URL}}js/jquery-1.7.1.min.js"></script>
   <script src="{{STATIC_URL}}js/jquery-ui-1.8.14.custom.min.js"></script>
   <script src="{{STATIC_URL}}js/jquery.jstree.js"></script>
@@ -57,34 +31,34 @@
   <script type="text/javascript">
     $(function() {
       var last_selection = null;
-  
+
       var admin_hideMessage = function ()  {
           $('#admin-status').hide();
           $(".error-field").removeClass("error-field");
       };
-      
+
       var admin_printMessage = function (message, css_class) {
           $('#admin-status').removeClass().html(message).addClass(css_class).show();
           setTimeout(admin_hideMessage, 3000);
       };
-  
+
       function disable_actions() {
         //$("#rename_node").attr('disabled', 'disabled');
-        //$("#delete_node").attr('disabled', 'disabled');   
-        $("#rename_node").parent('li').hide(); 
+        //$("#delete_node").attr('disabled', 'disabled');
+        $("#rename_node").parent('li').hide();
         $("#delete_node").parent('li').hide();
-        $("#navnode_in_navigation").parent('li').hide(); 
+        $("#navnode_in_navigation").parent('li').hide();
       }
-      
+
       function enable_actions() {
         //$("#rename_node").removeAttr('disabled');
         //$("#delete_node").removeAttr('disabled');
-        $("#rename_node").parent('li').show(); 
+        $("#rename_node").parent('li').show();
         $("#delete_node").parent('li').show();
-        $("#navnode_in_navigation").parent('li').show(); 
+        $("#navnode_in_navigation").parent('li').show();
       }
       disable_actions();
-      
+
       function post_msg(msg_id, data, callback) {
         data['msg_id'] = msg_id;
         $.post(
@@ -94,11 +68,11 @@
           'json'
         );
       }
-      
+
       function get_node_id(node) {
         return node.attr("id").slice(5);
       }
-      
+
       $("#add_object").click(function() {
         data = {msg_id: 'add_navnode'};
         data["object_id"] = $("#object_id").val();
@@ -119,8 +93,8 @@
           }
         );
       });
-      
-      $("#nodes").jstree({ 
+
+      $("#nodes").jstree({
           "themes" : {
               "theme" : "classic",
               "dots" : true,
@@ -129,7 +103,7 @@
         "dnd" : {
           "drop_target": false,
           "drag_target": false,
-          "drag_check" : function () { 
+          "drag_check" : function () {
             return { after : true, before : true, inside : true };
           }
         },
@@ -140,21 +114,21 @@
           "types" : {
             "valid_children" : "all",
             "out_nav" : {
-                "icon" : { 
-                  "image" : "{{STATIC_URL}}img/out_nav.png" 
+                "icon" : {
+                  "image" : "{{STATIC_URL}}img/out_nav.png"
                 }
             },
             "in_nav" : {
               "valid_children" : "all",
-              "icon" : { 
-                "image" : "{{STATIC_URL}}img/in_nav.png" 
+              "icon" : {
+                "image" : "{{STATIC_URL}}img/in_nav.png"
               }
             }
           }
         },
         "plugins" : [ "themes", "html_data", "dnd", "ui", "crrm", "types" ]
       })
-      
+
       $("#nodes").bind("move_node.jstree", function (event, data) {
         var tree_data = {
           node_id: get_node_id(data.rslt.o),
@@ -163,11 +137,11 @@
         try {
           tree_data['ref_id'] = get_node_id(data.rslt.or);
         } catch (ex) {}
-          
+
         try {
           tree_data['parent_id'] = get_node_id(data.rslt.np);
         } catch (ex) {}
-        
+
         post_msg('move_navnode', tree_data, function(data) {
           admin_printMessage(data.message, data.status);
         });
@@ -184,22 +158,22 @@
             deselect_all();
           });
       });
-      
+
       function deselect_all() {
         $("#nodes").jstree("deselect_all");
         disable_actions();
         last_selection = null;
         $("#aside #object-links").html("");
       }
-      
+
       $("#nodes").bind("select_node.jstree", function (event, data) {
         if (last_selection === get_node_id(data.rslt.obj)) {
             deselect_all();
         } else {
           last_selection = get_node_id(data.rslt.obj);
           enable_actions();
-          
-          post_msg('view_navnode', {node_id: get_node_id(data.rslt.obj)}, 
+
+          post_msg('view_navnode', {node_id: get_node_id(data.rslt.obj)},
             function(data) {
               //admin_printMessage(data.message, data.status);
               if (data.status === "success") {
@@ -211,7 +185,7 @@
           );
         }
       });
-      
+
       $("#object_label").catcomplete({
           source: function(request, add){
             post_msg('get_suggest_list', {term: request.term}, function(data) {
@@ -221,7 +195,7 @@
                   existing_objects.push(val);
                 });
               } else {
-                admin_printMessage(data.message, data.status);  
+                admin_printMessage(data.message, data.status);
               }
               add(existing_objects);
             });
@@ -238,12 +212,12 @@
             return false;
           }
       });
-      
-      $("#rename_node").click(function () { 
+
+      $("#rename_node").click(function () {
           $("#nodes").jstree("rename");
           return false;
       });
-      
+
       $("#delete_node").click(function () {
         var selected_nodes = $("#nodes").jstree('get_selected');
         var length = selected_nodes.length;
@@ -266,7 +240,7 @@
         }
         return false;
       });
-      
+
       $("#navnode_in_navigation").click(function () {
         var selected_nodes = $("#nodes").jstree('get_selected');
         var node=selected_nodes[0];
@@ -279,7 +253,7 @@
         });
         return false;
       });
-  
+
     });
   </script>
 {% endif %}
@@ -307,7 +281,7 @@
     <div class="button-bar">
       <span class="add_object_section">
         <input id="object_label" size=30/>
-        <button id="add_object">{% trans "Add a new node" %}</button>
+        <button id="add_object" class="btn primary">{% trans "Add a new node" %}</button>
         <input id="object_id" type="hidden"/>
         <input id="object_type" type="hidden"/>
       </span>
@@ -349,28 +323,28 @@
         </p>
         {{ adminform.form.non_field_errors }}
     {% endif %}
-    
+
     {% for fieldset in adminform %}
       {% include "admin/includes/fieldset.html" %}
     {% endfor %}
-    
+
     {% block after_field_sets %}{% endblock %}
-    
+
     {% for inline_admin_formset in inline_admin_formsets %}
         {% include inline_admin_formset.opts.template %}
     {% endfor %}
-    
+
     {% block after_related_objects %}{% endblock %}
-    
+
     {% submit_row %}
-    
+
     {% if adminform and add %}
        <script type="text/javascript">document.getElementById("{{ adminform.first_field.id_for_label }}").focus();</script>
     {% endif %}
-    
+
     {# JavaScript for prepopulated fields #}
     {% prepopulated_fields_js %}
-    
+
     </div>
     </form></div>
   {% endif %}
