@@ -20,7 +20,7 @@ Coop-cms has some sister apps to make it more usable:
 
 * `coop_bar <https://github.com/quinode/coop-bar/>`_, an extensible toolbar (same concept : any app you create can add links in the toolbar)
 * `djaloha <https://github.com/quinode/djaloha/>`_, a great in-site editor based on `Aloha Editor <http://aloha-editor.org/>`_
-* `colorbox <https://github.com/quinode/coop-colorbox/>`_, make easy integration of jquery colorbox library. 
+* `colorbox <https://github.com/quinode/coop-colorbox/>`_, make easy integration of jquery colorbox library.
 
 .. _quick-start:
 
@@ -57,7 +57,7 @@ In settings.py::
         'pagination.middleware.PaginationMiddleware',
         ...
     )
-    
+
     TEMPLATE_CONTEXT_PROCESSORS = (
         "django.contrib.auth.context_processors.auth",
         "django.core.context_processors.debug",
@@ -68,12 +68,12 @@ In settings.py::
         "django.contrib.messages.context_processors.messages",
         ...
     )
-    
+
     AUTHENTICATION_BACKENDS = (
         'coop_cms.perms_backends.ArticlePermissionBackend',
         'django.contrib.auth.backends.ModelBackend', # Django's default auth backend
     )
-    
+
     INSTALLED_APPS = (
         # Contribs
         'django.contrib.auth',
@@ -84,7 +84,7 @@ In settings.py::
         'django.contrib.staticfiles',
         'django.contrib.admin',
         'django.contrib.admindocs',
-    
+
         #3rd parties
         'south',
         'django_extensions',
@@ -92,80 +92,80 @@ In settings.py::
         'floppyforms',
         'pagination',
         'chosen', #optional but recommended. You must install it separately
-        
+
         #apps
         'coop_bar',
         'djaloha',
         'colorbox',
         'coop_cms',
-    
+
         #The coop_cms Article is an abstract model, you must define an Article in one of your app
         #We provide 2 apps that can be used if needed. Choose one or the other
         #'coop_cms.apps.basic_cms', #Nothing else than a concrete Article model.
         'coop_cms.apps.demo_cms', #A ready-to-use example app.
-    
+
         #The app below make possible to create articles from a RSS feed. Add it if needed
         'coop_cms.apps.rss_sync',
     )
 
     #These are settings to customize the CMS behavior. The values are just examples and correspond to the demo_cms app.
-    
+
     #Define the Concrete Article to use. Not required if basic_cms is used
     COOP_CMS_ARTICLE_CLASS = 'coop_cms.apps.demo_cms.models.Article'
-    
+
     #Define a custom form for Article editing. Not required if basic_cms is used
     COOP_CMS_ARTICLE_FORM = 'coop_cms.apps.demo_cms.forms.ArticleForm'
-    
+
     #Make possible to customize the menus in the admin bar. Optional.
     #If not defined, the tuple is build with the coop_bar_cfg modules of all INSTALLED_APPS
     COOPBAR_MODULES = (
         'coop_cms.apps.demo_cms.my_coop_bar',
     )
-    
+
     #Populate the urls when editing <a> tag in Aloha editor
     DJALOHA_LINK_MODELS = (
         'demo_cms.Article',
     )
-    
+
     # Optional: you can overload the aloha plugins used by coop_cms --> see djaloha docs for details
     DJALOHA_PLUGINS = (
         "common/format",
         "common/highlighteditables",
     )
-    
+
     # Optional: you can change the jquery version used by aloha --> see djaloha docs for details
     DJALOHA_JQUERY = 'js/jquery.1.7.2.js'
-    
-    # Optional : you can customize the whole behavior of aloha by proving the url of config file. 
+
+    # Optional : you can customize the whole behavior of aloha by proving the url of config file.
     # It will overload the config provided by djaloha --> see djaloha for details
     DJALOHA_INIT_URL = '/static/js/my_aloha_config.js'
-    
+
     #Default size of the article logo. Can be changed in template
     COOP_CMS_ARTICLE_LOGO_SIZE = "128x128"
-    
+
     #Templates that can be used for an article
-    #It can be a tuple or a function returning a tuple 
+    #It can be a tuple or a function returning a tuple
     COOP_CMS_ARTICLE_TEMPLATES = 'coop_cms.apps.demo_cms.get_article_templates'
     #COOP_CMS_ARTICLE_TEMPLATES = (
     #    ('standard.html', 'Standard'),
     #    ('homepage.html', 'Homepage'),
     #    ('blog.html', 'Blog'),
     #)
-    
+
     #Prefix for making absolute links
     COOP_CMS_SITE_PREFIX = 'http://127.0.0.1:8000'
-    
+
     #from email : the domain of this address should allow the IP of your SMTP server : See SPF
     COOP_CMS_FROM_EMAIL = '"Your name" <your@email.com>'
-    
+
     #TODO : REPLY-TO
     COOP_CMS_REPLY_TO = '"Your name" <your@email.com>'
-    
+
     # Email address to send a newsletter test
     COOP_CMS_TEST_EMAILS = (
         '"Your name" <your@email.com>',
     )
-    
+
     #tuples of templates that can be used for a newsletter.
     COOP_CMS_NEWSLETTER_TEMPLATES = (
         ('basic_newsletter.html', 'Basic'),
@@ -194,6 +194,10 @@ In the <body> of the document::
     {% block document %}...{% endblock %}
     {% coop_bar %}
 
+Just before </body> at the end of the document::
+
+    {% coop_bar_footer %}
+
 You can also put some navigations in the <body>::
 
     {% navigation_as_nested_ul %}
@@ -214,7 +218,7 @@ Don't forget to register the navigable types. In order to be accessible from the
  * Define how to get the label in navigation for a given object : use the __unicode__, use the search field or use a custom get_label method
  * If search_field is choosed, define the name of this field.
  * The search field make possible to define which field to use when the navigation tree ask for matching objects.
- 
+
  * Then Go to a Navigation object in admin, the admin page propose to configure it thanks to a tree view
  * Type some text in the text field at the top
  * The field autocomplete propose all the objects of a NavigableType matching the text you entered

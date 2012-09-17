@@ -24,7 +24,7 @@ def coop_piece_of_html(parser, token):
 
 ################################################################################
 class ArticleTitleNode(template.Node):
-    
+
     def render(self, context):
         is_edition_mode = context.get('form', None)!=None
         article = context.get('article')
@@ -37,11 +37,12 @@ class ArticleTitleNode(template.Node):
 @register.tag
 def article_title(parser, token):
     return ArticleTitleNode()
-    
+
 ################################################################################
 
+
 class CmsFormMediaNode(template.Node):
-    
+
     def render(self, context):
         form = context.get('form', None)
         if form:
@@ -50,23 +51,25 @@ class CmsFormMediaNode(template.Node):
         else:
             return ""
 
+
 @register.tag
 def cms_form_media(parser, token):
     return CmsFormMediaNode()
 
+
 ################################################################################
 
+
 class IfCmsEditionNode(template.Node):
-    
     def __init__(self, nodelist_true, nodelist_false):
         self.nodelist_true = nodelist_true
         self.nodelist_false = nodelist_false
-        
+
     def __iter__(self):
         for node in self.nodelist_true:
             yield node
         for node in self.nodelist_false:
-            yield node    
+            yield node
 
     def render(self, context):
         form = context.get('form', None)
@@ -74,6 +77,7 @@ class IfCmsEditionNode(template.Node):
             return self.nodelist_true.render(context)
         else:
             return self.nodelist_false.render(context)
+
 
 @register.tag
 def if_cms_edition(parser, token):
@@ -86,7 +90,10 @@ def if_cms_edition(parser, token):
         nodelist_false = template.NodeList()
     return IfCmsEditionNode(nodelist_true, nodelist_false)
 
+
 ################################################################################
+
+
 CMS_FORM_TEMPLATE = """
     <form id="cms_form" enctype="multipart/form-data"  method="POST" action="{{post_url}}">{% csrf_token %}
     {% include "coop_cms/_form_error.html" with errs=form.non_field_errors %}
@@ -94,11 +101,11 @@ CMS_FORM_TEMPLATE = """
 """
 
 class SafeWrapper:
-    
+
     def __init__(self, wrapped, logo_size=None):
         self._wrapped = wrapped
         self._logo_size = logo_size
-    
+
     def __getattr__(self, field):
         value = getattr(self._wrapped, field)
         if field=='logo':
@@ -112,13 +119,13 @@ class SafeWrapper:
         return mark_safe(value)
 
 class FormWrapper:
-    
+
     def __init__(self, form, the_object, logo_size=None):
         self._form = form
         self._obj = the_object
         if logo_size:
             self._form.set_logo_size(logo_size)
-    
+
     def __getitem__(self, field, logo_size=None):
         if field in self._form.fields.keys():
             t = template.Template("""
@@ -129,12 +136,12 @@ class FormWrapper:
             return getattr(self._obj, field)
 
 class CmsEditNode(template.Node):
-    
+
     def __init__(self, nodelist_content, var_name, logo_size=None):
         self.var_name = var_name
         self.nodelist_content = nodelist_content
         self._logo_size = logo_size
-        
+
     def __iter__(self):
         for node in self.nodelist_content:
             yield node
@@ -143,22 +150,22 @@ class CmsEditNode(template.Node):
         form = context.get('form', None)
         request = context.get('request')
         the_object = context.get(self.var_name)
-        
+
         #the context used for rendering the templatetag content
         inner_context = {}
         for x in context.dicts:
             inner_context.update(x)
-        
+
         #the context used for rendering the whole page
         self.post_url = the_object.get_edit_url()
         outer_context = {'post_url': self.post_url}
-        
+
         inner_context[self.var_name] = the_object
-        
+
         safe_context = inner_context.copy()
         inner_context[self.var_name] = the_object
         inner_value = u""
-             
+
         if form:
             t = template.Template(CMS_FORM_TEMPLATE)
             safe_context[self.var_name] = FormWrapper(form, the_object, logo_size=self._logo_size)

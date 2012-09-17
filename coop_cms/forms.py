@@ -59,11 +59,12 @@ class ArticleForm(floppyforms.ModelForm):
         if self.article:
             return self.article.logo_thumbnail(True, logo_size=logo_size)
 
-    class Media:
-        css = {
-            'all': ('css/colorbox.css',),
-        }
-        js = ('js/jquery.form.js', 'js/jquery.pageslide.js', 'js/jquery.colorbox-min.js', 'js/colorbox.coop.js')
+    # class Media:
+    #     css = {
+    #         'all': ('css/colorbox.css',),
+    #     }
+    #     js = ('js/jquery.form.js', 'js/jquery.pageslide.js', 'js/jquery.colorbox-min.js', 'js/colorbox.coop.js')
+
 
     def clean_title(self):
         title = self.cleaned_data['title'].strip()

@@ -1,7 +1,5 @@
 {% load i18n %}
-<script type="text/javascript">
-
-$(document).ready(function(){
+{% comment %}
 {% if editable %}
 	$("a.colorbox-form").colorboxify({
 		close_popup_and_media_slide: function() {
@@ -10,9 +8,13 @@ $(document).ready(function(){
 		}
 	})
 {% endif %}
+{% endcomment %}
 {% if edit_mode %}
+<script type="text/javascript">
+$(document).ready(function(){
+
 	$("#coop-bar a.slide").pageSlide({width:'350px', direction:'right'});
-	
+
 	var toggle_save = function() {
 	    if (!$(".show-dirty").is(":visible")) {
 			$(".show-clean").hide();
@@ -32,10 +34,10 @@ $(document).ready(function(){
 	$(".djaloha-editable").keypress(function() {
 		toggle_save();
 	});
-	
+
 	$("a.update-logo img").change(toggle_save);
 	$(".article select").change(toggle_save);
 	$(".article input").change(toggle_save);
-{% endif %}
 });
 </script>
+{% endif %}

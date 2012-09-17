@@ -112,11 +112,15 @@ def set_homepage(request, article_id):
         print "## ERR", msg
         raise
 
+from logging import getLogger
+logger = getLogger('coop')
 
 
 def view_article(request, url):
     """view the article"""
-    article = get_object_or_404(get_article_class(), slug=url) #Draft & Published
+    article = get_object_or_404(get_article_class(), slug=url)  # Draft & Published
+
+    logger.debug("coucou")
 
     if not request.user.has_perm('can_view_article', article):
         raise Http404
@@ -124,8 +128,10 @@ def view_article(request, url):
     editable = request.user.has_perm('can_edit_article', article)
 
     context_dict = {
-        'editable': editable, 'edit_mode': False, 'article': article,
-        'draft': article.publication==models.BaseArticle.DRAFT
+        'editable': editable,
+        'edit_mode': False,
+        'article': article,
+        'draft': article.publication == models.BaseArticle.DRAFT,
     }
 
     return render_to_response(
@@ -133,6 +139,7 @@ def view_article(request, url):
         context_dict,
         context_instance=RequestContext(request)
     )
+
 
 @login_required
 def edit_article(request, url):
@@ -175,9 +182,12 @@ def edit_article(request, url):
 
     context_dict = {
         'form': form,
-        'editable': True, 'edit_mode': True, 'title': article.title,
-        'draft': article.publication==models.BaseArticle.DRAFT,
-        'article': article, 'ARTICLE_PUBLISHED': models.BaseArticle.PUBLISHED
+        'editable': True,
+        'edit_mode': True,
+        'title': article.title,
+        'draft': article.publication == models.BaseArticle.DRAFT,
+        'article': article,
+        'ARTICLE_PUBLISHED': models.BaseArticle.PUBLISHED
     }
 
     return render_to_response(
@@ -185,6 +195,7 @@ def edit_article(request, url):
         context_dict,
         context_instance=RequestContext(request)
     )
+
 
 @login_required
 def cancel_edit_article(request, url):
@@ -389,12 +400,12 @@ def new_newsletter(request, newsletter_id=None):
 
     #if not request.user.has_perm(perm):
     #    raise PermissionDenied
-    
+
     if newsletter_id:
         newsletter = get_object_or_404(models.Newsletter, id=newsletter_id)
     else:
         newsletter = None
-    
+
     try:
         if request.method == "POST":
             form = forms.NewNewsletterForm(request.user, request.POST, instance=newsletter)
@@ -404,7 +415,7 @@ def new_newsletter(request, newsletter_id=None):
                 return HttpResponseRedirect(newsletter.get_edit_url())
         else:
             form = forms.NewNewsletterForm(request.user, instance=newsletter)
-    
+
         return render_to_response(
             'coop_cms/popup_new_newsletter.html',
             locals(),
@@ -775,8 +786,11 @@ def edit_newsletter(request, newsletter_id):
         form = newsletter_form_class(instance=newsletter)
 
     context_dict = {
-        'form': form, 'post_url': reverse('coop_cms_edit_newsletter', args=[newsletter.id]),
-        'editable': True, 'edit_mode': True, 'title': newsletter.subject,
+        'form': form,
+        'post_url': reverse('coop_cms_edit_newsletter', args=[newsletter.id]),
+        'editable': True,
+        'edit_mode': True,
+        'title': newsletter.subject,
         'newsletter': newsletter,
     }
 

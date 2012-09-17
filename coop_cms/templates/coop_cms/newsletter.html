@@ -9,6 +9,17 @@
 <head>
   <meta charset="utf-8">
   <title>{{newsletter.subject}}</title>
+
+{% block jquery_declaration %}
+{{ block.super }}
+{# jQuery is already loaded, add any additional JS libs here #}
+{% if_cms_edition %}{% cms_form_media %}{% endif %}
+{% endblock %}
+
+{% coop_bar_headers %}
+
+ {% comment %}
+
   {% if editable %}
     {% if_cms_edition %}
       {% cms_form_media %}
@@ -20,8 +31,9 @@
       <script type="text/javascript" src="{{STATIC_URL}}js/jquery.colorbox-min.js"></script>
       <script type="text/javascript" src="{{STATIC_URL}}js/colorbox.coop.js"></script>
     {% endif %}
-    {% coop_bar_headers %}
   {% endif %}
+
+
   {% if_cms_edition %}
   <script>
     $(function(){
@@ -34,8 +46,10 @@
     })
     </script>
   {% endif %}
+  {% endcomment %}
 </head>
 <body>
+
   {% if by_email %}
     {% block emain_only_style %}
     <style>
@@ -114,7 +128,9 @@
     {% endif %}
 
     {% if editable %}
-      {% include "coop_cms/_messages.html" %}
       {% coop_bar %}
     {% endif %}
+
+  <!-- coop_bar_footer -->
+  {% coop_bar_footer %}
 </body>
