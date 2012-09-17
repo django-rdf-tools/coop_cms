@@ -43,12 +43,12 @@ setup(
     install_requires = ['django-floppyforms==0.4.7',
                         'django-extensions==0.9',
                         'sorl-thumbnail==11.09',
-                        #'coop-colorbox==0.1.3',
-                        #'coop-bar==0.3.7',
-                        #'djaloha==0.4.0',
+                        'coop-colorbox',
+                        'coop-bar',
+                        'djaloha',
                         'django-pagination',
                         'feedparser',
-                        #'model_mommy', #---> ramène django 1.5
+                        #'model_mommy', #---> ramène django 1.5 dans ses dépendances quand installé via coop_cms
                         ],
     long_description = open('README.rst').read(),
     url = 'https://github.com/quinode/coop_cms/',
