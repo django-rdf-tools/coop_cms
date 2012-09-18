@@ -122,9 +122,6 @@ def view_article(request, url):
 
     editable = request.user.has_perm('can_edit_article', article)
 
-    if editable:
-        messages.success(request, _(u'You can directly edit this article.'))
-
     context_dict = {
         'editable': editable,
         'edit_mode': False,
@@ -184,6 +181,8 @@ def coop_bar_aloha_js(request, context):
 def edit_article(request, url):
     """edit the article"""
 
+    logger = getLogger('default')
+
     article_class = get_article_class()
     article_form_class = get_article_form()
 
@@ -192,17 +191,16 @@ def edit_article(request, url):
     if not request.user.has_perm('can_edit_article', article):
         raise PermissionDenied
 
-    from coop_bar.urls import bar
-    if "pageSlide" not in bar.get_footer(request, RequestContext(request)):
-        bar.register_footer(coop_bar_aloha_js)
-
     if request.method == "POST":
+
         form = article_form_class(request.POST, request.FILES, instance=article)
 
         forms_args = djaloha_utils.extract_forms_args(request.POST)
         djaloha_forms = djaloha_utils.make_forms(forms_args, request.POST)
 
         if form.is_valid() and all([f.is_valid() for f in djaloha_forms]):
+
+            logger.error('formulaire valide')
             article = form.save()
 
             if article.temp_logo:
@@ -220,7 +218,16 @@ def edit_article(request, url):
             messages.success(request, _(u'The article has been saved properly'))
 
             return HttpResponseRedirect(article.get_absolute_url())
+        else:
+
+            messages.error(request, _(u"An error has occured."))
+
     else:
+
+        from coop_bar.urls import bar
+        if "pageSlide" not in bar.get_footer(request, RequestContext(request)):
+            bar.register_footer(coop_bar_aloha_js)
+
         form = article_form_class(instance=article)
 
     context_dict = {
@@ -911,7 +918,7 @@ def test_newsletter(request, newsletter_id):
                 _(u"The test email has been sent to {0} addresses: {1}").format(nb_sent, u', '.join(dests)))
             return HttpResponseRedirect(newsletter.get_edit_url())
         except Exception, msg:
-            messages.error(request, _(u"An error occured : " + unicode(msg)))
+            messages.error(request, _(u"An error has occured.") + u'<br>' + unicode(msg))
             logger = getLogger('django.request')
             logger.error('Internal Server Error: %s' % request.path,
                 exc_info=sys.exc_info,

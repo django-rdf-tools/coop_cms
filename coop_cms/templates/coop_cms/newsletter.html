@@ -11,10 +11,11 @@
   <title>{{newsletter.subject}}</title>
 
 {% block jquery_declaration %}
-{{ block.super }}
-{# jQuery is already loaded, add any additional JS libs here #}
+<script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}js/jquery-1.7.1.min.js"></script>
+{# You can add any additional JS libs here #}
 {% if_cms_edition %}{% cms_form_media %}{% endif %}
 {% endblock %}
+
 
 {% coop_bar_headers %}
 </head>
