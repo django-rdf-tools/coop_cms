@@ -12,7 +12,7 @@ from django.core.exceptions import ValidationError, PermissionDenied
 from django.template.loader import select_template
 from django.db.models.aggregates import Max
 from coop_cms import forms
-from django.contrib.messages.api import success as success_message
+from django.contrib import messages
 from coop_cms import models
 from django.contrib.auth.decorators import login_required
 from coop_cms.settings import get_article_class, get_article_form, get_newsletter_form, get_navTree_class
@@ -112,20 +112,18 @@ def set_homepage(request, article_id):
         print "## ERR", msg
         raise
 
-from logging import getLogger
-logger = getLogger('coop')
-
 
 def view_article(request, url):
     """view the article"""
     article = get_object_or_404(get_article_class(), slug=url)  # Draft & Published
 
-    logger.debug("coucou")
-
     if not request.user.has_perm('can_view_article', article):
         raise Http404
 
     editable = request.user.has_perm('can_edit_article', article)
+
+    if editable:
+        messages.success(request, _(u'You can directly edit this article.'))
 
     context_dict = {
         'editable': editable,
@@ -143,6 +141,7 @@ def view_article(request, url):
 
 def coop_bar_aloha_js(request, context):
     script = '''
+    /* ---- DEBUG : from coop_bar_aloha_js function in views.py ---- */
     $("#coop-bar a.slide").pageSlide({width:'350px', direction:'right'});
     var toggle_save = function() {
         if (!$(".show-dirty").is(":visible")) {
@@ -162,10 +161,10 @@ def coop_bar_aloha_js(request, context):
     $(".show-dirty").hide();
     Aloha.bind('aloha-editable-deactivated', function(event, eventProperties){
         toggle_save();
-    });
+        });
     $(".djaloha-editable").keypress(function() {
         toggle_save();
-    });
+        });
 
     $("a.update-logo img").change(toggle_save);
     $(".article select").change(toggle_save);
@@ -176,7 +175,7 @@ def coop_bar_aloha_js(request, context):
     $('#coopbar_save').click(function(event) {
         $("form#cms_form").submit();
         event.preventDefault();
-    });
+        });
     '''
     return script
 
@@ -194,7 +193,8 @@ def edit_article(request, url):
         raise PermissionDenied
 
     from coop_bar.urls import bar
-    bar.register_footer(coop_bar_aloha_js)
+    if "pageSlide" not in bar.get_footer(request, RequestContext(request)):
+        bar.register_footer(coop_bar_aloha_js)
 
     if request.method == "POST":
         form = article_form_class(request.POST, request.FILES, instance=article)
@@ -217,7 +217,7 @@ def edit_article(request, url):
             if djaloha_forms:
                 [f.save() for f in djaloha_forms]
 
-            success_message(request, _(u'The article has been saved properly'))
+            messages.success(request, _(u'The article has been saved properly'))
 
             return HttpResponseRedirect(article.get_absolute_url())
     else:
@@ -391,6 +391,7 @@ def change_template(request, article_id):
         context_instance=RequestContext(request)
     )
 
+
 @login_required
 @popup_redirect
 def article_settings(request, article_id):
@@ -409,6 +410,7 @@ def article_settings(request, article_id):
         locals(),
         context_instance=RequestContext(request)
     )
+
 
 @login_required
 @popup_redirect
@@ -435,6 +437,7 @@ def new_article(request):
         locals(),
         context_instance=RequestContext(request)
     )
+
 
 @login_required
 @popup_redirect
@@ -495,6 +498,7 @@ def update_logo(request, article_id):
         locals(),
         context_instance=RequestContext(request)
     )
+
 
 @login_required
 def download_doc(request, doc_id):
@@ -795,7 +799,7 @@ def process_nav_edition(request, tree_id):
             response = {'status': 'error', 'message': u' - '.join(ex.messages)}
         except Exception, msg:
             print msg
-            response = {'status': 'error', 'message': u"An error occured : %s" % msg }
+            response = {'status': 'error', 'message': u"An error occured : %s" % msg}
         # except:
         #     response = {'status': 'error', 'message': u"An error occured"}
 
@@ -813,7 +817,8 @@ def edit_newsletter(request, newsletter_id):
         raise PermissionDenied
 
     from coop_bar.urls import bar
-    bar.register_footer(coop_bar_aloha_js)
+    if "pageSlide" not in bar.get_footer(request, RequestContext(request)):
+        bar.register_footer(coop_bar_aloha_js)
 
     if request.method == "POST":
         form = newsletter_form_class(request.POST, instance=newsletter)
@@ -827,7 +832,7 @@ def edit_newsletter(request, newsletter_id):
             if djaloha_forms:
                 [f.save() for f in djaloha_forms]
 
-            success_message(request, _(u'The newsletter has been saved properly'))
+            messages.success(request, _(u'The newsletter has been saved properly'))
 
             return HttpResponseRedirect(reverse('coop_cms_edit_newsletter', args=[newsletter.id]))
     else:
@@ -902,12 +907,11 @@ def test_newsletter(request, newsletter_id):
         try:
             nb_sent = send_newsletter(newsletter, dests)
 
-            messages.add_message(request, messages.SUCCESS,
+            messages.success(request,
                 _(u"The test email has been sent to {0} addresses: {1}").format(nb_sent, u', '.join(dests)))
             return HttpResponseRedirect(newsletter.get_edit_url())
-
         except Exception, msg:
-            messages.add_message(request, messages.ERROR, _(u"An error occured! Please contact your support."))
+            messages.error(request, _(u"An error occured : " + unicode(msg)))
             logger = getLogger('django.request')
             logger.error('Internal Server Error: %s' % request.path,
                 exc_info=sys.exc_info,
@@ -916,7 +920,6 @@ def test_newsletter(request, newsletter_id):
                     'request': request
                 }
             )
-
             return HttpResponseRedirect(newsletter.get_edit_url())
 
     return render_to_response(

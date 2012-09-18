@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coop_cms\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-17 14:23+0200\n"
-"PO-Revision-Date: 2012-09-15 11:42+0100\n"
+"POT-Creation-Date: 2012-09-18 21:07+0200\n"
+"PO-Revision-Date: 2012-09-18 21:08+0100\n"
 "Last-Translator: Dominique Guardiola <dguardiola@quinode.fr>\n"
 "Language-Team: Apidev, Quinode <contact@quinode.fr>\n"
 "Language: fr_FR\n"
@@ -16,6 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n>1;\n"
+"X-Generator: Poedit 1.5.3\n"
 
 #: admin.py:35
 msgid "All"
@@ -89,7 +90,7 @@ msgstr "Définir la page d'accueil"
 msgid "Article settings"
 msgstr "Réglages article"
 
-#: coop_bar_cfg.py:129 coop_bar_cfg.py:212
+#: coop_bar_cfg.py:129 coop_bar_cfg.py:203
 msgid "Save"
 msgstr "Enregistrer"
 
@@ -97,11 +98,11 @@ msgstr "Enregistrer"
 msgid "View"
 msgstr "Visualiser"
 
-#: coop_bar_cfg.py:145 coop_bar_cfg.py:204
+#: coop_bar_cfg.py:145 coop_bar_cfg.py:195
 msgid "Cancel"
 msgstr "Annuler"
 
-#: coop_bar_cfg.py:153 coop_bar_cfg.py:197
+#: coop_bar_cfg.py:153 coop_bar_cfg.py:188
 msgid "Edit"
 msgstr "Editer"
 
@@ -114,27 +115,27 @@ msgstr "Brouillon"
 msgid "Published"
 msgstr "Publié"
 
-#: coop_bar_cfg.py:181
+#: coop_bar_cfg.py:172
 msgid "Log out"
 msgstr "Déconnexion"
 
-#: coop_bar_cfg.py:189
+#: coop_bar_cfg.py:180
 msgid "Create newsletter"
 msgstr "Créer une lettre d'info"
 
-#: coop_bar_cfg.py:221
+#: coop_bar_cfg.py:212
 msgid "Newsletter settings"
 msgstr "Réglages lettre"
 
-#: coop_bar_cfg.py:231
+#: coop_bar_cfg.py:222
 msgid "Newsletter template"
 msgstr "Modèle Lettre"
 
-#: coop_bar_cfg.py:242
+#: coop_bar_cfg.py:233
 msgid "Send test"
 msgstr "Test envoi"
 
-#: coop_bar_cfg.py:251
+#: coop_bar_cfg.py:242
 msgid "Schedule sending"
 msgstr "Programmer"
 
@@ -429,77 +430,86 @@ msgstr "Envois de lettre d'informations"
 msgid "Do you want to use this article as homepage?"
 msgstr "Voulez-vous utiliser cet article comme page d'accueil ?"
 
-#: views.py:170
+#: views.py:126
+msgid "You can directly edit this article."
+msgstr "Vous pouvez directement modifier cet article."
+
+#: views.py:151
+msgid "Your modifications are not saved and will be lost. Continue?"
+msgstr ""
+"Vos modifications n'ont pas été enregistrées et seront perdues. Continuer?"
+
+#: views.py:220
 msgid "The article has been saved properly"
 msgstr "L’article a été enregistré avec succès"
 
-#: views.py:225
+#: views.py:280
 msgid "Do you want to publish this article?"
 msgstr "Voulez-vous publier cet article ?"
 
-#: views.py:225
+#: views.py:280
 msgid "Make it draft?"
 msgstr "Voulez-vous passez en mode brouillon?"
 
-#: views.py:500
+#: views.py:560
 msgid "The node '{0}' has been renamed into '{1}'."
 msgstr "L’élément '{0}' a été renommé en '{1}'."
 
-#: views.py:514
+#: views.py:574
 msgid "The node has been removed."
 msgstr "L’élément a été supprimé"
 
-#: views.py:516
+#: views.py:576
 msgid "{0} nodes has been removed."
 msgstr "{0} éléments ont été supprimés"
 
-#: views.py:611
+#: views.py:671
 msgid "The node '{0}' has been moved."
 msgstr "L'élément '{0}' a été déplacé"
 
-#: views.py:628
+#: views.py:688
 msgid "Please choose an existing {0}"
 msgstr "Veuillez choisir un {0} existant"
 
-#: views.py:632
+#: views.py:692
 msgid "{0} {1} not found"
 msgstr "{0} {1} est introuvable"
 
-#: views.py:636
+#: views.py:696
 msgid "The {0} is already in navigation"
 msgstr "Le {0} est déjà dans l’arborescence"
 
-#: views.py:648
+#: views.py:708
 msgid "'{0}' has added to the navigation tree."
 msgstr "'{0}' ajouté à l’arborescence."
 
-#: views.py:698
+#: views.py:758
 msgid "The node is now visible."
 msgstr "l’élément est à présent visible dans l’arborescence."
 
-#: views.py:699 templates/coop_cms/navtree_content/default.html:4
+#: views.py:759 templates/coop_cms/navtree_content/default.html:4
 msgid "Hide node in navigation"
 msgstr "Masquer cet élément"
 
-#: views.py:702
+#: views.py:762
 msgid "The node is now hidden."
 msgstr "Cet élément est maintenant masqué."
 
-#: views.py:703 templates/coop_cms/navtree_content/default.html:6
+#: views.py:763 templates/coop_cms/navtree_content/default.html:6
 msgid "Show node in navigation"
 msgstr "Rendre visible cet élément"
 
-#: views.py:771
+#: views.py:835
 msgid "The newsletter has been saved properly"
 msgstr "La lettre d'information a été enregistré avec succès"
 
-#: views.py:844
+#: views.py:911
 msgid "The test email has been sent to {0} addresses: {1}"
 msgstr "L'email de test a été envoyé à {0} adresses: {1}"
 
-#: views.py:848
-msgid "An error occured! Please contact your support."
-msgstr "Une erreur est intervenue, contactez le support technique."
+#: views.py:914
+msgid "An error occured : "
+msgstr "Une erreur est survenue : "
 
 #: apps/demo_cms/templates/404.html:4 apps/demo_cms/templates/404.html.py:7
 msgid "Page not found"
@@ -541,7 +551,7 @@ msgstr "Veuillez réessayer dans un instant ou retournez à la "
 msgid "homepage"
 msgstr "page d'accueil"
 
-#: apps/demo_cms/templates/base.html:16
+#: apps/demo_cms/templates/base.html:17
 msgid "Homepage"
 msgstr "Accueil"
 
@@ -679,15 +689,6 @@ msgid_plural "Please correct the errors below."
 msgstr[0] "Veuillez corriger l'erreur ci-dessous"
 msgstr[1] "Veuillez corriger les erreurs ci-dessous"
 
-#: templates/coop_cms/_coop_bar_js.html:23
-msgid "Your modifications are not saved and will be lost. Continue?"
-msgstr ""
-"Vos modifications n'ont pas été enregistrées et seront perdues. Continuer?"
-
-#: templates/coop_cms/_messages.html:27
-msgid "close"
-msgstr "fermer"
-
 #: templates/coop_cms/_newsletter_articles.html:9
 #: templates/coop_cms/_newsletter_categories.html:15
 msgid "Read more"
@@ -702,11 +703,11 @@ msgstr ""
 "%(when)s\n"
 "            "
 
-#: templates/coop_cms/newsletter.html:92
+#: templates/coop_cms/newsletter.html:76
 msgid "If you can't view this email, "
 msgstr "SI vous ne pouvez lire cet e-mail"
 
-#: templates/coop_cms/newsletter.html:94
+#: templates/coop_cms/newsletter.html:78
 msgid "read the online version"
 msgstr "lire la version en ligne"
 
@@ -855,6 +856,12 @@ msgstr "navigation_children requiert un objet en argument"
 msgid "navigation_siblings requires object as argument"
 msgstr "navigation_siblings requiert un objet en argument"
 
+#~ msgid "An error occured! Please contact your support."
+#~ msgstr "Une erreur est intervenue, contactez le support technique."
+
+#~ msgid "close"
+#~ msgstr "fermer"
+
 #~ msgid "Node content loaded."
 #~ msgstr "Contenu du noeud chargé."
 
@@ -863,9 +870,6 @@ msgstr "navigation_siblings requiert un objet en argument"
 
 #~ msgid "You are not allowed to add a node"
 #~ msgstr "Vous n'êtes pas autorisé à ajouter un élément"
-
-#~ msgid "An error occured"
-#~ msgstr "Une erreur est survenue"
 
 #~ msgid "Section"
 #~ msgstr "Catégorie"

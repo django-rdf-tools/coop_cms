@@ -246,12 +246,15 @@ def schedule_newsletter(request, context):
 def load_commands(coop_bar):
     coop_bar.register([
         [django_admin, django_admin_edit_article, django_admin_navtree, view_all_articles],
-        [cms_new_newsletter, edit_newsletter, cancel_edit_newsletter, save_newsletter,
-            change_newsletter_settings,
-            schedule_newsletter, test_newsletter],
+
         [cms_edit, cms_view, cms_save, cms_cancel],
         [cms_new_article, cms_article_settings, cms_set_homepage],
         [cms_publish],
+
+        [cms_new_newsletter, edit_newsletter, cancel_edit_newsletter, save_newsletter,
+            change_newsletter_settings,
+            schedule_newsletter, test_newsletter],
+
         [cms_media_library, cms_upload_image, cms_upload_doc],
         [log_out]
     ])
