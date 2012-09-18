@@ -260,7 +260,7 @@ def load_commands(coop_bar):
     ])
 
     #def js_code(request, context):
-    #    return """<script>
+    #    return """<script type="text/javascript">
     #    $(function() {
     #        $("a.modal").each(function(idx, elt) {
     #            $(elt).modal({

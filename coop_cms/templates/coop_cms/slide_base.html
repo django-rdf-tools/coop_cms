@@ -3,7 +3,7 @@
   <head>
 
     <link rel="stylesheet" type="text/css" href="/static/css/mediatheque.css">
-    <script>
+    <script type="text/javascript">
     $(function() {
       $('.pagination a').live('click', function() {
         e.preventDefault();
@@ -18,7 +18,7 @@
       var active_link = function(media_type) {
         $(".media-selector a." + media_type + "-sel").addClass('active');
       }
-      
+
       $('.media-selector a').click( function(e) {
         e.preventDefault();
         e.stopPropagation();

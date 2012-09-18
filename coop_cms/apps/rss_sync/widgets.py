@@ -14,7 +14,7 @@ def get_button_code(label, url, is_default=False):
     html = u"""&nbsp;&nbsp;<button class="btn btn-primary cust-btn{2}" onclick="window.location=\'{1}\'">{0}</button>""".format(
         label, url, css_class)
     #javascript code for moving the button to the submit-row at the bottom of the page
-    html += u"<script>django.jQuery(function() {django.jQuery('.cust-btn').appendTo('.submit-row')});</script>"
+    html += u"<script type="text/javascript">django.jQuery(function() {django.jQuery('.cust-btn').appendTo('.submit-row')});</script>"
     return html
 
 
