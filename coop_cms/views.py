@@ -812,6 +812,9 @@ def edit_newsletter(request, newsletter_id):
     if not request.user.has_perm('can_edit_newsletter', newsletter):
         raise PermissionDenied
 
+    from coop_bar.urls import bar
+    bar.register_footer(coop_bar_aloha_js)
+
     if request.method == "POST":
         form = newsletter_form_class(request.POST, instance=newsletter)
 
