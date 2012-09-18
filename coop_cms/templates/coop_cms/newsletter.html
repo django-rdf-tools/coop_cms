@@ -17,42 +17,12 @@
 {% endblock %}
 
 {% coop_bar_headers %}
-
- {% comment %}
-
-  {% if editable %}
-    {% if_cms_edition %}
-      {% cms_form_media %}
-    {% else %}
-      <link rel="stylesheet" href="{{STATIC_URL}}css/colorbox.css" type="text/css" />
-      <script type="text/javascript" src="{{STATIC_URL}}js/jquery-1.7.1.min.js"></script>
-      <script type="text/javascript" src="{{STATIC_URL}}js/jquery.form.js"></script>
-      <script type="text/javascript" src="{{STATIC_URL}}js/jquery.pageslide.js"></script>
-      <script type="text/javascript" src="{{STATIC_URL}}js/jquery.colorbox-min.js"></script>
-      <script type="text/javascript" src="{{STATIC_URL}}js/colorbox.coop.js"></script>
-    {% endif %}
-  {% endif %}
-
-
-  {% if_cms_edition %}
-  <script>
-    $(function(){
-        //move the form submit to the coop_bar
-        $("form#cms_form input[type='submit']").hide();
-        $('.post-form').click(function(event) {
-            $("form#cms_form").submit();
-            event.preventDefault();
-        });
-    })
-    </script>
-  {% endif %}
-  {% endcomment %}
 </head>
 <body>
 
   {% if by_email %}
     {% block emain_only_style %}
-    <style>
+    <style type="text/css">
     .top-header {
         top: 0;
     }
@@ -75,7 +45,7 @@
     {% endblock %}
   {% endif %}
   {% block style %}
-  <style>
+  <style type="text/css">
     body {
         background: #eee;
     }
@@ -127,9 +97,7 @@
     {% endblock %}
     {% endif %}
 
-    {% if editable %}
-      {% coop_bar %}
-    {% endif %}
+    {% coop_bar %}
 
   <!-- coop_bar_footer -->
   {% coop_bar_footer %}

@@ -167,15 +167,6 @@ def cms_publish(request, context):
                 classes=['colorbox-form', 'icon'])
 
 
-# def cms_extra_js(request, context):
-#     try:
-#         # editable = context['editable']
-#         t = get_template("coop_cms/_coop_bar_js.html")
-#         return t.render(context)
-#     except KeyError:
-#         return None
-
-
 def log_out(request, context):
     if request and request.user.is_authenticated():
         return make_link(reverse("django.contrib.auth.views.logout"), _(u'Log out'), 'fugue/control-power.png',
@@ -264,8 +255,6 @@ def load_commands(coop_bar):
         [cms_media_library, cms_upload_image, cms_upload_doc],
         [log_out]
     ])
-
-    #coop_bar.register_header(cms_extra_js)
 
     #def js_code(request, context):
     #    return """<script>

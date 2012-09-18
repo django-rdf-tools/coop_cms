@@ -1,58 +1,25 @@
 {% extends "coop_cms/base.html" %}
 {% load i18n djaloha_utils coop_edition %}
 
+
 {% block meta_title %}
     {% article_title %}
 {% endblock %}
 
+
 {% block jquery_declaration %}
 {{ block.super }}
-{# jQuery is already loaded, add any additional JS libs here #}
+{# jQuery is already loaded, you can add any additional JS libs here #}
 {% if_cms_edition %}{% cms_form_media %}{% endif %}
 {% endblock %}
 
-{% comment %}
-
-    {% else %}
-        <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}js/jquery-1.7.1.min.js"></script>
-        {% comment %}
-        {% if request.user.is_authenticated %}
-            <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}js/jquery.colorbox-min.js"></script>
-            <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}js/jquery.form.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/colorbox.coop.js"></script>
-            <link rel="stylesheet" href="{{ STATIC_URL }}css/colorbox.css" type="text/css" />
-        {% endif %}
-
-
-{% endcomment %}
-
 
 {% block document %}
-
     {% block article %}
         {% include "coop_cms/_article_form.html" %}
-
         {% if_cms_edition %}
-        {% include "coop_cms/_article_publication.html" %}
+            {% include "coop_cms/_article_publication.html" %}
         {% endif %}
-
     {% endblock %}
 {% endblock %}
 
-
-{% comment %}
-{% block jquery_footer %}
-    {% if_cms_edition %}
-        <script>
-        $(function(){
-            //move the form submit to the coop_bar
-            $("form#cms_form input[type='submit']").hide();
-            $('#coopbar_save').click(function(event) {
-                $("form#cms_form").submit();
-                event.preventDefault();
-            });
-        })
-        </script>
-    {% endif %}
-{% endblock %}
-{% endcomment %}

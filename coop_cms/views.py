@@ -141,6 +141,46 @@ def view_article(request, url):
     )
 
 
+def coop_bar_aloha_js(request, context):
+    script = '''
+    $("#coop-bar a.slide").pageSlide({width:'350px', direction:'right'});
+    var toggle_save = function() {
+        if (!$(".show-dirty").is(":visible")) {
+            $(".show-clean").hide();
+            $(".show-dirty").show();
+            $("a.alert_on_click").bind('click', function(event) {
+                return confirm("''' + _(u'Your modifications are not saved and will be lost. Continue?') + u'''");
+                });
+            };
+        '''
+    if 'draft' in context:
+        script += u'''
+        $(".publish").hide();
+        '''
+    script += u'''
+        }
+    $(".show-dirty").hide();
+    Aloha.bind('aloha-editable-deactivated', function(event, eventProperties){
+        toggle_save();
+    });
+    $(".djaloha-editable").keypress(function() {
+        toggle_save();
+    });
+
+    $("a.update-logo img").change(toggle_save);
+    $(".article select").change(toggle_save);
+    $(".article input").change(toggle_save);
+
+    //move the form submit to the coop_bar
+    $("form#cms_form input[type='submit']").hide();
+    $('#coopbar_save').click(function(event) {
+        $("form#cms_form").submit();
+        event.preventDefault();
+    });
+    '''
+    return script
+
+
 @login_required
 def edit_article(request, url):
     """edit the article"""
@@ -152,6 +192,9 @@ def edit_article(request, url):
 
     if not request.user.has_perm('can_edit_article', article):
         raise PermissionDenied
+
+    from coop_bar.urls import bar
+    bar.register_footer(coop_bar_aloha_js)
 
     if request.method == "POST":
         form = article_form_class(request.POST, request.FILES, instance=article)
@@ -206,6 +249,7 @@ def cancel_edit_article(request, url):
         article.save()
     return HttpResponseRedirect(article.get_absolute_url())
 
+
 @login_required
 @popup_redirect
 def publish_article(request, url):
@@ -242,12 +286,13 @@ def publish_article(request, url):
         context_instance=RequestContext(request)
     )
 
+
 @login_required
 def show_media(request, media_type):
     is_ajax = request.GET.get('page', 0)
 
     if request.session.get("coop_cms_media_doc", False):
-        media_type = 'document' #force the doc
+        media_type = 'document'  # force the doc
         del request.session["coop_cms_media_doc"]
 
     if media_type == 'image':
