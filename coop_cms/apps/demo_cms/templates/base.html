@@ -17,7 +17,6 @@
     <h1><a href="/" title="{% trans "Homepage" %}">coop_cms démo</a></h1>
 </div>
 <div id="main">
-  {% include "coop_cms/_messages.html "%}
   {% block navigation %}
   <ul id="nav">
     {% navigation_as_nested_ul li_template="dropdown_li.html" ul_template="dropdown_ul.html" li_args="dropdown_li_class.html" %}
