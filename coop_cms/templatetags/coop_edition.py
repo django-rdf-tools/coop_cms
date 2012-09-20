@@ -140,8 +140,8 @@ class CmsEditNode(template.Node):
         self.var_name = var_name
         self.nodelist_content = nodelist_content
         self._logo_size = logo_size
-        from logging import getLogger
-        self.log = getLogger('tartiflette')
+        #from logging import getLogger
+        #self.log = getLogger('tartiflette')
 
     def __iter__(self):
         for node in self.nodelist_content:
@@ -179,9 +179,9 @@ class CmsEditNode(template.Node):
             if isinstance(node, template.VariableNode) or isinstance(node, template.TextNode):
                 c = node.render(template.Context(safe_context))
             else:
-                self.log.debug(str(type(node)))
+                #self.log.debug(str(type(node)))
                 c = node.render(template.Context(inner_context))
-                self.log.debug('render = ' + str(c))
+                #self.log.debug(u'render = ' + unicode(c))
             inner_value += c
         outer_context['inner'] = mark_safe(inner_value) if form else inner_value
         return t.render(template.Context(outer_context))
