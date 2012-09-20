@@ -136,11 +136,12 @@ class FormWrapper:
             return getattr(self._obj, field)
 
 class CmsEditNode(template.Node):
-
     def __init__(self, nodelist_content, var_name, logo_size=None):
         self.var_name = var_name
         self.nodelist_content = nodelist_content
         self._logo_size = logo_size
+        from logging import getLogger
+        self.log = getLogger('tartiflette')
 
     def __iter__(self):
         for node in self.nodelist_content:
@@ -160,10 +161,10 @@ class CmsEditNode(template.Node):
         self.post_url = the_object.get_edit_url()
         outer_context = {'post_url': self.post_url}
 
-        inner_context[self.var_name] = the_object
+        inner_context[self.var_name] = the_object  # ???
 
         safe_context = inner_context.copy()
-        inner_context[self.var_name] = the_object
+        inner_context[self.var_name] = the_object  # ????????
         inner_value = u""
 
         if form:
@@ -178,10 +179,13 @@ class CmsEditNode(template.Node):
             if isinstance(node, template.VariableNode) or isinstance(node, template.TextNode):
                 c = node.render(template.Context(safe_context))
             else:
+                self.log.debug(str(type(node)))
                 c = node.render(template.Context(inner_context))
+                self.log.debug('render = ' + str(c))
             inner_value += c
         outer_context['inner'] = mark_safe(inner_value) if form else inner_value
         return t.render(template.Context(outer_context))
+
 
 @register.tag
 def cms_edit(parser, token):
