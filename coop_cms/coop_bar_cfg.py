@@ -54,19 +54,19 @@ def django_admin_edit_article(request, context):
             classes=['icon', 'alert_on_click'])
 
 
-def django_admin_navtree(request, context):
-    if request and request.user.is_staff:
-        coop_cms_navtrees = context.get('coop_cms_navtrees', None)
-        if coop_cms_navtrees:
-            if len(coop_cms_navtrees) == 1:
-                tree = coop_cms_navtrees[0]
-                url = reverse('admin:coop_cms_navtree_change', args=[tree.id])
-                label = _(u'Navigation tree')
-            else:
-                url = reverse('admin:coop_cms_navtree_changelist')
-                label = _(u'Navigation trees')
-            return make_link(url, label, 'fugue/leaf-plant.png',
-                classes=['icon', 'alert_on_click'])
+# def django_admin_navtree(request, context):
+#     if request and request.user.is_staff:
+#         coop_cms_navtrees = context.get('coop_cms_navtrees', None)
+#         if coop_cms_navtrees:
+#             if len(coop_cms_navtrees) == 1:
+#                 tree = coop_cms_navtrees[0]
+#                 url = reverse('admin:coop_cms_navtree_change', args=[tree.id])
+#                 label = _(u'Navigation tree')
+#             else:
+#                 url = reverse('admin:coop_cms_navtree_changelist')
+#                 label = _(u'Navigation trees')
+#             return make_link(url, label, 'fugue/leaf-plant.png',
+#                 classes=['icon', 'alert_on_click'])
 
 
 def view_all_articles(request, context):
@@ -245,7 +245,7 @@ def schedule_newsletter(request, context):
 
 def load_commands(coop_bar):
     coop_bar.register([
-        [django_admin, django_admin_edit_article, django_admin_navtree, view_all_articles],
+        [django_admin, django_admin_edit_article, view_all_articles],  # django_admin_navtree
 
         [cms_edit, cms_view, cms_save, cms_cancel],
         [cms_new_article, cms_article_settings, cms_set_homepage],
