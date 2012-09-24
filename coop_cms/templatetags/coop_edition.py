@@ -141,15 +141,17 @@ class CmsEditNode(template.Node):
         self.nodelist_content = nodelist_content
         self._logo_size = logo_size
         #from logging import getLogger
-        #self.log = getLogger('tartiflette')
+        #self.log = getLogger('coop_cms_debug')
 
     def __iter__(self):
         for node in self.nodelist_content:
             yield node
 
     def render(self, context):
+
         form = context.get('form', None)
         request = context.get('request')
+        #self.log.debug('coop_edition.py:153 - the_object = ' + str(self.var_name))
         the_object = context.get(self.var_name)
 
         #the context used for rendering the templatetag content
@@ -174,7 +176,9 @@ class CmsEditNode(template.Node):
             #outer_context['inner'] = self.nodelist_content.render(template.Context(inner_context))
         else:
             t = template.Template("{{inner|safe}}")
+
             safe_context[self.var_name] = SafeWrapper(the_object, logo_size=self._logo_size)
+
         for node in self.nodelist_content:
             if isinstance(node, template.VariableNode) or isinstance(node, template.TextNode):
                 c = node.render(template.Context(safe_context))

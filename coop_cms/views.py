@@ -137,43 +137,45 @@ def view_article(request, url):
 
 
 def coop_bar_aloha_js(request, context):
-    script = '''
-    /* ---- DEBUG : from coop_bar_aloha_js function in views.py ---- */
-    $("#coop-bar a.slide").pageSlide({width:'350px', direction:'right'});
-    var toggle_save = function() {
-        if (!$(".show-dirty").is(":visible")) {
-            $(".show-clean").hide();
-            $(".show-dirty").show();
-            $("a.alert_on_click").bind('click', function(event) {
-                return confirm("''' + _(u'Your modifications are not saved and will be lost. Continue?') + u'''");
-                });
-            };
-        '''
-    if 'draft' in context:
+    script = u""
+    if 'edit_mode' in context:
+        script = u'''
+        /* ---- DEBUG : from coop_bar_aloha_js function in views.py ---- */
+        $("#coop-bar a.slide").pageSlide({width:'350px', direction:'right'});
+        var toggle_save = function() {
+            if (!$(".show-dirty").is(":visible")) {
+                $(".show-clean").hide();
+                $(".show-dirty").show();
+                $("a.alert_on_click").bind('click', function(event) {
+                    return confirm("''' + _(u'Your modifications are not saved and will be lost. Continue?') + u'''");
+                    });
+                };
+            '''
+        if 'draft' in context:
+            script += u'''
+            $(".publish").hide();
+            '''
         script += u'''
-        $(".publish").hide();
+            }
+        $(".show-dirty").hide();
+        Aloha.bind('aloha-editable-deactivated', function(event, eventProperties){
+            toggle_save();
+            });
+        $(".djaloha-editable").keypress(function() {
+            toggle_save();
+            });
+
+        $("a.update-logo img").change(toggle_save);
+        $(".article select").change(toggle_save);
+        $(".article input").change(toggle_save);
+
+        //move the form submit to the coop_bar
+        $("form#cms_form input[type='submit']").hide();
+        $('#coopbar_save').click(function(event) {
+            $("form#cms_form").submit();
+            event.preventDefault();
+            });
         '''
-    script += u'''
-        }
-    $(".show-dirty").hide();
-    Aloha.bind('aloha-editable-deactivated', function(event, eventProperties){
-        toggle_save();
-        });
-    $(".djaloha-editable").keypress(function() {
-        toggle_save();
-        });
-
-    $("a.update-logo img").change(toggle_save);
-    $(".article select").change(toggle_save);
-    $(".article input").change(toggle_save);
-
-    //move the form submit to the coop_bar
-    $("form#cms_form input[type='submit']").hide();
-    $('#coopbar_save').click(function(event) {
-        $("form#cms_form").submit();
-        event.preventDefault();
-        });
-    '''
     return script
 
 

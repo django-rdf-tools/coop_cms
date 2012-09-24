@@ -15,6 +15,8 @@ def can_do(perm, object_names):
             for object_name in object_names:
                 object = context.get(object_name)
                 if object and request and request.user.has_perm(perm + "_" + object_name, object):
+                    # du coup la methode ou l'attribut sur le modele doit obligatoirement
+                    # s'appeller "nom-de-la-permission_nom-du-modele"
                     yes_we_can = func(request, context)
                     if yes_we_can:
                         return yes_we_can
@@ -25,7 +27,7 @@ def can_do(perm, object_names):
 can_edit_article = can_do('can_edit', ['article'])
 can_publish_article = can_do('can_publish', ['article'])
 can_edit_newsletter = can_do('can_edit', ['newsletter'])
-can_edit = can_do('can_edit', ['article', 'newsletter'])
+can_edit = can_do('can_edit', ['article', 'newsletter'])  # pour activer le lien mediathèque
 
 
 def can_add_article(func):
@@ -244,20 +246,25 @@ def schedule_newsletter(request, context):
 
 
 def load_commands(coop_bar):
-    coop_bar.register([
-        [django_admin, django_admin_edit_article, view_all_articles],  # django_admin_navtree
+    print '**** loading default coop-cms toolbar links ****'
+    try:
+        coop_bar.register([
+            [django_admin, django_admin_edit_article, view_all_articles],  # django_admin_navtree
 
-        [cms_edit, cms_view, cms_save, cms_cancel],
-        [cms_new_article, cms_article_settings, cms_set_homepage],
-        [cms_publish],
+            [cms_edit, cms_view, cms_save, cms_cancel],
+            [cms_new_article, cms_article_settings, cms_set_homepage],
+            [cms_publish],
 
-        [cms_new_newsletter, edit_newsletter, cancel_edit_newsletter, save_newsletter,
-            change_newsletter_settings,
-            schedule_newsletter, test_newsletter],
+            [cms_new_newsletter, edit_newsletter, cancel_edit_newsletter, save_newsletter,
+                change_newsletter_settings,
+                schedule_newsletter, test_newsletter],
 
-        [cms_media_library, cms_upload_image, cms_upload_doc],
-        [log_out]
-    ])
+            [cms_media_library, cms_upload_image, cms_upload_doc],
+            [log_out]
+        ])
+        return True
+    except:
+        return False
 
     #def js_code(request, context):
     #    return """<script type="text/javascript">
