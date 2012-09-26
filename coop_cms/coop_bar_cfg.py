@@ -43,7 +43,7 @@ def can_add_article(func):
 
 def django_admin(request, context):
     if request and request.user.is_staff:
-        return make_link(reverse("admin:index"), _(u'Administration'), 'fugue/tables.png',
+        return make_link(reverse("admin:index"), _(u'Administration'), 'fugue/application-form.png',
             classes=['icon', 'alert_on_click'])
 
 
@@ -52,7 +52,7 @@ def django_admin_edit_article(request, context):
         article_class = get_article_class()
         article = context['article']
         view_name = 'admin:%s_%s_change' % (article_class._meta.app_label,  article_class._meta.module_name)
-        return make_link(reverse(view_name, args=[article.id]), _(u'Article admin'), 'fugue/table.png',
+        return make_link(reverse(view_name, args=[article.id]), _(u'Article admin'), 'fugue/application-form.png',
             classes=['icon', 'alert_on_click'])
 
 
@@ -128,7 +128,7 @@ def cms_article_settings(request, context):
 def cms_save(request, context):
     if context.get('edit_mode'):
         #No link, will be managed by catching the js click event
-        return make_link('', _(u'Save'), 'fugue/disk-black.png', id="coopbar_save",
+        return make_link('', _(u'Save'), 'fugue/tick.png', id="coopbar_save",
             classes=['show-dirty', 'icon'])
 
 
@@ -202,7 +202,7 @@ def save_newsletter(request, context):
     # newsletter = context.get('newsletter')
     post_url = context.get('post_url')
     if context.get('edit_mode') and post_url:
-        return make_link(post_url, _(u'Save'), 'fugue/disk-black.png',
+        return make_link(post_url, _(u'Save'), 'fugue/tick.png',
             classes=['icon', 'post-form'])
 
 
