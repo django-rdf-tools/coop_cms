@@ -4,6 +4,11 @@
 	height: 100%;
 }
 
+#media_slide_content{
+	overflow-y: auto;
+	overflow-x: none;
+	}
+
 .library {
 	margin: auto;
 	height: 100%;
