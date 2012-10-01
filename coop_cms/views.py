@@ -141,7 +141,10 @@ def coop_bar_aloha_js(request, context):
     if 'edit_mode' in context:
         script = u'''
         /* ---- DEBUG : from coop_bar_aloha_js function in views.py ---- */
-        $("#coop-bar a.slide").pageSlide({width:'350px', direction:'right'});
+        $("#coop-bar a.slide").pageSlide({width:'350px', direction:'right'});'''
+
+        if context['edit_mode']:
+            script += u'''
         var toggle_save = function() {
             if (!$(".show-dirty").is(":visible")) {
                 $(".show-clean").hide();
@@ -151,11 +154,11 @@ def coop_bar_aloha_js(request, context):
                     });
                 };
             '''
-        if 'draft' in context:
-            script += u'''
+            if 'draft' in context:
+                script += u'''
             $(".publish").hide();
             '''
-        script += u'''
+            script += u'''
             }
         $(".show-dirty").hide();
         Aloha.bind('aloha-editable-deactivated', function(event, eventProperties){
