@@ -276,7 +276,7 @@ class BaseArticle(TimeStampedModel):
             img_root = 'cms_logos'
         return u'{0}/{1}/{2}'.format(img_root, self.id, filename)
 
-    slug = AutoSlugField(populate_from='title', max_length=100, unique=True)
+    slug = AutoSlugField(populate_from='title', max_length=100, unique=True, overwrite=True)
     #title = HTMLField(title_cleaner, verbose_name=_(u'title'), default=_('Page title'))
     #content = HTMLField(content_cleaner, verbose_name=_(u'content'), default=_('Page content'))
     title = models.TextField(_(u'title'), default=_('Page title'), blank=True)
@@ -337,16 +337,17 @@ class BaseArticle(TimeStampedModel):
         else:
             return None
 
-    def _set_navigation_parent(self, value):
+    def _set_navigation_parent(self, value, tree=None):
         ct = ContentType.objects.get_for_model(get_article_class())
         if value != None:
-            if value < 0:
+            if value < 0:  # WTF ???
                 tree_id = -value
                 tree = get_navTree_class().objects.get(id=tree_id)
                 parent = None
             else:
                 parent = NavNode.objects.get(id=value)
-                tree = parent.tree
+                if not tree:
+                    tree = parent.tree
 
             create_navigation_node(ct, self, tree, parent)
 
