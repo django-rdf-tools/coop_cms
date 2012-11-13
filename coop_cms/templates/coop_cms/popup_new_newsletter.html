@@ -1,4 +1,7 @@
 {% extends "colorbox/popup_form_base.html" %}
+
+{% load url from future %}
+
 {% load i18n %}
 
 {% block title %}{% spaceless %}{% if newsletter %}
@@ -8,7 +11,7 @@
 {% endif %}{% endspaceless %}{% endblock %}
 
 {% block form_url %}{% spaceless %}{% if newsletter %}
-        {% url coop_cms_newsletter_settings newsletter_id=newsletter.id %}
+        {% url 'coop_cms_newsletter_settings' newsletter_id=newsletter.id %}
     {% else %}
-        {% url coop_cms_new_newsletter %}
+        {% url 'coop_cms_new_newsletter' %}
 {% endif %}{% endspaceless %}{% endblock %}

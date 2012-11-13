@@ -223,6 +223,7 @@ def edit_article(request, url):
             messages.success(request, _(u'The article has been saved properly'))
 
             return HttpResponseRedirect(article.get_absolute_url())
+            
         else:
 
             messages.error(request, _(u"An error has occured."))

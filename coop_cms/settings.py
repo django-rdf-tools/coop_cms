@@ -14,7 +14,7 @@ def get_navigable_content_types():
         content_apps = django_settings.COOP_CMS_CONTENT_APPS
     except AttributeError:
         content_apps = []
-        not_to_be_mapped = ('south', 'django_extensions', 'd2rq')
+        not_to_be_mapped = ('south', 'django_extensions')
         for m in django_settings.INSTALLED_APPS:
             if(not m.startswith('django.') and m not in not_to_be_mapped):
                 content_apps.append(m)
@@ -25,7 +25,6 @@ def get_navigable_content_types():
         if (not is_navnode) and 'get_absolute_url' in dir(ct.model_class()):
             ct_choices.append((ct.id, ct.app_label + u'.' + ct.model))
     return ct_choices
-
 
 
 def get_navTree_class():

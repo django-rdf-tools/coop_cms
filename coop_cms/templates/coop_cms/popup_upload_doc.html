@@ -1,5 +1,8 @@
 {% extends "colorbox/popup_form_base.html" %}
+
+{% load url from future %}
+
 {% load i18n %}
 {% block title %}{% trans "Upload document" %}{% endblock %}
-{% block form_url %}{% url coop_cms_upload_doc %}{% endblock %}
+{% block form_url %}{% url 'coop_cms_upload_doc' %}{% endblock %}
 {% block form_ok %}{% trans "Add" %}{% endblock %}
