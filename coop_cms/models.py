@@ -188,9 +188,15 @@ class NavNode(models.Model):
             css_class = " "+args
         return u'<li{0}>{1}{2}</li>'.format(css_class, self._get_li_content(li_template), children_html)
 
-    def as_breadcrumb(self, li_template=None, css_class=""):
-        html = self.parent.as_breadcrumb(li_template) if self.parent else u""
-        return html + u'<li{0}>{1}</li>'.format(css_class, self._get_li_content(li_template))
+    def as_breadcrumb(self, init, li_template=None, self_hide=False):
+        html = self.parent.as_breadcrumb(init, li_template, self_hide) if self.parent else u""
+        if self == init and self_hide:
+            return html
+        else:
+            if init.parent == self and self_hide:
+                return html + u'<li><a href="{0}">{1}</a></li>'.format(self.get_absolute_url(), self.label)
+            else:
+                return html + u'<li>{0}</li>'.format(self._get_li_content(li_template))
 
     def children_as_navigation(self, li_template=None, css_class=""):
         children_li = [u'<li{0}>{1}</li>'.format(css_class, child._get_li_content(li_template))

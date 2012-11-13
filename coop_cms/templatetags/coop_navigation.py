@@ -90,7 +90,8 @@ class NavigationBreadcrumbNode(NavigationTemplateNode):
         kwargs = self.resolve_kwargs(context)
         tree_name = kwargs.pop('tree', 'default')
         nav_nodes = NavNode.objects.filter(tree__name=tree_name, content_type=ct, object_id=object.id)
-        if nav_nodes.count() > 0:
+        if nav_nodes.exists():
+            kwargs['init'] = nav_nodes[0]
             return nav_nodes[0].as_breadcrumb(**kwargs)
         return u''
 
