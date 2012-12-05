@@ -48,7 +48,7 @@ def django_admin(request, context):
 
 
 def django_admin_edit_article(request, context):
-    if request and request.user.is_staff and 'article' in context and hasttr(context['article'], 'id'):
+    if request and request.user.is_staff and 'article' in context and hasattr(context['article'], 'id'):
         article_class = get_article_class()
         article = context['article']
         view_name = 'admin:%s_%s_change' % (article_class._meta.app_label,  article_class._meta.module_name)
