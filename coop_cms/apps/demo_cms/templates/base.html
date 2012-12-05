@@ -1,6 +1,6 @@
 {% load i18n static coop_navigation coop_bar_tags %}<!DOCYTPE html>
 <head>
-    <title>{% block meta_title %}{% endblock %}{% if settings.SITE_TITLE %} | {{ settings.SITE_TITLE }}{% endif %}</title>
+    <title>{% block meta_title %}{% endblock %}{% if site_title %} | {{ site_title }}{% endif %}</title>
     {% block jquery_declaration %}
     <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}js/jquery-1.7.1.min.js"></script>
     {% endblock %}
