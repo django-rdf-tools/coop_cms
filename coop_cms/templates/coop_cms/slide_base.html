@@ -1,19 +1,25 @@
 {% load url from future %}
 {% load i18n %}
+{% if not is_ajax %}
 <html>
   <head>
-
     <link rel="stylesheet" type="text/css" href="/static/css/mediatheque.css">
     <script type="text/javascript">
     $(function() {
-      $('.pagination a').live('click', function() {
-        e.preventDefault();
-        $.ajax({
-          url: "{{ media_url }}"+$(this).attr('href'),
-          success: function(data) {
-            $("#media_slide_content").html(data["html"]);
-          }
-        });
+      $('.pagination a').live('click', function(e) {
+        try {
+          e.preventDefault();
+          $.ajax({
+            url: "{{ media_url }}"+$(this).attr('href'),
+            success: function(data) {
+              $("#media_slide_content").html(data["html"]);
+            }
+          });  
+        } catch(err) {
+          if (!console) console = {log:function(){}}; //no error but no log in IE
+          console.log(err)
+        }
+        return false;
       });
 
       var active_link = function(media_type) {
@@ -33,18 +39,19 @@
         if (!$(this).hasClass('active')){ $(".media-selector a").toggleClass('active'); }
 
       });
-
-      {% if not is_ajax %}active_link('{{media_type}}');{% endif %}
+      
+      active_link('{{media_type}}');
 
     });
     </script>
   </head>
   <body>
+  {% endif %}
     {% if is_ajax %}
       {% include media_slide_template %}
     {% else %}
       <div class="library">
-        <div class="close-slider"><a href="javascript:$.fn.pageSlideClose();"></a></div>
+        <div class="close-slider"><a href="" class="pageslide-close"></a></div>
         <div class="media-selector">
           {% url 'coop_cms_media_images' as images_url %}
           {% url 'coop_cms_media_documents' as docs_url %}
@@ -56,5 +63,7 @@
         </div>
       </div>
     {% endif %}
+{% if not is_ajax %}
   </body>
 </html>
+{% endif %}
