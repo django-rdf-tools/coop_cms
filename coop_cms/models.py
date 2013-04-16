@@ -20,7 +20,7 @@ from coop_cms.settings import get_navTree_class, COOP_CMS_NAVTREE_CLASS
 from django.contrib.staticfiles import finders
 from django.core.files import File
 from django.db.models.signals import pre_delete, post_save
-
+from sorl.thumbnail import ImageField
 from sorl.thumbnail import default
 ADMIN_THUMBS_SIZE = '60x60'
 
@@ -252,6 +252,8 @@ class ArticleCategory(models.Model):
     name = models.CharField(_(u'name'), max_length=100)
     slug = AutoSlugField(populate_from='name', max_length=100, unique=True)
     ordering = models.IntegerField(_(u'ordering'), default=0)
+    logo = ImageField(upload_to='logos/', null=True, blank=True)
+    description = models.TextField(u'description', null=True, blank=True)
 
     def __unicode__(self):
         return self.name
@@ -262,6 +264,19 @@ class ArticleCategory(models.Model):
     class Meta:
         verbose_name = _(u'article category')
         verbose_name_plural = _(u'article categories')
+
+    def logo_list_display(self):
+        try:
+            if self.logo:
+                thumb = default.backend.get_thumbnail(self.logo.file, settings.ADMIN_THUMBS_SIZE)
+                return '<img width="%s" src="%s" />' % (thumb.width, thumb.url)
+            else:
+                return _(u"No Image")
+        except IOError:
+            return _(u"No Image")
+
+    logo_list_display.short_description = _(u"logo")
+    logo_list_display.allow_tags = True
 
 
 class BaseArticle(TimeStampedModel):

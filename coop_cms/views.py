@@ -965,10 +965,10 @@ def schedule_newsletter_sending(request, newsletter_id):
 
 def articles_category(request, slug):
     category = get_object_or_404(models.ArticleCategory, slug=slug)
-    #articles = get_article_class().objects.filter(category=category)
+    articles = get_article_class().objects.filter(category=category)
     return render_to_response(
         'coop_cms/articles_category.html',
-        {'category': category},
+        {'category': category, 'articles':articles },
         context_instance=RequestContext(request)
     )
 

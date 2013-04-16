@@ -6,6 +6,7 @@ from forms import NavTypeForm, ArticleAdminForm, NewsletterItemAdminForm, Newsle
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
 from coop_cms.settings import get_article_class, get_navTree_class
+from sorl.thumbnail.admin import AdminImageMixin
 
 
 class NavNodeAdmin(admin.ModelAdmin):
@@ -75,8 +76,9 @@ admin.site.register(models.PieceOfHtml)
 admin.site.register(models.NewsletterSending)
 
 
-class ArticleCategoryAdmin(admin.ModelAdmin):
-    list_display = ['name', 'ordering']
+class ArticleCategoryAdmin(admin.ModelAdmin, AdminImageMixin):
+    list_display = ['logo_list_display','name', 'ordering']
+    list_display_links = ('logo_list_display', 'name')
     list_editable = ['ordering']
 admin.site.register(models.ArticleCategory, ArticleCategoryAdmin)
 
