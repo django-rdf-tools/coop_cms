@@ -73,26 +73,26 @@ def make_links_absolute(html_content):
 
     return html_content
     
-def send_newsletter(newsletter, dests):
+# def send_newsletter(newsletter, dests):
 
-    t = get_template(newsletter.get_template_name())
-    context_dict = {
-        'title': newsletter.subject, 'newsletter': newsletter, 'by_email': True,
-        'SITE_PREFIX': settings.COOP_CMS_SITE_PREFIX,
-        'MEDIA_URL': settings.MEDIA_URL, 'STATIC_URL': settings.STATIC_URL,
-    }
-    html_text = t.render(Context(context_dict))
-    html_text = make_links_absolute(html_text)
+#     t = get_template(newsletter.get_template_name())
+#     context_dict = {
+#         'title': newsletter.subject, 'newsletter': newsletter, 'by_email': True,
+#         'SITE_PREFIX': settings.COOP_CMS_SITE_PREFIX,
+#         'MEDIA_URL': settings.MEDIA_URL, 'STATIC_URL': settings.STATIC_URL,
+#     }
+#     html_text = t.render(Context(context_dict))
+#     html_text = make_links_absolute(html_text)
 
-    emails = []
-    connection = get_connection()
-    from_email = settings.COOP_CMS_FROM_EMAIL
-    reply_to = getattr(settings, 'COOP_CMS_REPLY_TO', None)
-    headers = {'Reply-To': reply_to} if reply_to else None
+#     emails = []
+#     connection = get_connection()
+#     from_email = settings.COOP_CMS_FROM_EMAIL
+#     reply_to = getattr(settings, 'COOP_CMS_REPLY_TO', None)
+#     headers = {'Reply-To': reply_to} if reply_to else None
 
-    for addr in dests:
-        text = html2text(html_text)
-        email = EmailMultiAlternatives(newsletter.subject, text, from_email, [addr], headers=headers)
-        email.attach_alternative(html_text, "text/html")
-        emails.append(email)
-    return connection.send_messages(emails)
+#     for addr in dests:
+#         text = html2text(html_text)
+#         email = EmailMultiAlternatives(newsletter.subject, text, from_email, [addr], headers=headers)
+#         email.attach_alternative(html_text, "text/html")
+#         emails.append(email)
+#     return connection.send_messages(emails)

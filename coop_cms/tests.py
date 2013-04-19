@@ -5,7 +5,7 @@ from django.contrib.auth.models import User, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.template import Template, Context
-from coop_cms.models import Link, NavNode, NavType, Document, Newsletter, NewsletterItem, PieceOfHtml, NewsletterSending, BaseArticle
+from coop_cms.models import Link, NavNode, NavType, Document, PieceOfHtml, # Newsletter, NewsletterItem, NewsletterSending, BaseArticle
 import json
 from django.core.exceptions import ValidationError
 from coop_cms.settings import get_article_class, get_article_templates, get_navTree_class
@@ -1582,449 +1582,449 @@ class DownloadDocTest(TestCase):
         self.assertTrue(redirect_url.find(login_url)>0)
         
         
-class NewsletterTest(TestCase):
+# class NewsletterTest(TestCase):
     
-    def setUp(self):
-        self.editor = None
+#     def setUp(self):
+#         self.editor = None
 
-    def _log_as_editor(self):
-        if not self.editor:
-            self.editor = User.objects.create_user('toto', 'toto@toto.fr', 'toto')
-            self.editor.is_staff = True
-            can_edit_newsletter = Permission.objects.get(content_type__app_label='coop_cms', codename='change_newsletter')
-            self.editor.user_permissions.add(can_edit_newsletter)
-            self.editor.save()
+#     def _log_as_editor(self):
+#         if not self.editor:
+#             self.editor = User.objects.create_user('toto', 'toto@toto.fr', 'toto')
+#             self.editor.is_staff = True
+#             can_edit_newsletter = Permission.objects.get(content_type__app_label='coop_cms', codename='change_newsletter')
+#             self.editor.user_permissions.add(can_edit_newsletter)
+#             self.editor.save()
         
-        self.client.login(username='toto', password='toto')
+#         self.client.login(username='toto', password='toto')
         
-    def test_create_article_for_newsletter(self):
-        Article = get_article_class()
-        ct = ContentType.objects.get_for_model(Article)
+#     def test_create_article_for_newsletter(self):
+#         Article = get_article_class()
+#         ct = ContentType.objects.get_for_model(Article)
         
-        art = Article.objects.create(in_newsletter=True)
-        self.assertEqual(1, NewsletterItem.objects.count())
-        item = NewsletterItem.objects.get(content_type=ct, object_id=art.id)
-        self.assertEqual(item.content_object, art)
+#         art = Article.objects.create(in_newsletter=True)
+#         self.assertEqual(1, NewsletterItem.objects.count())
+#         item = NewsletterItem.objects.get(content_type=ct, object_id=art.id)
+#         self.assertEqual(item.content_object, art)
         
-        art.delete()
-        self.assertEqual(0, NewsletterItem.objects.count())
+#         art.delete()
+#         self.assertEqual(0, NewsletterItem.objects.count())
 
-    def test_create_article_not_for_newsletter(self):
-        Article = get_article_class()
-        ct = ContentType.objects.get_for_model(Article)
+#     def test_create_article_not_for_newsletter(self):
+#         Article = get_article_class()
+#         ct = ContentType.objects.get_for_model(Article)
         
-        art = Article.objects.create(in_newsletter=False)
-        self.assertEqual(0, NewsletterItem.objects.count())
+#         art = Article.objects.create(in_newsletter=False)
+#         self.assertEqual(0, NewsletterItem.objects.count())
         
-        art.delete()
-        self.assertEqual(0, NewsletterItem.objects.count())
+#         art.delete()
+#         self.assertEqual(0, NewsletterItem.objects.count())
 
-    def test_create_article_commands(self):
-        Article = get_article_class()
-        ct = ContentType.objects.get_for_model(Article)
-        art1 = Article.objects.create(in_newsletter=True)
-        art2 = Article.objects.create(in_newsletter=True)
-        art3 = Article.objects.create(in_newsletter=False)
-        self.assertEqual(2, NewsletterItem.objects.count())
-        NewsletterItem.objects.all().delete()
-        self.assertEqual(0, NewsletterItem.objects.count())
-        management.call_command('create_newsletter_items', verbosity=0, interactive=False)
-        self.assertEqual(2, NewsletterItem.objects.count())
-        item1 = NewsletterItem.objects.get(content_type=ct, object_id=art1.id)
-        item2 = NewsletterItem.objects.get(content_type=ct, object_id=art2.id)
+#     def test_create_article_commands(self):
+#         Article = get_article_class()
+#         ct = ContentType.objects.get_for_model(Article)
+#         art1 = Article.objects.create(in_newsletter=True)
+#         art2 = Article.objects.create(in_newsletter=True)
+#         art3 = Article.objects.create(in_newsletter=False)
+#         self.assertEqual(2, NewsletterItem.objects.count())
+#         NewsletterItem.objects.all().delete()
+#         self.assertEqual(0, NewsletterItem.objects.count())
+#         management.call_command('create_newsletter_items', verbosity=0, interactive=False)
+#         self.assertEqual(2, NewsletterItem.objects.count())
+#         item1 = NewsletterItem.objects.get(content_type=ct, object_id=art1.id)
+#         item2 = NewsletterItem.objects.get(content_type=ct, object_id=art2.id)
 
-    def test_view_newsletter(self):
-        Article = get_article_class()
-        ct = ContentType.objects.get_for_model(Article)
+#     def test_view_newsletter(self):
+#         Article = get_article_class()
+#         ct = ContentType.objects.get_for_model(Article)
         
-        art1 = mommy.make_one(Article, title="Art 1", in_newsletter=True)
-        art2 = mommy.make_one(Article, title="Art 2", in_newsletter=True)
-        art3 = mommy.make_one(Article, title="Art 3", in_newsletter=True)
+#         art1 = mommy.make_one(Article, title="Art 1", in_newsletter=True)
+#         art2 = mommy.make_one(Article, title="Art 2", in_newsletter=True)
+#         art3 = mommy.make_one(Article, title="Art 3", in_newsletter=True)
         
-        newsletter = mommy.make_one(Newsletter, content="a little intro for this newsletter",
-            template="test/newsletter_blue.html")
-        newsletter.items.add(NewsletterItem.objects.get(content_type=ct, object_id=art1.id))
-        newsletter.items.add(NewsletterItem.objects.get(content_type=ct, object_id=art2.id))
-        newsletter.save()
+#         newsletter = mommy.make_one(Newsletter, content="a little intro for this newsletter",
+#             template="test/newsletter_blue.html")
+#         newsletter.items.add(NewsletterItem.objects.get(content_type=ct, object_id=art1.id))
+#         newsletter.items.add(NewsletterItem.objects.get(content_type=ct, object_id=art2.id))
+#         newsletter.save()
         
-        url = reverse('coop_cms_view_newsletter', args=[newsletter.id])
-        response = self.client.get(url)
+#         url = reverse('coop_cms_view_newsletter', args=[newsletter.id])
+#         response = self.client.get(url)
         
-        self.assertEqual(200, response.status_code)
+#         self.assertEqual(200, response.status_code)
         
-        self.assertContains(response, newsletter.content)
-        self.assertContains(response, art1.title)
-        self.assertContains(response, art2.title)
-        self.assertNotContains(response, art3.title)
+#         self.assertContains(response, newsletter.content)
+#         self.assertContains(response, art1.title)
+#         self.assertContains(response, art2.title)
+#         self.assertNotContains(response, art3.title)
         
-    def test_edit_newsletter(self):
-        Article = get_article_class()
-        ct = ContentType.objects.get_for_model(Article)
+#     def test_edit_newsletter(self):
+#         Article = get_article_class()
+#         ct = ContentType.objects.get_for_model(Article)
         
-        art1 = mommy.make_one(Article, title="Art 1", in_newsletter=True)
-        art2 = mommy.make_one(Article, title="Art 2", in_newsletter=True)
-        art3 = mommy.make_one(Article, title="Art 3", in_newsletter=True)
+#         art1 = mommy.make_one(Article, title="Art 1", in_newsletter=True)
+#         art2 = mommy.make_one(Article, title="Art 2", in_newsletter=True)
+#         art3 = mommy.make_one(Article, title="Art 3", in_newsletter=True)
         
-        newsletter = mommy.make_one(Newsletter, content="a little intro for this newsletter",
-            template="test/newsletter_blue.html")
-        newsletter.items.add(NewsletterItem.objects.get(content_type=ct, object_id=art1.id))
-        newsletter.items.add(NewsletterItem.objects.get(content_type=ct, object_id=art2.id))
-        newsletter.save()
+#         newsletter = mommy.make_one(Newsletter, content="a little intro for this newsletter",
+#             template="test/newsletter_blue.html")
+#         newsletter.items.add(NewsletterItem.objects.get(content_type=ct, object_id=art1.id))
+#         newsletter.items.add(NewsletterItem.objects.get(content_type=ct, object_id=art2.id))
+#         newsletter.save()
         
-        self._log_as_editor()
-        url = reverse('coop_cms_edit_newsletter', args=[newsletter.id])
-        response = self.client.get(url)
+#         self._log_as_editor()
+#         url = reverse('coop_cms_edit_newsletter', args=[newsletter.id])
+#         response = self.client.get(url)
         
-        self.assertEqual(200, response.status_code)
+#         self.assertEqual(200, response.status_code)
         
-        self.assertContains(response, newsletter.content)
-        self.assertContains(response, art1.title)
-        self.assertContains(response, art2.title)
-        self.assertNotContains(response, art3.title)
+#         self.assertContains(response, newsletter.content)
+#         self.assertContains(response, art1.title)
+#         self.assertContains(response, art2.title)
+#         self.assertNotContains(response, art3.title)
         
-        data = {'content': 'A better intro'}
-        response = self.client.post(url, data=data, follow=True)
-        self.assertEqual(200, response.status_code)
+#         data = {'content': 'A better intro'}
+#         response = self.client.post(url, data=data, follow=True)
+#         self.assertEqual(200, response.status_code)
         
-        self.assertNotContains(response, newsletter.content)
-        self.assertContains(response, data['content'])
-        self.assertContains(response, art1.title)
-        self.assertContains(response, art2.title)
-        self.assertNotContains(response, art3.title)
+#         self.assertNotContains(response, newsletter.content)
+#         self.assertContains(response, data['content'])
+#         self.assertContains(response, art1.title)
+#         self.assertContains(response, art2.title)
+#         self.assertNotContains(response, art3.title)
         
-    def test_edit_newsletter_anonymous(self):
-        original_data = {'content': "a little intro for this newsletter",
-            'template': "test/newsletter_blue.html"}
-        newsletter = mommy.make_one(Newsletter, **original_data)
+#     def test_edit_newsletter_anonymous(self):
+#         original_data = {'content': "a little intro for this newsletter",
+#             'template': "test/newsletter_blue.html"}
+#         newsletter = mommy.make_one(Newsletter, **original_data)
         
-        url = reverse('coop_cms_edit_newsletter', args=[newsletter.id])
-        response = self.client.get(url)
-        self.assertEqual(302, response.status_code)
+#         url = reverse('coop_cms_edit_newsletter', args=[newsletter.id])
+#         response = self.client.get(url)
+#         self.assertEqual(302, response.status_code)
         
-        response = self.client.post(url, data={'content': ':OP'})
-        self.assertEqual(302, response.status_code)
+#         response = self.client.post(url, data={'content': ':OP'})
+#         self.assertEqual(302, response.status_code)
         
-        newsletter = Newsletter.objects.get(id=newsletter.id)
-        self.assertEqual(newsletter.content, original_data['content'])
+#         newsletter = Newsletter.objects.get(id=newsletter.id)
+#         self.assertEqual(newsletter.content, original_data['content'])
         
-    def test_edit_newsletter_no_articles(self):
-        self._log_as_editor()
-        original_data = {'content': "a little intro for this newsletter",
-            'template': "test/newsletter_blue.html"}
-        newsletter = mommy.make_one(Newsletter, **original_data)
+#     def test_edit_newsletter_no_articles(self):
+#         self._log_as_editor()
+#         original_data = {'content': "a little intro for this newsletter",
+#             'template': "test/newsletter_blue.html"}
+#         newsletter = mommy.make_one(Newsletter, **original_data)
         
-        url = reverse('coop_cms_edit_newsletter', args=[newsletter.id])
+#         url = reverse('coop_cms_edit_newsletter', args=[newsletter.id])
         
-        data = {'content': ':OP'}
-        response = self.client.post(url, data=data, follow=True)
-        self.assertEqual(200, response.status_code)
-        self.assertContains(response, data['content'])
+#         data = {'content': ':OP'}
+#         response = self.client.post(url, data=data, follow=True)
+#         self.assertEqual(200, response.status_code)
+#         self.assertContains(response, data['content'])
         
-        response = self.client.get(url)
-        self.assertEqual(200, response.status_code)
-        self.assertContains(response, data['content'])
+#         response = self.client.get(url)
+#         self.assertEqual(200, response.status_code)
+#         self.assertContains(response, data['content'])
         
-    def test_newsletter_templates(self):
+#     def test_newsletter_templates(self):
         
-        Article = get_article_class()
-        ct = ContentType.objects.get_for_model(Article)
+#         Article = get_article_class()
+#         ct = ContentType.objects.get_for_model(Article)
         
-        art1 = mommy.make_one(Article, title="Art 1", in_newsletter=True)
-        poh = mommy.make_one(PieceOfHtml, div_id="newsletter_header", content="HELLO!!!")
+#         art1 = mommy.make_one(Article, title="Art 1", in_newsletter=True)
+#         poh = mommy.make_one(PieceOfHtml, div_id="newsletter_header", content="HELLO!!!")
         
-        newsletter = mommy.make_one(Newsletter, content="a little intro for this newsletter",
-            template="test/newsletter_blue.html")
-        newsletter.items.add(NewsletterItem.objects.get(content_type=ct, object_id=art1.id))
-        newsletter.save()
+#         newsletter = mommy.make_one(Newsletter, content="a little intro for this newsletter",
+#             template="test/newsletter_blue.html")
+#         newsletter.items.add(NewsletterItem.objects.get(content_type=ct, object_id=art1.id))
+#         newsletter.save()
         
-        self._log_as_editor()
+#         self._log_as_editor()
         
-        view_names = ['coop_cms_view_newsletter', 'coop_cms_edit_newsletter']
-        for view_name in view_names:
-            url = reverse(view_name, args=[newsletter.id])
-            response = self.client.get(url)
-            self.assertEqual(200, response.status_code)
+#         view_names = ['coop_cms_view_newsletter', 'coop_cms_edit_newsletter']
+#         for view_name in view_names:
+#             url = reverse(view_name, args=[newsletter.id])
+#             response = self.client.get(url)
+#             self.assertEqual(200, response.status_code)
             
-            self.assertContains(response, newsletter.content)
-            self.assertContains(response, art1.title)
-            self.assertContains(response, "background: blue;")
-            self.assertNotContains(response, poh.content)
+#             self.assertContains(response, newsletter.content)
+#             self.assertContains(response, art1.title)
+#             self.assertContains(response, "background: blue;")
+#             self.assertNotContains(response, poh.content)
         
-        newsletter.template = "test/newsletter_red.html"
-        newsletter.save()
+#         newsletter.template = "test/newsletter_red.html"
+#         newsletter.save()
         
-        for view_name in view_names:
-            url = reverse(view_name, args=[newsletter.id])
-            response = self.client.get(url)
+#         for view_name in view_names:
+#             url = reverse(view_name, args=[newsletter.id])
+#             response = self.client.get(url)
             
-            self.assertEqual(200, response.status_code)
+#             self.assertEqual(200, response.status_code)
             
-            self.assertContains(response, newsletter.content)
-            self.assertContains(response, art1.title)
-            self.assertContains(response, "background: red;")
-            self.assertContains(response, poh.content)
+#             self.assertContains(response, newsletter.content)
+#             self.assertContains(response, art1.title)
+#             self.assertContains(response, "background: red;")
+#             self.assertContains(response, poh.content)
             
-    def test_change_newsletter_templates(self):
-        settings.COOP_CMS_NEWSLETTER_TEMPLATES = (
-            ('test/newsletter_red.html', 'Red'),
-            ('test/newsletter_blue.html', 'Blue'),
-        )
-        self._log_as_editor()
+#     def test_change_newsletter_templates(self):
+#         settings.COOP_CMS_NEWSLETTER_TEMPLATES = (
+#             ('test/newsletter_red.html', 'Red'),
+#             ('test/newsletter_blue.html', 'Blue'),
+#         )
+#         self._log_as_editor()
         
-        newsletter = mommy.make_one(Newsletter, template='test/newsletter_blue.html')
+#         newsletter = mommy.make_one(Newsletter, template='test/newsletter_blue.html')
         
-        url = reverse('coop_cms_change_newsletter_template', args=[newsletter.id])
-        response = self.client.get(url)
-        self.assertEqual(200, response.status_code)
+#         url = reverse('coop_cms_change_newsletter_template', args=[newsletter.id])
+#         response = self.client.get(url)
+#         self.assertEqual(200, response.status_code)
         
-        for tpl, name in settings.COOP_CMS_NEWSLETTER_TEMPLATES:
-            self.assertContains(response, tpl)
-            self.assertContains(response, name)
+#         for tpl, name in settings.COOP_CMS_NEWSLETTER_TEMPLATES:
+#             self.assertContains(response, tpl)
+#             self.assertContains(response, name)
             
-        data={'template': 'test/newsletter_red.html'}
-        response = self.client.post(url, data=data, follow=True)
-        self.assertEqual(200, response.status_code)
-        self.assertContains(response, reverse('coop_cms_edit_newsletter', args=[newsletter.id]))
+#         data={'template': 'test/newsletter_red.html'}
+#         response = self.client.post(url, data=data, follow=True)
+#         self.assertEqual(200, response.status_code)
+#         self.assertContains(response, reverse('coop_cms_edit_newsletter', args=[newsletter.id]))
         
-        newsletter = Newsletter.objects.get(id=newsletter.id)
-        self.assertEqual(newsletter.template, data['template'])
+#         newsletter = Newsletter.objects.get(id=newsletter.id)
+#         self.assertEqual(newsletter.template, data['template'])
         
-    def test_change_newsletter_templates_anonymous(self):
-        settings.COOP_CMS_NEWSLETTER_TEMPLATES = (
-            ('test/newsletter_red.html', 'Red'),
-            ('test/newsletter_blue.html', 'Blue'),
-        )
-        original_data={'template': 'test/newsletter_blue.html'}
-        newsletter = mommy.make_one(Newsletter, **original_data)
+#     def test_change_newsletter_templates_anonymous(self):
+#         settings.COOP_CMS_NEWSLETTER_TEMPLATES = (
+#             ('test/newsletter_red.html', 'Red'),
+#             ('test/newsletter_blue.html', 'Blue'),
+#         )
+#         original_data={'template': 'test/newsletter_blue.html'}
+#         newsletter = mommy.make_one(Newsletter, **original_data)
         
-        url = reverse('coop_cms_change_newsletter_template', args=[newsletter.id])
-        response = self.client.get(url)
-        self.assertEqual(302, response.status_code)
+#         url = reverse('coop_cms_change_newsletter_template', args=[newsletter.id])
+#         response = self.client.get(url)
+#         self.assertEqual(302, response.status_code)
         
-        data={'template': 'test/newsletter_red.html'}
-        response = self.client.post(url, data=data)
-        self.assertEqual(302, response.status_code)
+#         data={'template': 'test/newsletter_red.html'}
+#         response = self.client.post(url, data=data)
+#         self.assertEqual(302, response.status_code)
         
-        newsletter = Newsletter.objects.get(id=newsletter.id)
-        self.assertEqual(newsletter.template, original_data['template'])
+#         newsletter = Newsletter.objects.get(id=newsletter.id)
+#         self.assertEqual(newsletter.template, original_data['template'])
         
-    def test_change_newsletter_unknow_template(self):
-        settings.COOP_CMS_NEWSLETTER_TEMPLATES = (
-            ('test/newsletter_red.html', 'Red'),
-            ('test/newsletter_blue.html', 'Blue'),
-        )
-        original_data={'template': 'test/newsletter_blue.html'}
-        newsletter = mommy.make_one(Newsletter, **original_data)
+#     def test_change_newsletter_unknow_template(self):
+#         settings.COOP_CMS_NEWSLETTER_TEMPLATES = (
+#             ('test/newsletter_red.html', 'Red'),
+#             ('test/newsletter_blue.html', 'Blue'),
+#         )
+#         original_data={'template': 'test/newsletter_blue.html'}
+#         newsletter = mommy.make_one(Newsletter, **original_data)
         
-        self._log_as_editor()
-        url = reverse('coop_cms_change_newsletter_template', args=[newsletter.id])
-        data={'template': 'test/newsletter_yellow.html'}
-        response = self.client.post(url, data=data)
-        self.assertEqual(200, response.status_code)
+#         self._log_as_editor()
+#         url = reverse('coop_cms_change_newsletter_template', args=[newsletter.id])
+#         data={'template': 'test/newsletter_yellow.html'}
+#         response = self.client.post(url, data=data)
+#         self.assertEqual(200, response.status_code)
         
-        newsletter = Newsletter.objects.get(id=newsletter.id)
-        self.assertEqual(newsletter.template, original_data['template'])
+#         newsletter = Newsletter.objects.get(id=newsletter.id)
+#         self.assertEqual(newsletter.template, original_data['template'])
         
-    def test_send_test_newsletter(self, template='test/newsletter_blue.html'):
-        settings.COOP_CMS_FROM_EMAIL = 'contact@toto.fr'
-        settings.COOP_CMS_TEST_EMAILS = ('toto@toto.fr', 'titi@toto.fr')
-        settings.COOP_CMS_SITE_PREFIX = 'http://toto.fr'
+#     def test_send_test_newsletter(self, template='test/newsletter_blue.html'):
+#         settings.COOP_CMS_FROM_EMAIL = 'contact@toto.fr'
+#         settings.COOP_CMS_TEST_EMAILS = ('toto@toto.fr', 'titi@toto.fr')
+#         settings.COOP_CMS_SITE_PREFIX = 'http://toto.fr'
         
-        rel_content = '''
-            <h1>Title</h1><a href="{0}/toto/"><img src="{0}/toto.jpg"></a><br /><img src="{0}/toto.jpg">
-            <div><a href="http://www.google.fr">Google</a></div>
-        '''
-        original_data = {
-            'template': template,
-            'subject': 'test email',
-            'content': rel_content.format("")
-        }
-        newsletter = mommy.make_one(Newsletter, **original_data)
+#         rel_content = '''
+#             <h1>Title</h1><a href="{0}/toto/"><img src="{0}/toto.jpg"></a><br /><img src="{0}/toto.jpg">
+#             <div><a href="http://www.google.fr">Google</a></div>
+#         '''
+#         original_data = {
+#             'template': template,
+#             'subject': 'test email',
+#             'content': rel_content.format("")
+#         }
+#         newsletter = mommy.make_one(Newsletter, **original_data)
         
-        self._log_as_editor()
-        url = reverse('coop_cms_test_newsletter', args=[newsletter.id])
-        response = self.client.post(url, data={})
-        self.assertEqual(200, response.status_code)
+#         self._log_as_editor()
+#         url = reverse('coop_cms_test_newsletter', args=[newsletter.id])
+#         response = self.client.post(url, data={})
+#         self.assertEqual(200, response.status_code)
         
-        self.assertEqual([[e] for e in settings.COOP_CMS_TEST_EMAILS], [e.to for e in mail.outbox])
-        for e in mail.outbox:
-            self.assertEqual(e.from_email, settings.COOP_CMS_FROM_EMAIL)
-            self.assertEqual(e.subject, newsletter.subject)
-            self.assertTrue(e.body.find('Title')>=0)
-            self.assertTrue(e.body.find('Google')>=0)
-            self.assertTrue(e.alternatives[0][1], "text/html")
-            self.assertTrue(e.alternatives[0][0].find('Title')>=0)
-            self.assertTrue(e.alternatives[0][0].find('Google')>=0)
-            self.assertTrue(e.alternatives[0][0].find(settings.COOP_CMS_SITE_PREFIX)>=0)
+#         self.assertEqual([[e] for e in settings.COOP_CMS_TEST_EMAILS], [e.to for e in mail.outbox])
+#         for e in mail.outbox:
+#             self.assertEqual(e.from_email, settings.COOP_CMS_FROM_EMAIL)
+#             self.assertEqual(e.subject, newsletter.subject)
+#             self.assertTrue(e.body.find('Title')>=0)
+#             self.assertTrue(e.body.find('Google')>=0)
+#             self.assertTrue(e.alternatives[0][1], "text/html")
+#             self.assertTrue(e.alternatives[0][0].find('Title')>=0)
+#             self.assertTrue(e.alternatives[0][0].find('Google')>=0)
+#             self.assertTrue(e.alternatives[0][0].find(settings.COOP_CMS_SITE_PREFIX)>=0)
         
-    def test_schedule_newsletter_sending(self):
-        newsletter = mommy.make_one(Newsletter)
+#     def test_schedule_newsletter_sending(self):
+#         newsletter = mommy.make_one(Newsletter)
         
-        self._log_as_editor()
-        url = reverse('coop_cms_schedule_newsletter_sending', args=[newsletter.id])
+#         self._log_as_editor()
+#         url = reverse('coop_cms_schedule_newsletter_sending', args=[newsletter.id])
         
-        response = self.client.get(url)
-        self.assertEqual(200, response.status_code)
+#         response = self.client.get(url)
+#         self.assertEqual(200, response.status_code)
         
-        sch_dt = "2030-12-12 12:00:00"
-        response = self.client.post(url, data={'scheduling_dt': sch_dt})
-        self.assertEqual(200, response.status_code)
-        self.assertContains(response, '$.colorbox.close()')
-        self.assertEqual(1, NewsletterSending.objects.count())
-        self.assertEqual(newsletter, NewsletterSending.objects.all()[0].newsletter)
-        self.assertEqual(2030, NewsletterSending.objects.all()[0].scheduling_dt.year)
+#         sch_dt = "2030-12-12 12:00:00"
+#         response = self.client.post(url, data={'scheduling_dt': sch_dt})
+#         self.assertEqual(200, response.status_code)
+#         self.assertContains(response, '$.colorbox.close()')
+#         self.assertEqual(1, NewsletterSending.objects.count())
+#         self.assertEqual(newsletter, NewsletterSending.objects.all()[0].newsletter)
+#         self.assertEqual(2030, NewsletterSending.objects.all()[0].scheduling_dt.year)
         
-    def test_schedule_newsletter_sending_invalid_value(self):
-        newsletter = mommy.make_one(Newsletter)
+#     def test_schedule_newsletter_sending_invalid_value(self):
+#         newsletter = mommy.make_one(Newsletter)
         
-        self._log_as_editor()
-        url = reverse('coop_cms_schedule_newsletter_sending', args=[newsletter.id])
+#         self._log_as_editor()
+#         url = reverse('coop_cms_schedule_newsletter_sending', args=[newsletter.id])
         
-        response = self.client.get(url)
-        self.assertEqual(200, response.status_code)
+#         response = self.client.get(url)
+#         self.assertEqual(200, response.status_code)
         
-        sch_dt = ''
-        response = self.client.post(url, data={'scheduling_dt': sch_dt})
-        self.assertEqual(200, response.status_code)
-        self.assertEqual(0, NewsletterSending.objects.count())
+#         sch_dt = ''
+#         response = self.client.post(url, data={'scheduling_dt': sch_dt})
+#         self.assertEqual(200, response.status_code)
+#         self.assertEqual(0, NewsletterSending.objects.count())
         
-        sch_dt = 'toto'
-        response = self.client.post(url, data={'scheduling_dt': sch_dt})
-        self.assertEqual(200, response.status_code)
-        self.assertEqual(0, NewsletterSending.objects.count())
+#         sch_dt = 'toto'
+#         response = self.client.post(url, data={'scheduling_dt': sch_dt})
+#         self.assertEqual(200, response.status_code)
+#         self.assertEqual(0, NewsletterSending.objects.count())
         
-        sch_dt = "2005-12-12 12:00:00"
-        response = self.client.post(url, data={'scheduling_dt': sch_dt})
-        self.assertEqual(200, response.status_code)
-        self.assertEqual(0, NewsletterSending.objects.count())
+#         sch_dt = "2005-12-12 12:00:00"
+#         response = self.client.post(url, data={'scheduling_dt': sch_dt})
+#         self.assertEqual(200, response.status_code)
+#         self.assertEqual(0, NewsletterSending.objects.count())
     
-    def test_schedule_anonymous(self):
-        newsletter = mommy.make_one(Newsletter)
+#     def test_schedule_anonymous(self):
+#         newsletter = mommy.make_one(Newsletter)
         
-        login_url = reverse('django.contrib.auth.views.login')
-        url = reverse('coop_cms_schedule_newsletter_sending', args=[newsletter.id])
+#         login_url = reverse('django.contrib.auth.views.login')
+#         url = reverse('coop_cms_schedule_newsletter_sending', args=[newsletter.id])
         
-        response = self.client.get(url, follow=False)
-        redirect_url = response['Location']
-        self.assertTrue(redirect_url.find(login_url)>0)
+#         response = self.client.get(url, follow=False)
+#         redirect_url = response['Location']
+#         self.assertTrue(redirect_url.find(login_url)>0)
         
-        sch_dt =datetime.now()+timedelta(1)
-        response = self.client.post(url, data={'sending_dt': sch_dt})
-        redirect_url = response['Location']
-        self.assertTrue(redirect_url.find(login_url)>0)
+#         sch_dt =datetime.now()+timedelta(1)
+#         response = self.client.post(url, data={'sending_dt': sch_dt})
+#         redirect_url = response['Location']
+#         self.assertTrue(redirect_url.find(login_url)>0)
     
-    def test_send_newsletter(self):
+#     def test_send_newsletter(self):
         
-        newsletter_data = {
-            'subject': 'This is the subject',
-            'content': '<h2>Hello guys!</h2><p>Visit <a href="http://toto.fr">us</a></p>',
-            'template': 'test/newsletter_blue.html',
-        }
-        newsletter = mommy.make_one(Newsletter, **newsletter_data)
+#         newsletter_data = {
+#             'subject': 'This is the subject',
+#             'content': '<h2>Hello guys!</h2><p>Visit <a href="http://toto.fr">us</a></p>',
+#             'template': 'test/newsletter_blue.html',
+#         }
+#         newsletter = mommy.make_one(Newsletter, **newsletter_data)
         
-        sch_dt = datetime.now() - timedelta(1)
-        sending = mommy.make_one(NewsletterSending, newsletter=newsletter, scheduling_dt= sch_dt, sending_dt= None)
+#         sch_dt = datetime.now() - timedelta(1)
+#         sending = mommy.make_one(NewsletterSending, newsletter=newsletter, scheduling_dt= sch_dt, sending_dt= None)
         
-        management.call_command('send_newsletter', 'toto@toto.fr', verbosity=0, interactive=False)
+#         management.call_command('send_newsletter', 'toto@toto.fr', verbosity=0, interactive=False)
         
-        sending = NewsletterSending.objects.get(id=sending.id)
-        self.assertNotEqual(sending.sending_dt, None)
+#         sending = NewsletterSending.objects.get(id=sending.id)
+#         self.assertNotEqual(sending.sending_dt, None)
         
-        self.assertEqual(len(mail.outbox), 1)
-        email = mail.outbox[0]
-        self.assertEqual(email.to, ['toto@toto.fr'])
-        self.assertEqual(email.subject, newsletter_data['subject'])
-        self.assertTrue(email.body.find('Hello guys')>=0)
-        self.assertTrue(email.alternatives[0][1], "text/html")
-        self.assertTrue(email.alternatives[0][0].find('Hello guys')>=0)
+#         self.assertEqual(len(mail.outbox), 1)
+#         email = mail.outbox[0]
+#         self.assertEqual(email.to, ['toto@toto.fr'])
+#         self.assertEqual(email.subject, newsletter_data['subject'])
+#         self.assertTrue(email.body.find('Hello guys')>=0)
+#         self.assertTrue(email.alternatives[0][1], "text/html")
+#         self.assertTrue(email.alternatives[0][0].find('Hello guys')>=0)
         
-        #check whet happens if command is called again
-        mail.outbox = []
-        management.call_command('send_newsletter', 'toto@toto.fr', verbosity=0, interactive=False)
-        self.assertEqual(len(mail.outbox), 0)
+#         #check whet happens if command is called again
+#         mail.outbox = []
+#         management.call_command('send_newsletter', 'toto@toto.fr', verbosity=0, interactive=False)
+#         self.assertEqual(len(mail.outbox), 0)
         
         
-    def test_send_newsletter_several(self):
+#     def test_send_newsletter_several(self):
         
-        newsletter_data = {
-            'subject': 'This is the subject',
-            'content': '<h2>Hello guys!</h2><p>Visit <a href="http://toto.fr">us</a></p>',
-            'template': 'test/newsletter_blue.html',
-        }
-        newsletter = mommy.make_one(Newsletter, **newsletter_data)
+#         newsletter_data = {
+#             'subject': 'This is the subject',
+#             'content': '<h2>Hello guys!</h2><p>Visit <a href="http://toto.fr">us</a></p>',
+#             'template': 'test/newsletter_blue.html',
+#         }
+#         newsletter = mommy.make_one(Newsletter, **newsletter_data)
         
-        sch_dt = datetime.now() - timedelta(1)
-        sending = mommy.make_one(NewsletterSending, newsletter=newsletter, scheduling_dt= sch_dt, sending_dt= None)
+#         sch_dt = datetime.now() - timedelta(1)
+#         sending = mommy.make_one(NewsletterSending, newsletter=newsletter, scheduling_dt= sch_dt, sending_dt= None)
         
-        addresses = ';'.join(['toto@toto.fr']*5)
-        management.call_command('send_newsletter', addresses, verbosity=0, interactive=False)
+#         addresses = ';'.join(['toto@toto.fr']*5)
+#         management.call_command('send_newsletter', addresses, verbosity=0, interactive=False)
         
-        sending = NewsletterSending.objects.get(id=sending.id)
-        self.assertNotEqual(sending.sending_dt, None)
+#         sending = NewsletterSending.objects.get(id=sending.id)
+#         self.assertNotEqual(sending.sending_dt, None)
         
-        self.assertEqual(len(mail.outbox), 5)
-        for email in mail.outbox:
-            self.assertEqual(email.to, ['toto@toto.fr'])
-            self.assertEqual(email.subject, newsletter_data['subject'])
-            self.assertTrue(email.body.find('Hello guys')>=0)
-            self.assertTrue(email.alternatives[0][1], "text/html")
-            self.assertTrue(email.alternatives[0][0].find('Hello guys')>=0)
+#         self.assertEqual(len(mail.outbox), 5)
+#         for email in mail.outbox:
+#             self.assertEqual(email.to, ['toto@toto.fr'])
+#             self.assertEqual(email.subject, newsletter_data['subject'])
+#             self.assertTrue(email.body.find('Hello guys')>=0)
+#             self.assertTrue(email.alternatives[0][1], "text/html")
+#             self.assertTrue(email.alternatives[0][0].find('Hello guys')>=0)
         
-        #check whet happens if command is called again
-        mail.outbox = []
-        management.call_command('send_newsletter', 'toto@toto.fr', verbosity=0, interactive=False)
-        self.assertEqual(len(mail.outbox), 0)
+#         #check whet happens if command is called again
+#         mail.outbox = []
+#         management.call_command('send_newsletter', 'toto@toto.fr', verbosity=0, interactive=False)
+#         self.assertEqual(len(mail.outbox), 0)
 
-    def test_send_newsletter_not_yet(self):
+#     def test_send_newsletter_not_yet(self):
         
-        newsletter_data = {
-            'subject': 'This is the subject',
-            'content': '<h2>Hello guys!</h2><p>Visit <a href="http://toto.fr">us</a></p>',
-            'template': 'test/newsletter_blue.html',
-        }
-        newsletter = mommy.make_one(Newsletter, **newsletter_data)
+#         newsletter_data = {
+#             'subject': 'This is the subject',
+#             'content': '<h2>Hello guys!</h2><p>Visit <a href="http://toto.fr">us</a></p>',
+#             'template': 'test/newsletter_blue.html',
+#         }
+#         newsletter = mommy.make_one(Newsletter, **newsletter_data)
         
-        sch_dt = datetime.now() + timedelta(1)
-        sending = mommy.make_one(NewsletterSending, newsletter=newsletter, scheduling_dt= sch_dt, sending_dt= None)
+#         sch_dt = datetime.now() + timedelta(1)
+#         sending = mommy.make_one(NewsletterSending, newsletter=newsletter, scheduling_dt= sch_dt, sending_dt= None)
         
-        management.call_command('send_newsletter', 'toto@toto.fr', verbosity=0, interactive=False)
+#         management.call_command('send_newsletter', 'toto@toto.fr', verbosity=0, interactive=False)
         
-        sending = NewsletterSending.objects.get(id=sending.id)
-        self.assertEqual(sending.sending_dt, None)
+#         sending = NewsletterSending.objects.get(id=sending.id)
+#         self.assertEqual(sending.sending_dt, None)
         
-        self.assertEqual(len(mail.outbox), 0)
+#         self.assertEqual(len(mail.outbox), 0)
         
-class AbsUrlTest(TestCase):
+# class AbsUrlTest(TestCase):
     
-    def test_href(self):
-        test_html = '<a href="%s/toto">This is a link</a>'
-        rel_html = test_html % ""
-        abs_html = test_html % settings.COOP_CMS_SITE_PREFIX
-        self.assertEqual(abs_html, make_links_absolute(rel_html))
+#     def test_href(self):
+#         test_html = '<a href="%s/toto">This is a link</a>'
+#         rel_html = test_html % ""
+#         abs_html = test_html % settings.COOP_CMS_SITE_PREFIX
+#         self.assertEqual(abs_html, make_links_absolute(rel_html))
         
-    def test_src(self):
-        test_html = '<h1>My image</h1><img src="%s/toto">'
-        rel_html = test_html % ""
-        abs_html = test_html % settings.COOP_CMS_SITE_PREFIX
-        self.assertEqual(abs_html, make_links_absolute(rel_html))
+#     def test_src(self):
+#         test_html = '<h1>My image</h1><img src="%s/toto">'
+#         rel_html = test_html % ""
+#         abs_html = test_html % settings.COOP_CMS_SITE_PREFIX
+#         self.assertEqual(abs_html, make_links_absolute(rel_html))
         
-    def test_relative_path(self):
-        test_html = '<h1>My image</h1><img src="%s/toto">'
-        rel_html = test_html % "../../.."
-        abs_html = test_html % settings.COOP_CMS_SITE_PREFIX
-        self.assertEqual(abs_html, make_links_absolute(rel_html))
+#     def test_relative_path(self):
+#         test_html = '<h1>My image</h1><img src="%s/toto">'
+#         rel_html = test_html % "../../.."
+#         abs_html = test_html % settings.COOP_CMS_SITE_PREFIX
+#         self.assertEqual(abs_html, make_links_absolute(rel_html))
     
-    def test_src_and_img(self):
-        test_html = '<h1>My image</h1><a href="{0}/a1">This is a link</a><img src="{0}/toto"><img src="{0}/titi"><a href="{0}/a2">This is another link</a>'
-        rel_html = test_html.format("")
-        abs_html = test_html.format(settings.COOP_CMS_SITE_PREFIX)
-        self.assertEqual(abs_html, make_links_absolute(rel_html))
+#     def test_src_and_img(self):
+#         test_html = '<h1>My image</h1><a href="{0}/a1">This is a link</a><img src="{0}/toto"><img src="{0}/titi"><a href="{0}/a2">This is another link</a>'
+#         rel_html = test_html.format("")
+#         abs_html = test_html.format(settings.COOP_CMS_SITE_PREFIX)
+#         self.assertEqual(abs_html, make_links_absolute(rel_html))
         
-    def test_href_rel_and_abs(self):
-        test_html = '<a href="%s/toto">This is a link</a><a href="http://www.apidev.fr">another</a>'
-        rel_html = test_html % ""
-        abs_html = test_html % settings.COOP_CMS_SITE_PREFIX
-        self.assertEqual(abs_html, make_links_absolute(rel_html))
+#     def test_href_rel_and_abs(self):
+#         test_html = '<a href="%s/toto">This is a link</a><a href="http://www.apidev.fr">another</a>'
+#         rel_html = test_html % ""
+#         abs_html = test_html % settings.COOP_CMS_SITE_PREFIX
+#         self.assertEqual(abs_html, make_links_absolute(rel_html))
         
 class NavigationTreeTest(TestCase):
     

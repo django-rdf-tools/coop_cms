@@ -15,14 +15,14 @@ from coop_cms import forms
 from django.contrib import messages
 from coop_cms import models
 from django.contrib.auth.decorators import login_required
-from coop_cms.settings import get_article_class, get_article_form, get_newsletter_form, get_navTree_class
+from coop_cms.settings import get_article_class, get_article_form, get_navTree_class #, get_newsletter_form
 from djaloha import utils as djaloha_utils
 from django.core.servers.basehttp import FileWrapper
 import mimetypes, unicodedata
 from django.conf import settings
 from django.contrib import messages
 from colorbox.decorators import popup_redirect
-from coop_cms.utils import send_newsletter
+# from coop_cms.utils import send_newsletter
 from django.utils.log import getLogger
 from datetime import datetime
 
@@ -59,9 +59,9 @@ def view_all_articles(request):
         view_name = 'admin:%s_%s_changelist' % (article_class._meta.app_label,  article_class._meta.module_name)
         articles_admin_url = reverse(view_name)
 
-        newsletters_admin_url = reverse('admin:coop_cms_newsletter_changelist')
+        # newsletters_admin_url = reverse('admin:coop_cms_newsletter_changelist')
 
-        add_newsletter_url = reverse('admin:coop_cms_newsletter_add')
+        # add_newsletter_url = reverse('admin:coop_cms_newsletter_add')
 
     Article = get_article_class()
     ct = ContentType.objects.get_for_model(Article)
@@ -73,12 +73,12 @@ def view_all_articles(request):
         'coop_cms/view_all_articles.html',
         {
             'articles': get_article_class().objects.all().order_by('-id')[:10],
-            'newsletters': models.Newsletter.objects.all().order_by('-id')[:10],
+            #'newsletters': models.Newsletter.objects.all().order_by('-id')[:10],
             'editable': True,
             'articles_list_url': articles_admin_url,
-            'newsletters_list_url': newsletters_admin_url,
+            # 'newsletters_list_url': newsletters_admin_url,
             'add_article_url': add_article_url,
-            'add_newsletter_url': add_newsletter_url,
+            # 'add_newsletter_url': add_newsletter_url,
         },
         RequestContext(request)
     )
@@ -452,39 +452,39 @@ def new_article(request):
     )
 
 
-@login_required
-@popup_redirect
-def new_newsletter(request, newsletter_id=None):
+# @login_required
+# @popup_redirect
+# def new_newsletter(request, newsletter_id=None):
 
-    #ct = ContentType.objects.get_for_model(Article)
-    #perm = '{0}.add_{1}'.format(ct.app_label, ct.model)
+#     #ct = ContentType.objects.get_for_model(Article)
+#     #perm = '{0}.add_{1}'.format(ct.app_label, ct.model)
 
-    #if not request.user.has_perm(perm):
-    #    raise PermissionDenied
+#     #if not request.user.has_perm(perm):
+#     #    raise PermissionDenied
 
-    if newsletter_id:
-        newsletter = get_object_or_404(models.Newsletter, id=newsletter_id)
-    else:
-        newsletter = None
+#     if newsletter_id:
+#         newsletter = get_object_or_404(models.Newsletter, id=newsletter_id)
+#     else:
+#         newsletter = None
 
-    try:
-        if request.method == "POST":
-            form = forms.NewNewsletterForm(request.user, request.POST, instance=newsletter)
-            if form.is_valid():
-                #article.template = form.cleaned_data['template']
-                newsletter = form.save()
-                return HttpResponseRedirect(newsletter.get_edit_url())
-        else:
-            form = forms.NewNewsletterForm(request.user, instance=newsletter)
+#     try:
+#         if request.method == "POST":
+#             form = forms.NewNewsletterForm(request.user, request.POST, instance=newsletter)
+#             if form.is_valid():
+#                 #article.template = form.cleaned_data['template']
+#                 newsletter = form.save()
+#                 return HttpResponseRedirect(newsletter.get_edit_url())
+#         else:
+#             form = forms.NewNewsletterForm(request.user, instance=newsletter)
 
-        return render_to_response(
-            'coop_cms/popup_new_newsletter.html',
-            locals(),
-            context_instance=RequestContext(request)
-        )
-    except Exception, msg:
-        print "#", msg
-        raise
+#         return render_to_response(
+#             'coop_cms/popup_new_newsletter.html',
+#             locals(),
+#             context_instance=RequestContext(request)
+#         )
+#     except Exception, msg:
+#         print "#", msg
+#         raise
 
 
 @login_required
@@ -821,146 +821,146 @@ def process_nav_edition(request, tree_id):
     raise Http404
 
 
-@login_required
-def edit_newsletter(request, newsletter_id):
-    newsletter = get_object_or_404(models.Newsletter, id=newsletter_id)
-    newsletter_form_class = get_newsletter_form()
+# @login_required
+# def edit_newsletter(request, newsletter_id):
+#     newsletter = get_object_or_404(models.Newsletter, id=newsletter_id)
+#     newsletter_form_class = get_newsletter_form()
 
-    if not request.user.has_perm('can_edit_newsletter', newsletter):
-        raise PermissionDenied
+#     if not request.user.has_perm('can_edit_newsletter', newsletter):
+#         raise PermissionDenied
 
-    from coop_bar.urls import bar
-    if "pageSlide" not in bar.get_footer(request, RequestContext(request)):
-        bar.register_footer(coop_bar_aloha_js)
+#     from coop_bar.urls import bar
+#     if "pageSlide" not in bar.get_footer(request, RequestContext(request)):
+#         bar.register_footer(coop_bar_aloha_js)
 
-    if request.method == "POST":
-        form = newsletter_form_class(request.POST, instance=newsletter)
+#     if request.method == "POST":
+#         form = newsletter_form_class(request.POST, instance=newsletter)
 
-        forms_args = djaloha_utils.extract_forms_args(request.POST)
-        djaloha_forms = djaloha_utils.make_forms(forms_args, request.POST)
+#         forms_args = djaloha_utils.extract_forms_args(request.POST)
+#         djaloha_forms = djaloha_utils.make_forms(forms_args, request.POST)
 
-        if form.is_valid() and all([f.is_valid() for f in djaloha_forms]):
-            newsletter = form.save()
+#         if form.is_valid() and all([f.is_valid() for f in djaloha_forms]):
+#             newsletter = form.save()
 
-            if djaloha_forms:
-                [f.save() for f in djaloha_forms]
+#             if djaloha_forms:
+#                 [f.save() for f in djaloha_forms]
 
-            messages.success(request, _(u'The newsletter has been saved properly'))
+#             messages.success(request, _(u'The newsletter has been saved properly'))
 
-            return HttpResponseRedirect(reverse('coop_cms_edit_newsletter', args=[newsletter.id]))
-    else:
-        form = newsletter_form_class(instance=newsletter)
+#             return HttpResponseRedirect(reverse('coop_cms_edit_newsletter', args=[newsletter.id]))
+#     else:
+#         form = newsletter_form_class(instance=newsletter)
 
-    context_dict = {
-        'form': form,
-        'post_url': reverse('coop_cms_edit_newsletter', args=[newsletter.id]),
-        'editable': True,
-        'edit_mode': True,
-        'title': newsletter.subject,
-        'newsletter': newsletter,
-    }
+#     context_dict = {
+#         'form': form,
+#         'post_url': reverse('coop_cms_edit_newsletter', args=[newsletter.id]),
+#         'editable': True,
+#         'edit_mode': True,
+#         'title': newsletter.subject,
+#         'newsletter': newsletter,
+#     }
 
-    return render_to_response(
-        newsletter.get_template_name(),
-        context_dict,
-        context_instance=RequestContext(request)
-    )
-
-
-def view_newsletter(request, newsletter_id):
-    newsletter = get_object_or_404(models.Newsletter, id=newsletter_id)
-
-    context_dict = {
-        'title': newsletter.subject, 'newsletter': newsletter,
-        'editable': request.user.is_authenticated()
-    }
-
-    return render_to_response(
-        newsletter.get_template_name(),
-        context_dict,
-        context_instance=RequestContext(request)
-    )
+#     return render_to_response(
+#         newsletter.get_template_name(),
+#         context_dict,
+#         context_instance=RequestContext(request)
+#     )
 
 
-@login_required
-@popup_redirect
-def change_newsletter_template(request, newsletter_id):
-    newsletter = get_object_or_404(models.Newsletter, id=newsletter_id)
+# def view_newsletter(request, newsletter_id):
+#     newsletter = get_object_or_404(models.Newsletter, id=newsletter_id)
 
-    if not request.user.has_perm('can_edit_newsletter', newsletter):
-        raise PermissionDenied
+#     context_dict = {
+#         'title': newsletter.subject, 'newsletter': newsletter,
+#         'editable': request.user.is_authenticated()
+#     }
 
-    if request.method == "POST":
-        form = forms.NewsletterTemplateForm(newsletter, request.user, request.POST)
-        if form.is_valid():
-            newsletter.template = form.cleaned_data['template']
-            newsletter.save()
-            return HttpResponseRedirect(newsletter.get_edit_url())
-    else:
-        form = forms.NewsletterTemplateForm(newsletter, request.user)
-
-    return render_to_response(
-        'coop_cms/popup_change_newsletter_template.html',
-        {'form': form, 'newsletter': newsletter},
-        context_instance=RequestContext(request)
-    )
+#     return render_to_response(
+#         newsletter.get_template_name(),
+#         context_dict,
+#         context_instance=RequestContext(request)
+#     )
 
 
-@login_required
-@popup_redirect
-def test_newsletter(request, newsletter_id):
-    newsletter = get_object_or_404(models.Newsletter, id=newsletter_id)
+# @login_required
+# @popup_redirect
+# def change_newsletter_template(request, newsletter_id):
+#     newsletter = get_object_or_404(models.Newsletter, id=newsletter_id)
 
-    if not request.user.has_perm('can_edit_newsletter', newsletter):
-        raise PermissionDenied
+#     if not request.user.has_perm('can_edit_newsletter', newsletter):
+#         raise PermissionDenied
 
-    dests = settings.COOP_CMS_TEST_EMAILS
+#     if request.method == "POST":
+#         form = forms.NewsletterTemplateForm(newsletter, request.user, request.POST)
+#         if form.is_valid():
+#             newsletter.template = form.cleaned_data['template']
+#             newsletter.save()
+#             return HttpResponseRedirect(newsletter.get_edit_url())
+#     else:
+#         form = forms.NewsletterTemplateForm(newsletter, request.user)
 
-    if request.method == "POST":
-        try:
-            nb_sent = send_newsletter(newsletter, dests)
-
-            messages.success(request,
-                _(u"The test email has been sent to {0} addresses: {1}").format(nb_sent, u', '.join(dests)))
-            return HttpResponseRedirect(newsletter.get_edit_url())
-        except Exception, msg:
-            messages.error(request, _(u"An error has occured.") + u'<br>' + unicode(msg))
-            logger = getLogger('django.request')
-            logger.error('Internal Server Error: %s' % request.path,
-                exc_info=sys.exc_info,
-                extra={
-                    'status_code': 500,
-                    'request': request
-                }
-            )
-            return HttpResponseRedirect(newsletter.get_edit_url())
-
-    return render_to_response(
-        'coop_cms/popup_test_newsletter.html',
-        {'newsletter': newsletter, 'dests': dests},
-        context_instance=RequestContext(request)
-    )
+#     return render_to_response(
+#         'coop_cms/popup_change_newsletter_template.html',
+#         {'form': form, 'newsletter': newsletter},
+#         context_instance=RequestContext(request)
+#     )
 
 
-@login_required
-@popup_redirect
-def schedule_newsletter_sending(request, newsletter_id):
-    newsletter = get_object_or_404(models.Newsletter, id=newsletter_id)
-    instance = models.NewsletterSending(newsletter=newsletter)
+# @login_required
+# @popup_redirect
+# def test_newsletter(request, newsletter_id):
+#     newsletter = get_object_or_404(models.Newsletter, id=newsletter_id)
 
-    if request.method == "POST":
-        form = forms.NewsletterSchedulingForm(request.POST, instance=instance)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(newsletter.get_edit_url())
-    else:
-        form = forms.NewsletterSchedulingForm(instance=instance, initial={'scheduling_dt': datetime.now()})
+#     if not request.user.has_perm('can_edit_newsletter', newsletter):
+#         raise PermissionDenied
 
-    return render_to_response(
-        'coop_cms/popup_schedule_newsletter_sending.html',
-        {'newsletter': newsletter, 'form': form},
-        context_instance=RequestContext(request)
-    )
+#     dests = settings.COOP_CMS_TEST_EMAILS
+
+#     if request.method == "POST":
+#         try:
+#             nb_sent = send_newsletter(newsletter, dests)
+
+#             messages.success(request,
+#                 _(u"The test email has been sent to {0} addresses: {1}").format(nb_sent, u', '.join(dests)))
+#             return HttpResponseRedirect(newsletter.get_edit_url())
+#         except Exception, msg:
+#             messages.error(request, _(u"An error has occured.") + u'<br>' + unicode(msg))
+#             logger = getLogger('django.request')
+#             logger.error('Internal Server Error: %s' % request.path,
+#                 exc_info=sys.exc_info,
+#                 extra={
+#                     'status_code': 500,
+#                     'request': request
+#                 }
+#             )
+#             return HttpResponseRedirect(newsletter.get_edit_url())
+
+#     return render_to_response(
+#         'coop_cms/popup_test_newsletter.html',
+#         {'newsletter': newsletter, 'dests': dests},
+#         context_instance=RequestContext(request)
+#     )
+
+
+# @login_required
+# @popup_redirect
+# def schedule_newsletter_sending(request, newsletter_id):
+#     newsletter = get_object_or_404(models.Newsletter, id=newsletter_id)
+#     instance = models.NewsletterSending(newsletter=newsletter)
+
+#     if request.method == "POST":
+#         form = forms.NewsletterSchedulingForm(request.POST, instance=instance)
+#         if form.is_valid():
+#             form.save()
+#             return HttpResponseRedirect(newsletter.get_edit_url())
+#     else:
+#         form = forms.NewsletterSchedulingForm(instance=instance, initial={'scheduling_dt': datetime.now()})
+
+#     return render_to_response(
+#         'coop_cms/popup_schedule_newsletter_sending.html',
+#         {'newsletter': newsletter, 'form': form},
+#         context_instance=RequestContext(request)
+#     )
 
 
 def articles_category(request, slug):

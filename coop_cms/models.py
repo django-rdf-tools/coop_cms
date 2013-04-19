@@ -15,7 +15,7 @@ from django.utils.html import escape
 from django.core.exceptions import ValidationError
 # from html_field.db.models import HTMLField
 # from html_field import html_cleaner
-from coop_cms.settings import get_article_class, get_article_logo_size, get_newsletter_item_classes
+from coop_cms.settings import get_article_class, get_article_logo_size  #, get_newsletter_item_classes
 from coop_cms.settings import get_navTree_class, COOP_CMS_NAVTREE_CLASS
 from django.contrib.staticfiles import finders
 from django.core.files import File
@@ -541,6 +541,8 @@ def remove_from_navigation(sender, instance, **kwargs):
             pass
 pre_delete.connect(remove_from_navigation)
 
+
+"""
 class NewsletterItem(models.Model):
     content_type = models.ForeignKey(ContentType, verbose_name=_("content_type"))
     object_id = models.PositiveIntegerField(verbose_name=_("object id"))
@@ -643,4 +645,4 @@ class NewsletterSending(models.Model):
     class Meta:
         verbose_name = _(u'newsletter sending')
         verbose_name_plural = _(u'newsletter sendings')
-
+"""

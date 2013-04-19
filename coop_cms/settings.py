@@ -91,24 +91,24 @@ def get_article_form():
 
 
 
-def get_newsletter_templates(newsletter, user):
-    try:
-        return getattr(django_settings, 'COOP_CMS_NEWSLETTERS_TEMPLATES')
-    except AttributeError:
-        print "# pas de COOP_CMS_NEWSLETTERS_TEMPLATES"
-        return None
+# def get_newsletter_templates(newsletter, user):
+#     try:
+#         return getattr(django_settings, 'COOP_CMS_NEWSLETTERS_TEMPLATES')
+#     except AttributeError:
+#         print "# pas de COOP_CMS_NEWSLETTERS_TEMPLATES"
+#         return None
 
-def get_newsletter_form():
-    try:
-        full_class_name = getattr(django_settings, 'COOP_CMS_NEWSLETTER_FORM')
-    except AttributeError:
-        from coop_cms.forms import NewsletterForm
-        newsletter_form = NewsletterForm
-    else:
-        module_name, class_name = full_class_name.rsplit('.', 1)
-        module = import_module(module_name)
-        newsletter_form = getattr(module, class_name)
-    return newsletter_form
+# def get_newsletter_form():
+#     try:
+#         full_class_name = getattr(django_settings, 'COOP_CMS_NEWSLETTER_FORM')
+#     except AttributeError:
+#         from coop_cms.forms import NewsletterForm
+#         newsletter_form = NewsletterForm
+#     else:
+#         module_name, class_name = full_class_name.rsplit('.', 1)
+#         module = import_module(module_name)
+#         newsletter_form = getattr(module, class_name)
+#     return newsletter_form
 
 def get_article_templates(article, user):
     if hasattr(django_settings, 'COOP_CMS_ARTICLE_TEMPLATES'):
@@ -155,25 +155,25 @@ def get_article_logo_size(article):
         size = "48x48"
     return size
 
-def get_newsletter_item_classes():
-    if hasattr(get_newsletter_item_classes, '_cache_class'):
-        return getattr(get_newsletter_item_classes, '_cache_class')
-    else:
-        item_classes = []
-        try:
-            full_classes_names = getattr(django_settings, 'COOP_CMS_NEWSLETTER_ITEM_CLASSES')
-        except AttributeError:
-            item_classes = (get_article_class(),)
-        else:
-            item_classes = []
-            for full_class_name in full_classes_names:
-                module_name, class_name = full_class_name.rsplit('.', 1)
-                module = import_module(module_name)
-                item_classes.append(getattr(module, class_name))
-            item_classes = tuple(item_classes)
+# def get_newsletter_item_classes():
+#     if hasattr(get_newsletter_item_classes, '_cache_class'):
+#         return getattr(get_newsletter_item_classes, '_cache_class')
+#     else:
+#         item_classes = []
+#         try:
+#             full_classes_names = getattr(django_settings, 'COOP_CMS_NEWSLETTER_ITEM_CLASSES')
+#         except AttributeError:
+#             item_classes = (get_article_class(),)
+#         else:
+#             item_classes = []
+#             for full_class_name in full_classes_names:
+#                 module_name, class_name = full_class_name.rsplit('.', 1)
+#                 module = import_module(module_name)
+#                 item_classes.append(getattr(module, class_name))
+#             item_classes = tuple(item_classes)
 
-        if not item_classes:
-            raise Exception('No newsletter item classes configured')
+#         if not item_classes:
+#             raise Exception('No newsletter item classes configured')
 
-        setattr(get_newsletter_item_classes, '_cache_class', item_classes)
-        return item_classes
+#         setattr(get_newsletter_item_classes, '_cache_class', item_classes)
+#         return item_classes

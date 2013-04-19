@@ -1,5 +1,5 @@
 from django import forms
-from coop_cms.models import NavType, NavNode, Newsletter, NewsletterSending
+from coop_cms.models import NavType, NavNode, # Newsletter, NewsletterSending
 from django.contrib.contenttypes.models import ContentType
 from settings import get_navigable_content_types
 from django.core.exceptions import ValidationError
@@ -8,7 +8,7 @@ from djaloha.widgets import AlohaInput
 import floppyforms
 import re
 from django.conf import settings
-from coop_cms.settings import get_article_class, get_article_templates, get_newsletter_templates, get_navTree_class
+from coop_cms.settings import get_article_class, get_article_templates, get_navTree_class  #,get_newsletter_templates
 from coop_cms.widgets import ImageEdit
 from django.core.urlresolvers import reverse
 from coop_cms.utils import dehtml
@@ -97,19 +97,19 @@ def get_node_choices():
 def get_navigation_parent_help_text():
     return get_article_class().navigation_parent.__doc__
 
-class NewsletterItemAdminForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super(NewsletterItemAdminForm, self).__init__(*args, **kwargs)
-        self.item = kwargs.get('instance', None)
-        article_choices = [(a.id, unicode(a)) for a in get_article_class().objects.all()]
-        self.fields['object_id'] = forms.ChoiceField(
-           choices=article_choices, required=True, help_text=_(u"Select an article")
-        )
-        self.fields['content_type'].required = False
-        self.fields['content_type'].widget = forms.HiddenInput()
+# class NewsletterItemAdminForm(forms.ModelForm):
+#     def __init__(self, *args, **kwargs):
+#         super(NewsletterItemAdminForm, self).__init__(*args, **kwargs)
+#         self.item = kwargs.get('instance', None)
+#         article_choices = [(a.id, unicode(a)) for a in get_article_class().objects.all()]
+#         self.fields['object_id'] = forms.ChoiceField(
+#            choices=article_choices, required=True, help_text=_(u"Select an article")
+#         )
+#         self.fields['content_type'].required = False
+#         self.fields['content_type'].widget = forms.HiddenInput()
 
-    def clean_content_type(self):
-        return ContentType.objects.get_for_model(get_article_class())
+#     def clean_content_type(self):
+#         return ContentType.objects.get_for_model(get_article_class())
 
 class ArticleFormWithNavigation(forms.ModelForm):
     navigation_parent = forms.ChoiceField()
@@ -229,27 +229,27 @@ class NewArticleForm(ArticleFormWithNavigation):
             self.fields["template"] = forms.CharField()
         self.fields["title"].widget = forms.TextInput(attrs={'size': 30})
 
-class NewNewsletterForm(forms.ModelForm):
-    class Meta:
-        model = Newsletter
-        fields = ('subject', 'template', 'items')
-        #widgets = {}
-        #try:
-        #    widgets.update({
-        #        'items': ChosenSelectMultiple(),
-        #    })
-        #except NameError:
-        #    print 'NO ChosenSelectMultiple'
-        #    pass
+# class NewNewsletterForm(forms.ModelForm):
+#     class Meta:
+#         model = Newsletter
+#         fields = ('subject', 'template', 'items')
+#         #widgets = {}
+#         #try:
+#         #    widgets.update({
+#         #        'items': ChosenSelectMultiple(),
+#         #    })
+#         #except NameError:
+#         #    print 'NO ChosenSelectMultiple'
+#         #    pass
 
-    def __init__(self, user, *args, **kwargs):
-        super(NewNewsletterForm, self).__init__(*args, **kwargs)
-        tpl_choices = get_newsletter_templates(None, user)
-        if tpl_choices:
-            self.fields["template"] = forms.ChoiceField(choices=tpl_choices)
-        else:
-            self.fields["template"] = forms.CharField()
-        self.fields["subject"].widget = forms.TextInput(attrs={'size': 30})
+#     def __init__(self, user, *args, **kwargs):
+#         super(NewNewsletterForm, self).__init__(*args, **kwargs)
+#         tpl_choices = get_newsletter_templates(None, user)
+#         if tpl_choices:
+#             self.fields["template"] = forms.ChoiceField(choices=tpl_choices)
+#         else:
+#             self.fields["template"] = forms.CharField()
+#         self.fields["subject"].widget = forms.TextInput(attrs={'size': 30})
 
 
 class PublishArticleForm(forms.ModelForm):
@@ -274,74 +274,74 @@ class PublishArticleForm(forms.ModelForm):
     #    super(PublishArticleForm, self).__init__(*args, **kwargs)
 
 
-class NewsletterForm(floppyforms.ModelForm):
+# class NewsletterForm(floppyforms.ModelForm):
 
-    class Meta:
-        model = Newsletter
-        fields = ('content',)
-        widgets = {
-            'content': AlohaInput(text_color_plugin=False),
-        }
+#     class Meta:
+#         model = Newsletter
+#         fields = ('content',)
+#         widgets = {
+#             'content': AlohaInput(text_color_plugin=False),
+#         }
 
-    class Media:
-        css = {
-            'all': ('css/colorbox.css',),
-        }
-        js = ('js/jquery.form.js', 'js/jquery.pageslide.js', 'js/jquery.colorbox-min.js', 'js/colorbox.coop.js')
+#     class Media:
+#         css = {
+#             'all': ('css/colorbox.css',),
+#         }
+#         js = ('js/jquery.form.js', 'js/jquery.pageslide.js', 'js/jquery.colorbox-min.js', 'js/colorbox.coop.js')
 
 
-class NewsletterSchedulingForm(floppyforms.ModelForm):
-    class Meta:
-        model = NewsletterSending
-        fields = ('scheduling_dt',)
+# class NewsletterSchedulingForm(floppyforms.ModelForm):
+#     class Meta:
+#         model = NewsletterSending
+#         fields = ('scheduling_dt',)
 
-    def clean_scheduling_dt(self):
-        sch_dt = self.cleaned_data['scheduling_dt']
+#     def clean_scheduling_dt(self):
+#         sch_dt = self.cleaned_data['scheduling_dt']
 
-        if not sch_dt:
-            raise ValidationError(_(u"This field is required"))
+#         if not sch_dt:
+#             raise ValidationError(_(u"This field is required"))
 
-        if sch_dt < datetime.now():
-            raise ValidationError(_(u"The scheduling date must be in future"))
+#         if sch_dt < datetime.now():
+#             raise ValidationError(_(u"The scheduling date must be in future"))
 
-        return sch_dt
+#         return sch_dt
 
-class NewsletterTemplateForm(forms.Form):
+# class NewsletterTemplateForm(forms.Form):
 
-    def __init__(self, newsletter, user, *args, **kwargs):
-        super(NewsletterTemplateForm, self).__init__(*args, **kwargs)
-        choices = get_newsletter_templates(newsletter, user)
-        if choices:
-            self.fields["template"] = forms.ChoiceField(choices=choices)
-        else:
-            self.fields["template"] = forms.CharField()
-        self.fields["template"].initial = newsletter.template
+#     def __init__(self, newsletter, user, *args, **kwargs):
+#         super(NewsletterTemplateForm, self).__init__(*args, **kwargs)
+#         choices = get_newsletter_templates(newsletter, user)
+#         if choices:
+#             self.fields["template"] = forms.ChoiceField(choices=choices)
+#         else:
+#             self.fields["template"] = forms.CharField()
+#         self.fields["template"].initial = newsletter.template
 
-class NewsletterAdminForm(forms.ModelForm):
+# class NewsletterAdminForm(forms.ModelForm):
 
-    def __init__(self, *args, **kwargs):
-        super(NewsletterAdminForm, self).__init__(*args, **kwargs)
-        self.newsletter = kwargs.get('instance', None)
-        choices = get_newsletter_templates(self.newsletter, self.current_user)
-        if choices:
-            self.fields["template"] = forms.ChoiceField(choices=choices)
-        else:
-            self.fields["template"] = forms.CharField()
+#     def __init__(self, *args, **kwargs):
+#         super(NewsletterAdminForm, self).__init__(*args, **kwargs)
+#         self.newsletter = kwargs.get('instance', None)
+#         choices = get_newsletter_templates(self.newsletter, self.current_user)
+#         if choices:
+#             self.fields["template"] = forms.ChoiceField(choices=choices)
+#         else:
+#             self.fields["template"] = forms.CharField()
 
-    class Meta:
-        model = Newsletter
-        fields = ('subject', 'content', 'template', 'items')
-        widgets = {}
-        try:
-            widgets.update({
-                'items': ChosenSelectMultiple(),
-            })
-        except NameError:
-            print 'No ChosenSelectMultiple'
-            pass
+#     class Meta:
+#         model = Newsletter
+#         fields = ('subject', 'content', 'template', 'items')
+#         widgets = {}
+#         try:
+#             widgets.update({
+#                 'items': ChosenSelectMultiple(),
+#             })
+#         except NameError:
+#             print 'No ChosenSelectMultiple'
+#             pass
 
-    class Media:
-        css = {
-            'all': ('css/admin-tricks.css',),
-        }
-        js = ()
+#     class Media:
+#         css = {
+#             'all': ('css/admin-tricks.css',),
+#         }
+#         js = ()
