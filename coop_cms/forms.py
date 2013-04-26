@@ -1,5 +1,5 @@
 from django import forms
-from coop_cms.models import NavType, NavNode, # Newsletter, NewsletterSending
+from coop_cms.models import NavType, NavNode # Newsletter, NewsletterSending
 from django.contrib.contenttypes.models import ContentType
 from settings import get_navigable_content_types
 from django.core.exceptions import ValidationError
@@ -111,6 +111,7 @@ def get_navigation_parent_help_text():
 #     def clean_content_type(self):
 #         return ContentType.objects.get_for_model(get_article_class())
 
+
 class ArticleFormWithNavigation(forms.ModelForm):
     navigation_parent = forms.ChoiceField()
 
@@ -161,12 +162,14 @@ class ArticleAdminForm(forms.ModelForm):
             'title': forms.TextInput(attrs={'size': 100})
         }
 
+
 class AddImageForm(forms.Form):
     image = forms.ImageField(required=True, label = _('Image'),)
     descr = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'size': '35', 'placeholder': _(u'Optional description'),}),
         label = _('Description'),
     )
+
 
 class AddDocForm(forms.Form):
     doc = forms.FileField(required=True, label = _('File'),)
@@ -175,6 +178,7 @@ class AddDocForm(forms.Form):
         label = _('Description'),
     )
     is_private = forms.BooleanField(required=False)
+
 
 class ArticleTemplateForm(forms.Form):
     def __init__(self, article, user, *args, **kwargs):
@@ -189,6 +193,7 @@ class ArticleTemplateForm(forms.Form):
 
 class ArticleLogoForm(forms.Form):
     image = forms.ImageField(required=True, label = _('Logo'),)
+
 
 class ArticleSettingsForm(forms.ModelForm):
     class Meta:
@@ -214,6 +219,7 @@ class ArticleSettingsForm(forms.ModelForm):
             self.fields["template"] = forms.ChoiceField(choices=choices)
         else:
             self.fields["template"] = forms.CharField()
+
 
 class NewArticleForm(ArticleFormWithNavigation):
     class Meta:

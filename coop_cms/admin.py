@@ -2,7 +2,7 @@
 from django.contrib import admin
 from django.core.urlresolvers import reverse
 import models
-from forms import NavTypeForm, ArticleAdminForm, #  NewsletterItemAdminForm, NewsletterAdminForm
+from forms import NavTypeForm, ArticleAdminForm  # , NewsletterItemAdminForm, NewsletterAdminForm
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
 from coop_cms.settings import get_article_class, get_navTree_class
